@@ -13,8 +13,8 @@
  * - ✨ Day 8: Approval checkpoints at phase boundaries
  */
 
-import type { AgentState } from '../agents/types'
-import type { AgentRegistry, AgentWithRoleSkills } from './agent-registry'
+import type { AgentState, AgentWithRoleSkills } from '../agents/types'
+import type { AgentRegistry } from './agent-registry'
 import type { SkillMatcher } from './skill-matcher'
 import { PhaseManager, WorkflowPhase } from './phase-manager'
 import { ApprovalCheckpoint, ApprovalCheckpointConfig } from './approval-checkpoint'
