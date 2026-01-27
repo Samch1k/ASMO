@@ -42,10 +42,7 @@ ai1st-orchestration/
 │   │   └── tests/               # Jest tests (smoke tests implemented)
 │   ├── examples/                # Demo applications (Phase 2 - Coming soon)
 │   └── docs/                    # VitePress documentation (Phase 3 - Coming soon)
-└── scripts/
-    ├── extract-from-meatconnect.ts  # Extraction script
-    ├── fix-imports.ts                # Import path fixer
-    └── validate-extraction.ts        # Validation script
+└── scripts/                     # Build and utility scripts
 ```
 
 ## 🚀 Current Status
@@ -67,7 +64,6 @@ ai1st-orchestration/
   - 6 agent instruction sets
 - ✅ Test infrastructure: Jest + ts-jest
 - ✅ Package exports: Comprehensive public API
-- ✅ Validation script: Automated quality checks
 
 **Validation Results:**
 - ✅ Package Structure: 100% complete
@@ -113,9 +109,6 @@ pnpm typecheck
 
 # Run tests (currently smoke tests only)
 pnpm test
-
-# Run validation
-pnpm tsx scripts/validate-extraction.ts
 ```
 
 ### Working with Core Library
