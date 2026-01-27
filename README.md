@@ -9,7 +9,7 @@
 
 AI1st is an autonomous AI development orchestration system that coordinates multiple AI agents to work together as a cohesive team, handling complex software development tasks from design to deployment.
 
-**Origin**: Extracted from the BMAD (Built-in Multi-Agent Development) system and refactored as a standalone, generalizable library.
+**Origin**: Extracted from the BMAD (Breakthrough Method of Agile AI Driven Development) system and refactored as a standalone, generalizable library.
 
 ## ✨ Key Features
 
