@@ -12,7 +12,7 @@
  * - Automatic optimization application (with safety checks)
  */
 
-import type { Workflow, WorkflowStep } from './workflow-engine'
+import type { Workflow, WorkflowStep } from './types'
 import type { WorkflowMetrics, AgentStepMetrics } from './metrics-collector'
 import type { MetricsPersister } from './metrics-persister'
 import { getConfigManager } from './config/config-manager'

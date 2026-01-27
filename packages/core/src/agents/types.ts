@@ -53,6 +53,9 @@ export interface AgentState {
 
   /** Skill matches for this task */
   skill_matches?: SkillMatch[]
+
+  /** Metadata for tracking workflow state */
+  metadata?: Record<string, any>
 }
 
 /**

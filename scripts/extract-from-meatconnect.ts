@@ -26,7 +26,7 @@ interface FileCopyConfig {
 // Files to extract from MeatConnect
 const filesToCopy: FileCopyConfig[] = [
   // ========================================
-  // ORCHESTRATION FILES (13 files)
+  // ORCHESTRATION FILES (17 files)
   // ========================================
   {
     from: '.cursor/lib/orchestration/workflow-engine.ts',
@@ -91,6 +91,26 @@ const filesToCopy: FileCopyConfig[] = [
   {
     from: '.cursor/lib/orchestration/team-manager.ts',
     to: 'packages/core/src/orchestration/team-manager.ts',
+    transform: true,
+  },
+  {
+    from: '.cursor/lib/orchestration/metrics-persister.ts',
+    to: 'packages/core/src/orchestration/metrics-persister.ts',
+    transform: true,
+  },
+  {
+    from: '.cursor/lib/orchestration/retrospective-report-generator.ts',
+    to: 'packages/core/src/orchestration/retrospective-report-generator.ts',
+    transform: true,
+  },
+  {
+    from: '.cursor/lib/orchestration/config-loader.ts',
+    to: 'packages/core/src/orchestration/config-loader.ts',
+    transform: true,
+  },
+  {
+    from: '.cursor/lib/orchestration/role-manager.ts',
+    to: 'packages/core/src/orchestration/role-manager.ts',
     transform: true,
   },
 

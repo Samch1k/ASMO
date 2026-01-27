@@ -12,7 +12,7 @@
  */
 
 import type { AgentState } from '../agents/types'
-import type { Workflow, WorkflowStep, StepResult } from './workflow-engine'
+import type { Workflow, WorkflowStep, StepResult } from './types'
 import { randomUUID } from 'crypto'
 import { getConfigManager } from './config/config-manager'
 
