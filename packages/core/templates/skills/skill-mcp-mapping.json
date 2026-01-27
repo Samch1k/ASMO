@@ -1,0 +1,339 @@
+{
+  "version": "1.0.0",
+  "mappings": {
+    "code_writing": {
+      "required": ["filesystem", "context7"],
+      "optional": ["github", "memory"]
+    },
+    "typescript_expert": {
+      "required": ["context7"],
+      "optional": ["filesystem"]
+    },
+    "feature_implementation": {
+      "required": ["filesystem", "context7", "github"],
+      "optional": ["memory", "supabase"]
+    },
+    "refactoring": {
+      "required": ["filesystem", "context7"],
+      "optional": ["github"]
+    },
+    "integration": {
+      "required": ["filesystem", "context7", "supabase"],
+      "optional": ["github", "memory"]
+    },
+    "unit_testing": {
+      "required": ["filesystem"],
+      "optional": ["github", "memory"]
+    },
+    "e2e_testing": {
+      "required": ["playwright", "filesystem"],
+      "optional": ["memory"]
+    },
+    "test_coverage": {
+      "required": ["filesystem"],
+      "optional": []
+    },
+    "bug_reproduction": {
+      "required": ["filesystem", "playwright"],
+      "optional": ["memory"]
+    },
+    "smoke_testing": {
+      "required": ["playwright"],
+      "optional": ["filesystem"]
+    },
+    "acceptance_testing": {
+      "required": ["playwright", "filesystem"],
+      "optional": ["memory"]
+    },
+    "deployment": {
+      "required": ["vercel", "render", "github"],
+      "optional": ["memory"]
+    },
+    "ci_cd": {
+      "required": ["github", "vercel", "render"],
+      "optional": ["memory"]
+    },
+    "infrastructure": {
+      "required": ["vercel", "render", "supabase"],
+      "optional": ["github", "memory"]
+    },
+    "monitoring": {
+      "required": ["vercel", "render", "supabase"],
+      "optional": ["memory"]
+    },
+    "incident_response": {
+      "required": ["vercel", "render", "github"],
+      "optional": ["memory", "supabase"]
+    },
+    "system_design": {
+      "required": ["memory", "filesystem", "context7"],
+      "optional": ["supabase"]
+    },
+    "architecture_decisions": {
+      "required": ["memory", "context7"],
+      "optional": ["filesystem"]
+    },
+    "adr_creation": {
+      "required": ["filesystem", "memory"],
+      "optional": []
+    },
+    "technology_evaluation": {
+      "required": ["context7", "memory"],
+      "optional": ["filesystem"]
+    },
+    "data_modeling": {
+      "required": ["supabase", "filesystem"],
+      "optional": ["memory", "context7"]
+    },
+    "scalability_planning": {
+      "required": ["memory", "context7"],
+      "optional": ["vercel", "render", "supabase"]
+    },
+    "bug_diagnosis": {
+      "required": ["filesystem", "render", "vercel"],
+      "optional": ["memory", "supabase"]
+    },
+    "root_cause_analysis": {
+      "required": ["filesystem", "memory"],
+      "optional": ["render", "vercel", "supabase"]
+    },
+    "error_investigation": {
+      "required": ["render", "vercel", "filesystem"],
+      "optional": ["memory", "supabase"]
+    },
+    "log_analysis": {
+      "required": ["render", "vercel", "memory"],
+      "optional": ["supabase"]
+    },
+    "performance_debugging": {
+      "required": ["vercel", "supabase", "context7"],
+      "optional": ["render", "memory"]
+    },
+    "hotfix_generation": {
+      "required": ["filesystem", "github"],
+      "optional": ["memory"]
+    },
+    "performance_analysis": {
+      "required": ["vercel", "supabase", "context7"],
+      "optional": ["render", "memory"]
+    },
+    "query_optimization": {
+      "required": ["supabase", "context7"],
+      "optional": ["memory"]
+    },
+    "code_optimization": {
+      "required": ["filesystem", "context7"],
+      "optional": ["vercel", "memory"]
+    },
+    "profiling": {
+      "required": ["vercel", "context7"],
+      "optional": ["memory"]
+    },
+    "caching_strategy": {
+      "required": ["filesystem", "context7"],
+      "optional": ["memory", "supabase"]
+    },
+    "bundle_optimization": {
+      "required": ["filesystem", "vercel"],
+      "optional": ["context7"]
+    },
+    "component_styling": {
+      "required": ["filesystem", "context7"],
+      "optional": ["github"]
+    },
+    "tailwind_css": {
+      "required": ["filesystem"],
+      "optional": ["context7"]
+    },
+    "responsive_design": {
+      "required": ["filesystem"],
+      "optional": ["context7"]
+    },
+    "accessibility": {
+      "required": ["filesystem", "context7"],
+      "optional": []
+    },
+    "animation": {
+      "required": ["filesystem"],
+      "optional": ["context7"]
+    },
+    "css_optimization": {
+      "required": ["filesystem"],
+      "optional": ["vercel"]
+    },
+    "user_flows": {
+      "required": ["memory", "filesystem"],
+      "optional": []
+    },
+    "wireframes": {
+      "required": ["filesystem"],
+      "optional": ["memory"]
+    },
+    "usability": {
+      "required": ["memory", "filesystem"],
+      "optional": []
+    },
+    "user_research": {
+      "required": ["memory", "supabase"],
+      "optional": ["filesystem"]
+    },
+    "prototyping": {
+      "required": ["filesystem"],
+      "optional": ["memory"]
+    },
+    "user_testing": {
+      "required": ["memory"],
+      "optional": ["filesystem", "playwright"]
+    },
+    "requirements": {
+      "required": ["memory", "filesystem"],
+      "optional": ["supabase"]
+    },
+    "user_stories": {
+      "required": ["memory", "github"],
+      "optional": ["filesystem"]
+    },
+    "kpis": {
+      "required": ["memory", "supabase"],
+      "optional": ["filesystem"]
+    },
+    "business_logic": {
+      "required": ["filesystem", "supabase", "context7"],
+      "optional": ["memory"]
+    },
+    "process_modeling": {
+      "required": ["memory", "filesystem"],
+      "optional": []
+    },
+    "stakeholder_management": {
+      "required": ["memory"],
+      "optional": ["filesystem"]
+    },
+    "strategy": {
+      "required": ["memory", "filesystem"],
+      "optional": []
+    },
+    "roadmap": {
+      "required": ["memory", "filesystem"],
+      "optional": ["github"]
+    },
+    "prioritization": {
+      "required": ["memory", "filesystem"],
+      "optional": ["github"]
+    },
+    "market_analysis": {
+      "required": ["memory"],
+      "optional": ["filesystem"]
+    },
+    "competitive_analysis": {
+      "required": ["memory"],
+      "optional": ["filesystem"]
+    },
+    "sprint_planning": {
+      "required": ["memory", "github"],
+      "optional": ["filesystem"]
+    },
+    "coordination": {
+      "required": ["memory", "github"],
+      "optional": []
+    },
+    "tracking": {
+      "required": ["memory", "github"],
+      "optional": ["filesystem"]
+    },
+    "risk_management": {
+      "required": ["memory", "filesystem"],
+      "optional": []
+    },
+    "resource_allocation": {
+      "required": ["memory"],
+      "optional": ["filesystem"]
+    },
+    "stakeholder_communication": {
+      "required": ["memory"],
+      "optional": ["filesystem"]
+    },
+    "rfq_workflow": {
+      "required": ["supabase", "filesystem", "memory"],
+      "optional": ["github"]
+    },
+    "bid_management": {
+      "required": ["supabase", "filesystem"],
+      "optional": ["memory"]
+    },
+    "award_process": {
+      "required": ["supabase", "memory"],
+      "optional": ["filesystem"]
+    },
+    "rfq_validation": {
+      "required": ["supabase", "filesystem"],
+      "optional": []
+    },
+    "supplier_matching": {
+      "required": ["supabase", "memory"],
+      "optional": ["filesystem"]
+    },
+    "procurement_optimization": {
+      "required": ["supabase", "memory"],
+      "optional": ["filesystem"]
+    },
+    "verification": {
+      "required": ["supabase", "filesystem", "memory"],
+      "optional": []
+    },
+    "ratings": {
+      "required": ["supabase", "memory"],
+      "optional": ["filesystem"]
+    },
+    "onboarding": {
+      "required": ["supabase", "filesystem"],
+      "optional": ["memory"]
+    },
+    "compliance": {
+      "required": ["supabase", "memory", "filesystem"],
+      "optional": []
+    },
+    "supplier_analytics": {
+      "required": ["supabase", "memory"],
+      "optional": ["filesystem"]
+    },
+    "relationship_management": {
+      "required": ["memory", "supabase"],
+      "optional": ["filesystem"]
+    }
+  },
+  "mcp_servers": {
+    "filesystem": {
+      "description": "File system operations - read, write, edit files",
+      "primary_skills": ["code_writing", "refactoring", "unit_testing", "component_styling"]
+    },
+    "context7": {
+      "description": "Code context and documentation lookup",
+      "primary_skills": ["typescript_expert", "code_optimization", "architecture_decisions"]
+    },
+    "supabase": {
+      "description": "Database operations and queries",
+      "primary_skills": ["data_modeling", "query_optimization", "rfq_workflow", "supplier_matching"]
+    },
+    "github": {
+      "description": "Git operations, PRs, issues, CI/CD",
+      "primary_skills": ["deployment", "ci_cd", "feature_implementation"]
+    },
+    "memory": {
+      "description": "Long-term memory storage and retrieval",
+      "primary_skills": ["architecture_decisions", "requirements", "strategy", "compliance"]
+    },
+    "playwright": {
+      "description": "Browser automation and E2E testing",
+      "primary_skills": ["e2e_testing", "bug_reproduction", "smoke_testing"]
+    },
+    "render": {
+      "description": "Backend deployment and monitoring",
+      "primary_skills": ["deployment", "monitoring", "log_analysis", "incident_response"]
+    },
+    "vercel": {
+      "description": "Frontend deployment and analytics",
+      "primary_skills": ["deployment", "bundle_optimization", "performance_analysis"]
+    }
+  }
+}

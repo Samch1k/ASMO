@@ -1,0 +1,336 @@
+{
+  "version": "2.0.0",
+  "roles": [
+    {
+      "id": "architect",
+      "name": "Architect",
+      "description": "System architecture and design decisions. Creates architectural decision records (ADRs), designs system components, evaluates technologies, and models data structures. Focuses on long-term technical vision and scalability.",
+      "category": "core",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "system_design",
+        "architecture_decisions",
+        "adr_creation",
+        "data_modeling"
+      ],
+      "optional_skills": [
+        "technology_evaluation",
+        "scalability_planning"
+      ],
+      "priority": 10,
+      "allowed_mcps": [
+        "filesystem",
+        "context7",
+        "memory",
+        "github"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "design",
+          "architecture",
+          "architect",
+          "adr",
+          "system design",
+          "архитектура",
+          "проектирование"
+        ],
+        "task_types": [
+          "architecture",
+          "planning"
+        ]
+      },
+      "agent_class": "ArchitectAgent",
+      "metadata": {
+        "llm_temperature": 0.3,
+        "max_tokens": 8192,
+        "output_artifacts": [
+          "architecture",
+          "documentation"
+        ],
+        "domain": "System Architecture"
+      }
+    },
+    {
+      "id": "developer",
+      "name": "Developer",
+      "description": "Feature implementation and code generation. Writes production-quality TypeScript/React code, implements features following TDD methodology, creates unit tests, and performs refactoring. Primary code execution role.",
+      "category": "core",
+      "role_type": "execution",
+      "can_modify_code": true,
+      "requires_plan": true,
+      "required_skills": [
+        "code_writing",
+        "typescript_expert",
+        "feature_implementation",
+        "unit_testing"
+      ],
+      "optional_skills": [
+        "refactoring",
+        "integration"
+      ],
+      "priority": 8,
+      "allowed_mcps": [
+        "filesystem",
+        "context7",
+        "github",
+        "memory",
+        "supabase"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "implement",
+          "code",
+          "develop",
+          "feature",
+          "create function",
+          "реализуй",
+          "код",
+          "функция"
+        ],
+        "task_types": [
+          "feature",
+          "refactor",
+          "enhancement"
+        ]
+      },
+      "agent_class": "DeveloperAgent",
+      "metadata": {
+        "llm_temperature": 0.2,
+        "max_tokens": 8192,
+        "output_artifacts": [
+          "code",
+          "test"
+        ],
+        "domain": "Software Development"
+      }
+    },
+    {
+      "id": "debugger",
+      "name": "Debugger",
+      "description": "Bug investigation and root cause analysis. Diagnoses errors, analyzes logs, reproduces bugs, investigates production issues, and generates hotfixes. Uses systematic debugging workflow (Reproduce-Isolate-Fix).",
+      "category": "core",
+      "role_type": "hybrid",
+      "can_modify_code": true,
+      "requires_plan": false,
+      "required_skills": [
+        "bug_diagnosis",
+        "root_cause_analysis",
+        "error_investigation"
+      ],
+      "optional_skills": [
+        "log_analysis",
+        "performance_debugging",
+        "hotfix_generation"
+      ],
+      "priority": 9,
+      "allowed_mcps": [
+        "filesystem",
+        "github",
+        "render",
+        "vercel",
+        "memory",
+        "supabase"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "bug",
+          "error",
+          "broken",
+          "fail",
+          "crash",
+          "not working",
+          "баг",
+          "ошибка",
+          "не работает"
+        ],
+        "task_types": [
+          "bug_fix",
+          "investigation"
+        ]
+      },
+      "agent_class": "DebuggerAgent",
+      "metadata": {
+        "llm_temperature": 0.1,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "diagnosis",
+          "fix"
+        ],
+        "domain": "Debugging"
+      }
+    },
+    {
+      "id": "optimizer",
+      "name": "Optimizer",
+      "description": "Performance analysis and optimization. Profiles code performance, identifies bottlenecks, optimizes queries, implements caching strategies, and reduces bundle sizes. Focuses on improving application speed and efficiency.",
+      "category": "core",
+      "role_type": "hybrid",
+      "can_modify_code": true,
+      "requires_plan": false,
+      "required_skills": [
+        "performance_analysis",
+        "code_optimization",
+        "profiling"
+      ],
+      "optional_skills": [
+        "query_optimization",
+        "caching_strategy",
+        "bundle_optimization"
+      ],
+      "priority": 7,
+      "allowed_mcps": [
+        "filesystem",
+        "supabase",
+        "memory",
+        "context7",
+        "render",
+        "vercel"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "slow",
+          "performance",
+          "optimize",
+          "speed",
+          "latency",
+          "lag",
+          "медленно",
+          "оптимизация",
+          "производительность"
+        ],
+        "task_types": [
+          "optimization",
+          "performance"
+        ]
+      },
+      "agent_class": "OptimizerAgent",
+      "metadata": {
+        "llm_temperature": 0.2,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "optimization",
+          "analysis"
+        ],
+        "domain": "Performance Optimization"
+      }
+    },
+    {
+      "id": "tester",
+      "name": "Tester",
+      "description": "Test creation and quality assurance. Creates unit tests, integration tests, E2E scenarios (Playwright), analyzes test coverage, reproduces bugs, and performs smoke testing. Ensures code quality through comprehensive testing.",
+      "category": "core",
+      "role_type": "execution",
+      "can_modify_code": true,
+      "can_run_tests": true,
+      "requires_plan": false,
+      "required_skills": [
+        "unit_testing",
+        "e2e_testing",
+        "test_coverage"
+      ],
+      "optional_skills": [
+        "bug_reproduction",
+        "smoke_testing",
+        "acceptance_testing"
+      ],
+      "priority": 8,
+      "allowed_mcps": [
+        "filesystem",
+        "playwright",
+        "github",
+        "memory"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "test",
+          "testing",
+          "e2e",
+          "playwright",
+          "coverage",
+          "тест",
+          "тестирование"
+        ],
+        "task_types": [
+          "testing",
+          "quality_assurance"
+        ]
+      },
+      "agent_class": "TesterAgent",
+      "metadata": {
+        "llm_temperature": 0.2,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "test",
+          "report"
+        ],
+        "domain": "Testing & QA"
+      }
+    },
+    {
+      "id": "devops",
+      "name": "DevOps",
+      "description": "Deployment, CI/CD, and infrastructure management. Handles deployment to Render/Vercel, manages CI/CD pipelines, monitors production systems, responds to incidents, and manages infrastructure. Ensures reliable operations.",
+      "category": "core",
+      "role_type": "execution",
+      "can_modify_code": false,
+      "can_deploy": true,
+      "requires_plan": false,
+      "required_skills": [
+        "deployment",
+        "ci_cd",
+        "infrastructure",
+        "monitoring"
+      ],
+      "optional_skills": [
+        "incident_response"
+      ],
+      "priority": 9,
+      "allowed_mcps": [
+        "render",
+        "vercel",
+        "github",
+        "docker",
+        "filesystem",
+        "memory"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "deploy",
+          "deployment",
+          "ci/cd",
+          "ci",
+          "cd",
+          "production",
+          "staging",
+          "render",
+          "vercel",
+          "деплой",
+          "развертывание"
+        ],
+        "task_types": [
+          "deployment",
+          "infrastructure",
+          "operations"
+        ]
+      },
+      "agent_class": "DevOpsAgent",
+      "metadata": {
+        "llm_temperature": 0.1,
+        "max_tokens": 4096,
+        "output_artifacts": [
+          "deployment",
+          "configuration"
+        ],
+        "domain": "DevOps & Infrastructure"
+      }
+    }
+  ]
+}

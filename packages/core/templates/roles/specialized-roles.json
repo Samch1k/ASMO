@@ -1,0 +1,275 @@
+{
+  "version": "2.0.0",
+  "roles": [
+    {
+      "id": "ui-developer",
+      "name": "UI Developer",
+      "description": "Frontend and UI component development specialist. Creates React components, implements responsive designs with Tailwind CSS, handles animations with Framer Motion, ensures accessibility, and optimizes CSS. Focuses on user-facing interfaces.",
+      "category": "specialized",
+      "role_type": "execution",
+      "can_modify_code": true,
+      "requires_plan": false,
+      "required_skills": [
+        "component_styling",
+        "tailwind_css",
+        "responsive_design"
+      ],
+      "optional_skills": [
+        "accessibility",
+        "animation",
+        "css_optimization"
+      ],
+      "priority": 6,
+      "allowed_mcps": [
+        "filesystem",
+        "context7",
+        "github",
+        "figma",
+        "memory"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "ui",
+          "component",
+          "frontend",
+          "react",
+          "tailwind",
+          "css",
+          "styling",
+          "интерфейс",
+          "компонент"
+        ],
+        "task_types": [
+          "ui_development",
+          "styling",
+          "frontend"
+        ]
+      },
+      "agent_class": "UIDeveloperAgent",
+      "metadata": {
+        "llm_temperature": 0.3,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "component",
+          "styles"
+        ],
+        "domain": "UI/Frontend Development"
+      }
+    },
+    {
+      "id": "ux-designer",
+      "name": "UX Designer",
+      "description": "User experience design and prototyping specialist. Designs user flows, creates wireframes, conducts user research and testing, ensures usability, and prototypes interfaces. Focuses on user-centered design principles.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "user_flows",
+        "wireframes",
+        "usability"
+      ],
+      "optional_skills": [
+        "user_research",
+        "prototyping",
+        "user_testing"
+      ],
+      "priority": 5,
+      "allowed_mcps": [
+        "filesystem",
+        "figma",
+        "memory",
+        "context7"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "ux",
+          "user experience",
+          "wireframe",
+          "prototype",
+          "user flow",
+          "usability",
+          "дизайн",
+          "прототип"
+        ],
+        "task_types": [
+          "design",
+          "ux",
+          "prototyping"
+        ]
+      },
+      "agent_class": "UXDesignerAgent",
+      "metadata": {
+        "llm_temperature": 0.4,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "design",
+          "wireframe"
+        ],
+        "domain": "UX Design"
+      }
+    },
+    {
+      "id": "business-analyst",
+      "name": "Business Analyst",
+      "description": "Requirements gathering and business analysis specialist. Analyzes business logic, gathers requirements, writes user stories, models business processes, manages stakeholders, and defines KPIs. Bridges business and technical domains.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "requirements",
+        "user_stories",
+        "business_logic"
+      ],
+      "optional_skills": [
+        "kpis",
+        "process_modeling",
+        "stakeholder_management"
+      ],
+      "priority": 6,
+      "allowed_mcps": [
+        "filesystem",
+        "memory",
+        "github",
+        "supabase"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "requirements",
+          "business",
+          "user story",
+          "process",
+          "kpi",
+          "stakeholder",
+          "требования",
+          "бизнес-логика"
+        ],
+        "task_types": [
+          "requirements",
+          "analysis",
+          "business"
+        ]
+      },
+      "agent_class": "BusinessAnalystAgent",
+      "metadata": {
+        "llm_temperature": 0.3,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "requirements",
+          "documentation"
+        ],
+        "domain": "Business Analysis"
+      }
+    },
+    {
+      "id": "project-manager",
+      "name": "Project Manager",
+      "description": "Project planning and coordination specialist. Plans sprints, coordinates teams, tracks progress, manages risks, allocates resources, and communicates with stakeholders. Ensures projects are delivered on time and within scope.",
+      "category": "specialized",
+      "role_type": "hybrid",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "sprint_planning",
+        "coordination",
+        "tracking"
+      ],
+      "optional_skills": [
+        "risk_management",
+        "resource_allocation",
+        "stakeholder_communication"
+      ],
+      "priority": 5,
+      "allowed_mcps": [
+        "filesystem",
+        "memory",
+        "github"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "sprint",
+          "plan",
+          "project",
+          "coordinate",
+          "track",
+          "risk",
+          "спринт",
+          "планирование"
+        ],
+        "task_types": [
+          "planning",
+          "coordination",
+          "management"
+        ]
+      },
+      "agent_class": "ProjectManagerAgent",
+      "metadata": {
+        "llm_temperature": 0.3,
+        "max_tokens": 4096,
+        "output_artifacts": [
+          "plan",
+          "report"
+        ],
+        "domain": "Project Management"
+      }
+    },
+    {
+      "id": "product-owner",
+      "name": "Product Owner",
+      "description": "Product vision and prioritization specialist. Defines product strategy, creates roadmaps, prioritizes features, conducts market and competitive analysis. Represents user and business needs, makes product decisions.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "strategy",
+        "roadmap",
+        "prioritization"
+      ],
+      "optional_skills": [
+        "market_analysis",
+        "competitive_analysis"
+      ],
+      "priority": 7,
+      "allowed_mcps": [
+        "filesystem",
+        "memory",
+        "github",
+        "supabase"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "product",
+          "strategy",
+          "roadmap",
+          "prioritize",
+          "feature",
+          "market",
+          "продукт",
+          "стратегия"
+        ],
+        "task_types": [
+          "product",
+          "strategy",
+          "planning"
+        ]
+      },
+      "agent_class": "ProductOwnerAgent",
+      "metadata": {
+        "llm_temperature": 0.4,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "strategy",
+          "roadmap"
+        ],
+        "domain": "Product Management"
+      }
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": "performance_investigation",
+  "name": "Performance Investigation & Optimization",
+  "description": "Parallel analysis by Debugger + Optimizer, then Developer implements fixes",
+  "trigger_condition": {
+    "keywords": [
+      "slow",
+      "performance",
+      "optimize",
+      "speed",
+      "latency",
+      "медленн",
+      "оптимиз",
+      "производительность"
+    ],
+    "task_types": [
+      "optimization"
+    ],
+    "required_skills": [
+      "performance_optimization",
+      "debugging",
+      "performance_analysis"
+    ]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "debugger",
+      "phase": "error_analysis",
+      "description": "Analyze error patterns and stack traces",
+      "parallel_with": [
+        "optimizer"
+      ],
+      "deliverables": [
+        "error_report",
+        "stack_traces"
+      ],
+      "exit_criteria": "Error patterns identified",
+      "timeout": "20m"
+    },
+    {
+      "order": 1,
+      "role_id": "optimizer",
+      "phase": "performance_profiling",
+      "description": "Profile performance and identify bottlenecks",
+      "parallel_with": [
+        "debugger"
+      ],
+      "deliverables": [
+        "performance_metrics",
+        "bottleneck_analysis"
+      ],
+      "exit_criteria": "Bottlenecks identified",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "developer",
+      "phase": "optimization_implementation",
+      "description": "Implement optimizations based on analysis",
+      "deliverables": [
+        "code",
+        "performance_improvements"
+      ],
+      "exit_criteria": "Optimizations implemented",
+      "timeout": "40m"
+    },
+    {
+      "order": 3,
+      "role_id": "tester",
+      "phase": "performance_verification",
+      "description": "Run benchmarks to verify improvements",
+      "deliverables": [
+        "benchmark_results"
+      ],
+      "exit_criteria": "Performance meets targets",
+      "timeout": "15m"
+    }
+  ],
+  "estimated_time": "1h 35m",
+  "success_criteria": "Performance improved and verified with benchmarks"
+}

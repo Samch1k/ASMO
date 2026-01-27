@@ -1,0 +1,84 @@
+{
+  "id": "comprehensive_testing",
+  "name": "Multi-Layer Testing",
+  "description": "Parallel unit + E2E + performance tests before deployment",
+  "trigger_condition": {
+    "keywords": [
+      "test everything",
+      "full test",
+      "comprehensive test",
+      "тест все",
+      "полный тест",
+      "run all tests"
+    ],
+    "task_types": [
+      "testing"
+    ],
+    "required_skills": [
+      "unit_testing",
+      "e2e_testing",
+      "performance_analysis"
+    ]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "tester",
+      "phase": "unit_testing",
+      "description": "Run unit tests",
+      "parallel_with": [
+        "tester_e2e",
+        "optimizer"
+      ],
+      "deliverables": [
+        "unit_test_results"
+      ],
+      "exit_criteria": "All unit tests pass",
+      "timeout": "15m"
+    },
+    {
+      "order": 1,
+      "role_id": "tester",
+      "phase": "e2e_testing",
+      "description": "Run E2E tests with Playwright",
+      "parallel_with": [
+        "tester_unit",
+        "optimizer"
+      ],
+      "deliverables": [
+        "e2e_test_results"
+      ],
+      "exit_criteria": "All E2E tests pass",
+      "timeout": "25m"
+    },
+    {
+      "order": 1,
+      "role_id": "optimizer",
+      "phase": "performance_testing",
+      "description": "Run performance benchmarks",
+      "parallel_with": [
+        "tester_unit",
+        "tester_e2e"
+      ],
+      "deliverables": [
+        "performance_test_results"
+      ],
+      "exit_criteria": "Performance benchmarks meet thresholds",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "devops",
+      "phase": "deployment",
+      "description": "Deploy if all tests pass",
+      "deliverables": [
+        "deployment_logs"
+      ],
+      "exit_criteria": "Deployed successfully",
+      "timeout": "10m",
+      "requires_approval": true
+    }
+  ],
+  "estimated_time": "35m",
+  "success_criteria": "All test layers pass and deployed"
+}

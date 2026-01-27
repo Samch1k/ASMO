@@ -1,0 +1,227 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://meatconnect.com/schemas/roles.schema.json",
+  "title": "Agent Roles Configuration Schema",
+  "description": "JSON Schema for validating AI agent role configurations",
+  "type": "object",
+  "required": ["version", "roles"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the roles configuration format"
+    },
+    "roles": {
+      "type": "array",
+      "description": "Array of role definitions",
+      "items": {
+        "$ref": "#/definitions/role"
+      },
+      "minItems": 1
+    }
+  },
+  "definitions": {
+    "role": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "description",
+        "category",
+        "role_type",
+        "required_skills",
+        "priority",
+        "allowed_mcps",
+        "activation_rules",
+        "agent_class"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z-]+$",
+          "description": "Unique role identifier (kebab-case)",
+          "examples": ["developer", "architect", "devops"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable role name",
+          "examples": ["Developer", "Architect", "DevOps Engineer"]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "description": "Detailed description of role purpose and responsibilities"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["core", "specialized", "project_specific", "business"],
+          "description": "Role classification category"
+        },
+        "role_type": {
+          "type": "string",
+          "enum": ["reasoning", "execution", "hybrid"],
+          "description": "Type of role: reasoning (planning), execution (implementation), or hybrid (both)"
+        },
+        "can_modify_code": {
+          "type": "boolean",
+          "description": "Whether this role is allowed to modify source code",
+          "default": false
+        },
+        "can_deploy": {
+          "type": "boolean",
+          "description": "Whether this role is allowed to deploy to production",
+          "default": false
+        },
+        "can_run_tests": {
+          "type": "boolean",
+          "description": "Whether this role is allowed to execute tests",
+          "default": false
+        },
+        "requires_plan": {
+          "type": "boolean",
+          "description": "Whether this role requires an architectural plan before execution",
+          "default": false
+        },
+        "requires_approval": {
+          "type": "boolean",
+          "description": "Whether this role requires human approval before execution",
+          "default": false
+        },
+        "required_skills": {
+          "type": "array",
+          "description": "List of required skill IDs (must have all)",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z_]+$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "optional_skills": {
+          "type": "array",
+          "description": "List of optional skill IDs (nice-to-have)",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z_]+$"
+          },
+          "uniqueItems": true,
+          "default": []
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Role priority (1-10, where 10 is highest)"
+        },
+        "allowed_mcps": {
+          "type": "array",
+          "description": "MCP servers this role can access",
+          "items": {
+            "type": "string",
+            "enum": [
+              "filesystem",
+              "memory",
+              "supabase",
+              "context7",
+              "github",
+              "playwright",
+              "render",
+              "vercel"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "activation_rules": {
+          "$ref": "#/definitions/activationRules"
+        },
+        "agent_class": {
+          "type": "string",
+          "pattern": "^[A-Z][a-zA-Z]+Agent$",
+          "description": "TypeScript class name implementing this role (must end with 'Agent')",
+          "examples": ["DeveloperAgent", "ArchitectAgent", "DevOpsAgent"]
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional role-specific metadata",
+          "properties": {
+            "llm_temperature": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 2,
+              "description": "LLM temperature setting for this role"
+            },
+            "max_tokens": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200000,
+              "description": "Maximum tokens for LLM responses"
+            },
+            "output_artifacts": {
+              "type": "array",
+              "description": "Types of artifacts this role produces",
+              "items": {
+                "type": "string",
+                "enum": ["code", "adr", "diagram", "test", "documentation"]
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "activationRules": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["always", "auto_attached", "agent_requested", "manual"],
+          "description": "How this role gets activated"
+        },
+        "trigger_keywords": {
+          "type": "array",
+          "description": "Keywords that trigger this role (for auto_attached type)",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "task_types": {
+          "type": "array",
+          "description": "Task types this role handles",
+          "items": {
+            "type": "string",
+            "enum": ["bug_fix", "feature", "optimization", "architecture", "deployment", "infrastructure", "testing", "qa", "refactor"]
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "auto_attached"
+              }
+            }
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": ["trigger_keywords"]
+              },
+              {
+                "required": ["task_types"]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,2717 @@
+{
+  "version": "2.1.0",
+  "skills": [
+    {
+      "id": "acceptance_testing",
+      "name": "Acceptance Testing",
+      "description": "Verify that implemented features meet business requirements and acceptance criteria. Ensures the solution satisfies stakeholder expectations.",
+      "category": "testing",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "playwright",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "40m",
+      "composable_with": [
+        "e2e_testing"
+      ],
+      "metadata": {
+        "tools": [
+          "playwright"
+        ],
+        "docs": [
+          "Acceptance criteria guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "acceptance test",
+          "UAT",
+          "user acceptance"
+        ]
+      }
+    },
+    {
+      "id": "accessibility",
+      "name": "Accessibility",
+      "description": "Ensure web accessibility compliance with ARIA standards and WCAG guidelines. Includes semantic HTML, keyboard navigation, screen reader support, and inclusive design.",
+      "category": "ui_design",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem",
+        "context7"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1h",
+      "composable_with": [
+        "component_styling",
+        "responsive_design"
+      ],
+      "metadata": {
+        "tools": [
+          "axe",
+          "lighthouse"
+        ],
+        "docs": [
+          "WCAG guidelines",
+          "ARIA documentation"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "a11y",
+          "wcag",
+          "aria"
+        ]
+      }
+    },
+    {
+      "id": "adr_creation",
+      "name": "ADR Creation",
+      "description": "Create Architecture Decision Records (ADRs) to document important architectural decisions, context, alternatives considered, and consequences. Maintains architectural knowledge.",
+      "category": "architecture",
+      "complexity": "intermediate",
+      "requires_skills": [
+        "architecture_decisions"
+      ],
+      "required_mcps": [
+        "filesystem",
+        "memory"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "30m",
+      "composable_with": [
+        "architecture_decisions"
+      ],
+      "metadata": {
+        "tools": [
+          "markdown"
+        ],
+        "docs": [
+          "ADR template"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.9,
+        "aliases": [
+          "adr",
+          "decision record",
+          "architecture documentation"
+        ]
+      }
+    },
+    {
+      "id": "animation",
+      "name": "Animation",
+      "description": "Create smooth, performant animations and transitions for better user experience. Includes CSS animations, JavaScript animations, and animation libraries.",
+      "category": "ui_design",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "30m",
+      "composable_with": [
+        "component_styling"
+      ],
+      "metadata": {
+        "tools": [
+          "css",
+          "framer-motion"
+        ],
+        "docs": [
+          "Animation guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "animations",
+          "transitions",
+          "motion"
+        ]
+      }
+    },
+    {
+      "id": "api_endpoint_creation",
+      "name": "API Endpoint Creation",
+      "description": "Create production-ready API endpoints with architecture decisions, implementation, validation, and testing. Includes ADR creation, code writing, schema validation, unit tests, and integration tests. Use when: adding new API endpoints, creating RESTful routes, building backend APIs. Keywords: API, endpoint, REST, backend",
+      "category": "development",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "2-4h",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 6,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "architecture_decisions",
+      "name": "Architecture Decisions",
+      "description": "Make informed decisions about technology choices, architectural patterns, and design trade-offs. Evaluate alternatives and document decisions with rationale.",
+      "category": "architecture",
+      "complexity": "expert",
+      "requires_skills": [
+        "system_design"
+      ],
+      "required_mcps": [
+        "memory",
+        "context7"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "45m",
+      "composable_with": [
+        "adr_creation",
+        "technology_evaluation"
+      ],
+      "metadata": {
+        "tools": [
+          "decision frameworks"
+        ],
+        "docs": [
+          "Architecture patterns"
+        ],
+        "difficulty": 9,
+        "success_rate": 0.85,
+        "aliases": [
+          "decisions",
+          "tech choices",
+          "architectural decisions"
+        ]
+      }
+    },
+    {
+      "id": "architecture_review",
+      "name": "Architecture Review",
+      "description": "Comprehensive system architecture review combining design decisions, technology evaluation, and documentation. Reviews architecture decisions, system design, technology choices, and creates ADRs. Use when: reviewing system architecture, evaluating design decisions, conducting architecture audits. Keywords: architecture, review, ADR, design decisions",
+      "category": "architecture",
+      "complexity": "expert",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "4-8h",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 9,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "award_process",
+      "name": "Award Process",
+      "description": "Manage the award process in MeatConnect: evaluating bids, selecting winners, sending award notifications, and initiating contracts. Ensure compliance with procurement policies.",
+      "category": "project_specific",
+      "complexity": "advanced",
+      "requires_skills": [
+        "business_logic",
+        "compliance"
+      ],
+      "required_mcps": [
+        "supabase",
+        "memory"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "1h",
+      "composable_with": [
+        "bid_management",
+        "rfq_workflow"
+      ],
+      "metadata": {
+        "tools": [
+          "supabase",
+          "contract management"
+        ],
+        "docs": [
+          "Award process documentation"
+        ],
+        "difficulty": 8,
+        "success_rate": 0.85,
+        "aliases": [
+          "award",
+          "contract award",
+          "winner selection"
+        ],
+        "domain": "MeatConnect"
+      }
+    },
+    {
+      "id": "bmad_analyze",
+      "name": "BMad Workflow Analysis",
+      "description": "Analyze BMad workflow execution metrics and generate enhanced AI-powered recommendations for optimization. Reads metrics from database or files, identifies patterns, and provides actionable insights. Use when: analyzing workflow performance, optimizing BMad workflows. Keywords: bmad, workflow analysis, performance optimization, retrospective",
+      "category": "analysis",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "2-5m",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 6,
+        "success_rate": 0.8,
+        "aliases": [
+          "bmad-analyze"
+        ]
+      }
+    },
+    {
+      "id": "bmad_enhance",
+      "name": "BMad Recommendation Enhancement",
+      "description": "Enhance existing BMad recommendations with deeper AI-powered analysis. Takes basic rule-based recommendations and adds LLM insights for more actionable, context-aware improvements. Use when: refining BMad recommendations. Keywords: bmad, enhance recommendations, deeper analysis, refinement",
+      "category": "analysis",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.88,
+      "estimated_time": "3-7m",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 6,
+        "success_rate": 0.8,
+        "aliases": [
+          "bmad-enhance"
+        ]
+      }
+    },
+    {
+      "id": "bug_diagnosis",
+      "name": "Bug Diagnosis",
+      "description": "Investigate and diagnose bugs by analyzing symptoms, reproducing issues, examining logs, and identifying root causes. Systematic debugging approach to understand failures.",
+      "category": "debugging",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem",
+        "render",
+        "vercel"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "45m",
+      "composable_with": [
+        "root_cause_analysis",
+        "error_investigation"
+      ],
+      "metadata": {
+        "tools": [
+          "debugger",
+          "logging"
+        ],
+        "docs": [
+          "Debugging guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "debug",
+          "diagnose",
+          "investigate bug"
+        ]
+      }
+    },
+    {
+      "id": "bug_fix_workflow",
+      "name": "Bug Fix Workflow",
+      "description": "Complete bug fixing workflow from diagnosis through verification. Includes bug diagnosis, reproduction, hotfix generation, and verification testing. Use when: fixing bugs, handling production issues, resolving defects. Keywords: bug, fix, hotfix, debugging",
+      "category": "debugging",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "1-4h",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 6,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "bug_reproduction",
+      "name": "Bug Reproduction",
+      "description": "Reproduce reported bugs to understand the exact conditions that cause failures. Includes creating minimal reproducible examples and documenting steps to reproduce.",
+      "category": "testing",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem",
+        "playwright"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "30m",
+      "composable_with": [
+        "bug_diagnosis"
+      ],
+      "metadata": {
+        "tools": [
+          "playwright",
+          "debugger"
+        ],
+        "docs": [
+          "Bug reproduction guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.8,
+        "aliases": [
+          "reproduce bug",
+          "replicate",
+          "reproduce issue"
+        ]
+      }
+    },
+    {
+      "id": "bundle_optimization",
+      "name": "Bundle Optimization",
+      "description": "Optimize JavaScript bundle sizes through code splitting, tree shaking, lazy loading, and removing unused dependencies. Improve initial load time.",
+      "category": "performance",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem",
+        "vercel"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "45m",
+      "composable_with": [
+        "code_optimization"
+      ],
+      "metadata": {
+        "tools": [
+          "webpack",
+          "vite",
+          "bundle analyzers"
+        ],
+        "docs": [
+          "Bundle optimization guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "bundle",
+          "bundle size",
+          "webpack optimization"
+        ]
+      }
+    },
+    {
+      "id": "business_logic",
+      "name": "Business Logic",
+      "description": "Analyze and implement complex business rules and workflows. Ensure business logic is correctly translated into technical implementation.",
+      "category": "business",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem",
+        "supabase",
+        "context7"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1.5h",
+      "composable_with": [
+        "requirements",
+        "code_writing"
+      ],
+      "metadata": {
+        "tools": [
+          "business analysis tools"
+        ],
+        "docs": [
+          "Business logic patterns"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "business rules",
+          "domain logic",
+          "business workflow"
+        ]
+      }
+    },
+    {
+      "id": "caching_strategy",
+      "name": "Caching Strategy",
+      "description": "Design and implement caching strategies to improve performance. Includes cache invalidation, cache layers, and choosing appropriate caching mechanisms.",
+      "category": "performance",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem",
+        "context7"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1h",
+      "composable_with": [
+        "performance_analysis"
+      ],
+      "metadata": {
+        "tools": [
+          "redis",
+          "cache libraries"
+        ],
+        "docs": [
+          "Caching patterns"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "caching",
+          "cache",
+          "cache optimization"
+        ]
+      }
+    },
+    {
+      "id": "ci_cd",
+      "name": "CI/CD Pipeline Management",
+      "description": "Manage continuous integration and deployment pipelines using GitHub Actions. Includes pipeline configuration, automated testing, build optimization, and deployment automation.",
+      "category": "devops",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "github",
+        "vercel",
+        "render"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "20m",
+      "composable_with": [
+        "deployment",
+        "monitoring"
+      ],
+      "metadata": {
+        "tools": [
+          "github actions",
+          "yaml"
+        ],
+        "docs": [
+          "GitHub Actions documentation"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.85,
+        "aliases": [
+          "ci/cd",
+          "pipeline",
+          "automation"
+        ]
+      }
+    },
+    {
+      "id": "code_optimization",
+      "name": "Code Optimization",
+      "description": "Optimize code for better performance, including algorithm improvements, reducing complexity, optimizing loops, and improving memory usage.",
+      "category": "performance",
+      "complexity": "advanced",
+      "requires_skills": [
+        "typescript_expert"
+      ],
+      "required_mcps": [
+        "filesystem",
+        "context7"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1h",
+      "composable_with": [
+        "performance_analysis",
+        "refactoring"
+      ],
+      "metadata": {
+        "tools": [
+          "profilers",
+          "typescript"
+        ],
+        "docs": [
+          "Code optimization patterns"
+        ],
+        "difficulty": 8,
+        "success_rate": 0.75,
+        "aliases": [
+          "optimize code",
+          "code performance",
+          "optimization"
+        ]
+      }
+    },
+    {
+      "id": "code_writing",
+      "name": "Code Writing",
+      "description": "Write production-quality TypeScript code following project conventions, best practices, and SOLID principles. Includes implementing features, writing clean maintainable code, and following the project's coding standards.",
+      "category": "development",
+      "complexity": "intermediate",
+      "requires_skills": [
+        "typescript_expert"
+      ],
+      "required_mcps": [
+        "filesystem",
+        "context7"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "30m",
+      "composable_with": [
+        "unit_testing",
+        "refactoring"
+      ],
+      "metadata": {
+        "tools": [
+          "typescript",
+          "eslint",
+          "prettier"
+        ],
+        "docs": [
+          "TypeScript handbook",
+          "Project conventions"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "coding",
+          "programming",
+          "implementation"
+        ]
+      }
+    },
+    {
+      "id": "competitive_analysis",
+      "name": "Competitive Analysis",
+      "description": "Analyze competitors' products, features, and strategies. Identify competitive advantages and differentiation opportunities.",
+      "category": "product",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "1.5h",
+      "composable_with": [
+        "market_analysis",
+        "strategy"
+      ],
+      "metadata": {
+        "tools": [
+          "competitive analysis frameworks"
+        ],
+        "docs": [
+          "Competitive analysis guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "competitor analysis",
+          "competitive landscape",
+          "competition"
+        ]
+      }
+    },
+    {
+      "id": "compliance",
+      "name": "Compliance Management",
+      "description": "Ensure supplier compliance with regulatory requirements, food safety standards, and MeatConnect policies. Monitor compliance status and handle violations.",
+      "category": "project_specific",
+      "complexity": "expert",
+      "requires_skills": [
+        "business_logic"
+      ],
+      "required_mcps": [
+        "supabase",
+        "memory",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.95,
+      "estimated_time": "1.5h",
+      "composable_with": [
+        "verification",
+        "onboarding"
+      ],
+      "metadata": {
+        "tools": [
+          "compliance tracking",
+          "document management"
+        ],
+        "docs": [
+          "Compliance requirements"
+        ],
+        "difficulty": 9,
+        "success_rate": 0.8,
+        "aliases": [
+          "compliance",
+          "regulatory compliance",
+          "compliance check"
+        ],
+        "domain": "MeatConnect"
+      }
+    },
+    {
+      "id": "component_development",
+      "name": "Component Development",
+      "description": "Create production-ready React components with design mockups, styling, responsive layout, and accessibility. Includes wireframing, Tailwind CSS implementation, responsive design, and component testing. Use when: building UI components, creating React elements, implementing frontend features. Keywords: React, component, UI, frontend",
+      "category": "development",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "2-6h",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 6,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "component_styling",
+      "name": "Component Styling",
+      "description": "Style React components using modern CSS techniques, ensuring visual consistency and maintainability. Includes component-level styling and design system integration.",
+      "category": "ui_design",
+      "complexity": "intermediate",
+      "requires_skills": [
+        "tailwind_css"
+      ],
+      "required_mcps": [
+        "filesystem",
+        "context7"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "30m",
+      "composable_with": [
+        "responsive_design",
+        "accessibility"
+      ],
+      "metadata": {
+        "tools": [
+          "tailwind",
+          "css"
+        ],
+        "docs": [
+          "Styling guide"
+        ],
+        "difficulty": 5,
+        "success_rate": 0.85,
+        "aliases": [
+          "styling",
+          "css",
+          "component style"
+        ]
+      }
+    },
+    {
+      "id": "coordination",
+      "name": "Team Coordination",
+      "description": "Coordinate work across team members, resolve dependencies, facilitate communication, and ensure smooth collaboration.",
+      "category": "project_management",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "github"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "varies",
+      "composable_with": [
+        "sprint_planning",
+        "tracking"
+      ],
+      "metadata": {
+        "tools": [
+          "collaboration tools"
+        ],
+        "docs": [
+          "Team coordination guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.8,
+        "aliases": [
+          "team coordination",
+          "collaboration",
+          "coordination"
+        ]
+      }
+    },
+    {
+      "id": "css_optimization",
+      "name": "CSS Optimization",
+      "description": "Optimize CSS for better performance and maintainability. Includes reducing CSS size, eliminating unused styles, and improving CSS architecture.",
+      "category": "ui_design",
+      "complexity": "intermediate",
+      "requires_skills": [
+        "tailwind_css"
+      ],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "30m",
+      "composable_with": [
+        "bundle_optimization"
+      ],
+      "metadata": {
+        "tools": [
+          "purgecss",
+          "css minifiers"
+        ],
+        "docs": [
+          "CSS optimization guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "css perf",
+          "style optimization",
+          "css performance"
+        ]
+      }
+    },
+    {
+      "id": "data_modeling",
+      "name": "Data Modeling",
+      "description": "Design database schemas, entity relationships, and data structures. Includes normalization, indexing strategies, and ensuring data integrity.",
+      "category": "architecture",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "supabase",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1h",
+      "composable_with": [
+        "system_design"
+      ],
+      "metadata": {
+        "tools": [
+          "database tools",
+          "ER diagrams"
+        ],
+        "docs": [
+          "Data modeling guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.85,
+        "aliases": [
+          "database design",
+          "schema",
+          "data structure"
+        ]
+      }
+    },
+    {
+      "id": "deployment",
+      "name": "Deployment",
+      "description": "Deploy applications to production environments (Vercel for frontend, Render for backend). Includes build process, environment configuration, rollback procedures, and deployment verification.",
+      "category": "devops",
+      "complexity": "advanced",
+      "requires_skills": [
+        "ci_cd",
+        "infrastructure"
+      ],
+      "required_mcps": [
+        "vercel",
+        "render",
+        "github"
+      ],
+      "confidence_threshold": 0.95,
+      "estimated_time": "15m",
+      "composable_with": [
+        "monitoring"
+      ],
+      "metadata": {
+        "tools": [
+          "vercel",
+          "render",
+          "github actions"
+        ],
+        "docs": [
+          "Deployment guide"
+        ],
+        "difficulty": 8,
+        "success_rate": 0.9,
+        "aliases": [
+          "deploy",
+          "release",
+          "production"
+        ]
+      }
+    },
+    {
+      "id": "deployment_pipeline",
+      "name": "Deployment Pipeline",
+      "description": "Complete CI/CD deployment pipeline from build through monitoring. Includes continuous integration, deployment automation, and post-deploy monitoring. Use when: deploying applications, setting up CI/CD, automating deployments. Keywords: deployment, CI/CD, pipeline, automation",
+      "category": "devops",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "2-8h",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 8,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "design_brainstorming_workflow",
+      "name": "Design Brainstorming Workflow",
+      "description": "Collaborative design refinement workflow from Superpowers.\n\n\n  Turns ideas into fully formed designs through natural dialogue.\n\n\n  Use before any creative work:\n\n  - Creating features\n\n  - Building components\n\n  - Adding functionality\n\n  - Modifying behavior\n\n\n  The Process:\n\n\n  1. Understanding the idea:\n\n  - Check current project state (files, docs, commits)\n\n  - Ask questions one at a time to refine idea\n\n  - Prefer multiple choice when possible\n\n  - Focus on: purpose, constraints, success criteria\n\n\n  2. Exploring approaches:\n\n  - Propose 2-3 different approaches with trade-offs\n\n  - Present conversationally with recommendation and reasoning\n\n  - Lead with recommended option, explain why\n\n\n  3. Presenting the design:\n\n  - Once understood, present design in sections (200-300 words)\n\n  - Ask after each section if it looks right\n\n  - Cover: architecture, components, data flow, errors, testing\n\n  - Be ready to go back and clarify\n\n\n  After the Design:\n\n  - Write to docs/plans/YYYY-MM-DD-<topic>-design.md\n\n  - Commit design document\n\n  - Ask: \\",
+      "category": "superpowers_workflows",
+      "complexity": "basic",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.7,
+      "estimated_time": "30m",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 3,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "dispatching_parallel_agents",
+      "name": "Dispatching Parallel Agents",
+      "description": "Распределение независимых задач на параллельных агентов из Superpowers.\n\n\n  Core principle: Dispatch one agent per independent problem domain. Let them work concurrently.\n\n\n  ## Когда использовать\n\n\n  ✅ Используй когда:\n\n  - 2+ независимые задачи без shared state\n\n  - Каждая задача может быть понята без контекста других\n\n  - 3+ упавших теста в разных файлах\n\n  - Разные подсистемы сломаны независимо\n\n  - Нет последовательных зависимостей\n\n\n  ❌ НЕ используй когда:\n\n  - Баги связаны (fix одного может fix других)\n\n  - Нужно понять полное состояние системы\n\n  - Агенты будут мешать друг другу (редактируют одни файлы)\n\n\n  ## The Pattern\n\n\n  ### 1. Identify Independent Domains\n\n  Группировка багов по подсистемам:\n\n  - File A tests: Tool approval flow\n\n  - File B tests: Batch completion behavior\n\n  - File C tests: Abort functionality\n\n\n  ### 2. Create Focused Agent Tasks\n\n  Каждый агент получает:\n\n  - **Specific scope**: Одна подзадача/файл\n\n  - **Clear goal**: Конкретный результат (make these tests pass)\n\n  - **Constraints**: Ограничения (don't change other code)\n\n  - **Expected output**: Summary of what you found and fixed\n\n\n  ### 3. Dispatch in Parallel\n\n  ```typescript\n\n  // В Claude Code / AI среде\n\n  Task(\\",
+      "category": "superpowers_workflows",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "N/A",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 8,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "e2e_testing",
+      "name": "E2E Testing",
+      "description": "Create and run end-to-end tests with Playwright to verify full user workflows work correctly. Includes browser automation, page object patterns, and testing across different browsers.",
+      "category": "testing",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "playwright",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "45m",
+      "composable_with": [
+        "unit_testing"
+      ],
+      "metadata": {
+        "tools": [
+          "playwright"
+        ],
+        "docs": [
+          "Playwright documentation"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "e2e",
+          "end-to-end",
+          "integration test"
+        ]
+      }
+    },
+    {
+      "id": "error_investigation",
+      "name": "Error Investigation",
+      "description": "Investigate error messages, stack traces, and failure patterns to understand what went wrong. Includes log analysis, error tracking, and correlation of related issues.",
+      "category": "debugging",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "render",
+        "vercel",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "30m",
+      "composable_with": [
+        "log_analysis",
+        "bug_diagnosis"
+      ],
+      "metadata": {
+        "tools": [
+          "log viewers",
+          "error tracking"
+        ],
+        "docs": [
+          "Error investigation guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "investigate error",
+          "error analysis",
+          "failure investigation"
+        ]
+      }
+    },
+    {
+      "id": "feature_implementation",
+      "name": "Feature Implementation",
+      "description": "End-to-end implementation of new features from requirements to deployment. Includes understanding business requirements, implementing frontend and backend components, writing tests, and integrating into existing codebase.",
+      "category": "development",
+      "complexity": "advanced",
+      "requires_skills": [
+        "code_writing",
+        "typescript_expert"
+      ],
+      "required_mcps": [
+        "filesystem",
+        "context7",
+        "github"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "2h",
+      "composable_with": [
+        "unit_testing",
+        "integration"
+      ],
+      "metadata": {
+        "tools": [
+          "typescript",
+          "react",
+          "node"
+        ],
+        "docs": [
+          "Feature development guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "feature",
+          "implementation",
+          "new feature"
+        ]
+      }
+    },
+    {
+      "id": "full_feature_lifecycle",
+      "name": "Full Feature Lifecycle",
+      "description": "Complete end-to-end feature development from requirements gathering through deployment and monitoring. Combines requirements analysis, design, planning, implementation, testing, and deployment phases into a cohesive workflow. Use when: implementing complete features from scratch, running full SDLC for new functionality. Keywords: full lifecycle, end-to-end, complete workflow",
+      "category": "superpowers_workflows",
+      "complexity": "expert",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "1-2 weeks",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 9,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "hotfix_generation",
+      "name": "Hotfix Generation",
+      "description": "Quickly create and deploy critical fixes for production issues. Includes minimal code changes, expedited testing, and emergency deployment procedures.",
+      "category": "debugging",
+      "complexity": "advanced",
+      "requires_skills": [
+        "code_writing",
+        "bug_diagnosis"
+      ],
+      "required_mcps": [
+        "filesystem",
+        "github"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "30m",
+      "composable_with": [
+        "incident_response"
+      ],
+      "metadata": {
+        "tools": [
+          "git",
+          "deployment tools"
+        ],
+        "docs": [
+          "Hotfix procedures"
+        ],
+        "difficulty": 8,
+        "success_rate": 0.8,
+        "aliases": [
+          "hotfix",
+          "emergency fix",
+          "critical fix"
+        ]
+      }
+    },
+    {
+      "id": "implementation_planning_workflow",
+      "name": "Implementation Planning Workflow",
+      "description": "Comprehensive implementation planning workflow from Superpowers.\n\n\n  Creates detailed bite-sized plans assuming engineer has zero context.\n\n\n  Use when you have spec/requirements for multi-step task, before touching code.\n\n\n  Plan Structure:\n\n  - Goal (one sentence)\n\n  - Architecture (2-3 sentences)\n\n  - Tech Stack (key technologies)\n\n  - Tasks broken into 2-5 minute steps\n\n\n  Bite-Sized Task Granularity:\n\n  Each step is one action (2-5 minutes):\n\n  - \\",
+      "category": "superpowers_workflows",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.75,
+      "estimated_time": "1h",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 6,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "incident_response",
+      "name": "Incident Response",
+      "description": "Respond to production incidents, perform root cause analysis, implement hotfixes, and restore service availability. Includes incident communication and post-mortem analysis.",
+      "category": "devops",
+      "complexity": "advanced",
+      "requires_skills": [
+        "monitoring",
+        "debugging"
+      ],
+      "required_mcps": [
+        "vercel",
+        "render",
+        "github"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "varies",
+      "composable_with": [
+        "monitoring",
+        "hotfix_generation"
+      ],
+      "metadata": {
+        "tools": [
+          "monitoring dashboards",
+          "logs"
+        ],
+        "docs": [
+          "Incident response playbook"
+        ],
+        "difficulty": 9,
+        "success_rate": 0.75,
+        "aliases": [
+          "incident",
+          "emergency",
+          "production issue"
+        ]
+      }
+    },
+    {
+      "id": "infrastructure",
+      "name": "Infrastructure Management",
+      "description": "Manage cloud infrastructure, server configuration, database setup, and service provisioning. Includes infrastructure as code, resource optimization, and environment management.",
+      "category": "devops",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "vercel",
+        "render",
+        "supabase"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "30m",
+      "composable_with": [
+        "deployment",
+        "monitoring"
+      ],
+      "metadata": {
+        "tools": [
+          "terraform",
+          "cloud providers"
+        ],
+        "docs": [
+          "Infrastructure guide"
+        ],
+        "difficulty": 8,
+        "success_rate": 0.8,
+        "aliases": [
+          "infra",
+          "cloud",
+          "servers"
+        ]
+      }
+    },
+    {
+      "id": "integration",
+      "name": "Integration",
+      "description": "Integrate new features or components into existing systems. Includes API integration, third-party service integration, database integration, and ensuring proper communication between system components.",
+      "category": "development",
+      "complexity": "advanced",
+      "requires_skills": [
+        "code_writing"
+      ],
+      "required_mcps": [
+        "filesystem",
+        "context7",
+        "supabase"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "1.5h",
+      "composable_with": [
+        "unit_testing",
+        "feature_implementation"
+      ],
+      "metadata": {
+        "tools": [
+          "api clients",
+          "sdk"
+        ],
+        "docs": [
+          "Integration patterns"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.78,
+        "aliases": [
+          "integrate",
+          "connect",
+          "api integration"
+        ]
+      }
+    },
+    {
+      "id": "kpis",
+      "name": "KPIs Definition",
+      "description": "Define key performance indicators to measure business success and feature effectiveness. Includes metric selection, tracking setup, and goal setting.",
+      "category": "business",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "supabase"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "1h",
+      "composable_with": [
+        "business_logic"
+      ],
+      "metadata": {
+        "tools": [
+          "analytics tools"
+        ],
+        "docs": [
+          "KPI framework"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "kpi",
+          "metrics",
+          "key metrics"
+        ]
+      }
+    },
+    {
+      "id": "log_analysis",
+      "name": "Log Analysis",
+      "description": "Analyze application logs from Render and Vercel to identify patterns, errors, and performance issues. Includes log querying, filtering, and correlation.",
+      "category": "debugging",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "render",
+        "vercel",
+        "memory"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "30m",
+      "composable_with": [
+        "error_investigation",
+        "monitoring"
+      ],
+      "metadata": {
+        "tools": [
+          "log viewers",
+          "query tools"
+        ],
+        "docs": [
+          "Log analysis guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "logs",
+          "log investigation",
+          "analyze logs"
+        ]
+      }
+    },
+    {
+      "id": "market_analysis",
+      "name": "Market Analysis",
+      "description": "Conduct market research and analysis to understand market trends, opportunities, and customer needs. Inform product decisions with market insights.",
+      "category": "product",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "2h",
+      "composable_with": [
+        "competitive_analysis",
+        "strategy"
+      ],
+      "metadata": {
+        "tools": [
+          "research tools"
+        ],
+        "docs": [
+          "Market analysis guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "market research",
+          "market study",
+          "market trends"
+        ]
+      }
+    },
+    {
+      "id": "monitoring",
+      "name": "Monitoring",
+      "description": "Monitor application health, performance metrics, error rates, and service availability. Includes setting up alerts, dashboards, and responding to monitoring signals.",
+      "category": "devops",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "vercel",
+        "render",
+        "supabase"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "20m",
+      "composable_with": [
+        "deployment",
+        "incident_response"
+      ],
+      "metadata": {
+        "tools": [
+          "vercel analytics",
+          "render metrics"
+        ],
+        "docs": [
+          "Monitoring guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "monitoring",
+          "metrics",
+          "observability"
+        ]
+      }
+    },
+    {
+      "id": "onboarding",
+      "name": "Supplier Onboarding",
+      "description": "Manage supplier onboarding process in MeatConnect: registration, document submission, verification, profile setup, and activation.",
+      "category": "project_specific",
+      "complexity": "advanced",
+      "requires_skills": [
+        "business_logic",
+        "verification"
+      ],
+      "required_mcps": [
+        "supabase",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1.5h",
+      "composable_with": [
+        "verification",
+        "compliance"
+      ],
+      "metadata": {
+        "tools": [
+          "onboarding workflows",
+          "supabase"
+        ],
+        "docs": [
+          "Onboarding process documentation"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "supplier onboarding",
+          "onboard supplier",
+          "supplier registration"
+        ],
+        "domain": "MeatConnect"
+      }
+    },
+    {
+      "id": "performance_analysis",
+      "name": "Performance Analysis",
+      "description": "Analyze application performance metrics, identify bottlenecks, and recommend optimizations. Includes profiling, benchmarking, and performance testing.",
+      "category": "performance",
+      "complexity": "advanced",
+      "requires_skills": [
+        "profiling"
+      ],
+      "required_mcps": [
+        "vercel",
+        "supabase",
+        "context7"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1h",
+      "composable_with": [
+        "query_optimization",
+        "code_optimization"
+      ],
+      "metadata": {
+        "tools": [
+          "profilers",
+          "benchmarking tools"
+        ],
+        "docs": [
+          "Performance analysis guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "performance",
+          "analyze performance",
+          "perf analysis"
+        ]
+      }
+    },
+    {
+      "id": "performance_debugging",
+      "name": "Performance Debugging",
+      "description": "Debug performance issues by profiling code, identifying bottlenecks, analyzing slow queries, and optimizing hot paths. Systematic approach to finding performance problems.",
+      "category": "debugging",
+      "complexity": "advanced",
+      "requires_skills": [
+        "profiling"
+      ],
+      "required_mcps": [
+        "vercel",
+        "supabase",
+        "context7"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1h",
+      "composable_with": [
+        "performance_analysis",
+        "profiling"
+      ],
+      "metadata": {
+        "tools": [
+          "profilers",
+          "performance tools"
+        ],
+        "docs": [
+          "Performance debugging guide"
+        ],
+        "difficulty": 8,
+        "success_rate": 0.75,
+        "aliases": [
+          "perf debugging",
+          "performance issues",
+          "slow performance"
+        ]
+      }
+    },
+    {
+      "id": "performance_optimization_workflow",
+      "name": "Performance Optimization Workflow",
+      "description": "Systematic performance optimization combining profiling, analysis, code optimization, and caching. Identifies bottlenecks, implements optimizations, and validates improvements. Use when: optimizing performance, reducing latency, improving throughput. Keywords: performance, optimization, profiling, caching",
+      "category": "performance",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "4-16h",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 8,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "prioritization",
+      "name": "Feature Prioritization",
+      "description": "Prioritize features and backlog items using frameworks like RICE, MoSCoW, or value vs effort. Make data-driven prioritization decisions.",
+      "category": "product",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1h",
+      "composable_with": [
+        "roadmap",
+        "sprint_planning"
+      ],
+      "metadata": {
+        "tools": [
+          "prioritization frameworks"
+        ],
+        "docs": [
+          "Prioritization guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.85,
+        "aliases": [
+          "prioritize",
+          "backlog prioritization",
+          "feature ranking"
+        ]
+      }
+    },
+    {
+      "id": "process_modeling",
+      "name": "Process Modeling",
+      "description": "Model business processes and workflows using BPMN or similar notation. Visualize and optimize business processes.",
+      "category": "business",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "1.5h",
+      "composable_with": [
+        "business_logic"
+      ],
+      "metadata": {
+        "tools": [
+          "bpmn tools",
+          "process modeling software"
+        ],
+        "docs": [
+          "BPMN guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "bpmn",
+          "process",
+          "workflow modeling"
+        ]
+      }
+    },
+    {
+      "id": "profiling",
+      "name": "Profiling",
+      "description": "Profile application performance to identify CPU hotspots, memory usage, and bottlenecks. Generate performance reports with actionable insights.",
+      "category": "performance",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "vercel",
+        "context7"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "30m",
+      "composable_with": [
+        "performance_analysis",
+        "performance_debugging"
+      ],
+      "metadata": {
+        "tools": [
+          "chrome devtools",
+          "profilers"
+        ],
+        "docs": [
+          "Profiling guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.85,
+        "aliases": [
+          "profile",
+          "profiler",
+          "performance profiling"
+        ]
+      }
+    },
+    {
+      "id": "prototyping",
+      "name": "Prototyping",
+      "description": "Create interactive prototypes to test and validate design concepts before development. Includes clickable prototypes and user flow simulations.",
+      "category": "ux_design",
+      "complexity": "intermediate",
+      "requires_skills": [
+        "wireframes"
+      ],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "1.5h",
+      "composable_with": [
+        "wireframes",
+        "user_testing"
+      ],
+      "metadata": {
+        "tools": [
+          "figma",
+          "prototyping tools"
+        ],
+        "docs": [
+          "Prototyping guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "prototype",
+          "interactive mockup",
+          "clickable prototype"
+        ]
+      }
+    },
+    {
+      "id": "query_optimization",
+      "name": "Query Optimization",
+      "description": "Optimize database queries for better performance. Includes index optimization, query rewriting, analyzing query plans, and reducing N+1 queries.",
+      "category": "performance",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "supabase",
+        "context7"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "45m",
+      "composable_with": [
+        "performance_analysis"
+      ],
+      "metadata": {
+        "tools": [
+          "database tools",
+          "query analyzers"
+        ],
+        "docs": [
+          "Query optimization guide"
+        ],
+        "difficulty": 8,
+        "success_rate": 0.8,
+        "aliases": [
+          "optimize queries",
+          "database optimization",
+          "query performance"
+        ]
+      }
+    },
+    {
+      "id": "ratings",
+      "name": "Supplier Ratings",
+      "description": "Manage supplier rating system in MeatConnect: collecting feedback, calculating ratings, displaying ratings, and using ratings for supplier matching.",
+      "category": "project_specific",
+      "complexity": "intermediate",
+      "requires_skills": [
+        "business_logic"
+      ],
+      "required_mcps": [
+        "supabase",
+        "memory"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "45m",
+      "composable_with": [
+        "supplier_matching",
+        "verification"
+      ],
+      "metadata": {
+        "tools": [
+          "rating algorithms",
+          "supabase"
+        ],
+        "docs": [
+          "Rating system documentation"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "supplier ratings",
+          "rating system",
+          "supplier feedback"
+        ],
+        "domain": "MeatConnect"
+      }
+    },
+    {
+      "id": "refactoring",
+      "name": "Code Refactoring",
+      "description": "Improve existing code structure, readability, and maintainability without changing external behavior. Includes extracting functions, simplifying logic, removing duplication, and improving naming.",
+      "category": "development",
+      "complexity": "intermediate",
+      "requires_skills": [
+        "typescript_expert"
+      ],
+      "required_mcps": [
+        "filesystem",
+        "context7"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "1h",
+      "composable_with": [
+        "code_writing",
+        "unit_testing"
+      ],
+      "metadata": {
+        "tools": [
+          "typescript",
+          "eslint"
+        ],
+        "docs": [
+          "Refactoring patterns"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "refactor",
+          "cleanup",
+          "improve code"
+        ]
+      }
+    },
+    {
+      "id": "relationship_management",
+      "name": "Supplier Relationship Management",
+      "description": "Manage ongoing relationships with suppliers: communication, issue resolution, performance reviews, and partnership development.",
+      "category": "project_specific",
+      "complexity": "advanced",
+      "requires_skills": [
+        "stakeholder_management"
+      ],
+      "required_mcps": [
+        "memory",
+        "supabase"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "varies",
+      "composable_with": [
+        "ratings",
+        "supplier_analytics"
+      ],
+      "metadata": {
+        "tools": [
+          "crm tools",
+          "communication platforms"
+        ],
+        "docs": [
+          "Supplier relationship guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "supplier relations",
+          "supplier management",
+          "vendor relations"
+        ],
+        "domain": "MeatConnect"
+      }
+    },
+    {
+      "id": "requirements",
+      "name": "Requirements Gathering",
+      "description": "Gather and document business requirements through stakeholder interviews, workshops, and analysis. Translate business needs into clear, actionable requirements.",
+      "category": "business",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "1.5h",
+      "composable_with": [
+        "user_stories",
+        "business_logic"
+      ],
+      "metadata": {
+        "tools": [
+          "documentation tools"
+        ],
+        "docs": [
+          "Requirements gathering guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "requirements",
+          "requirement analysis",
+          "business requirements"
+        ]
+      }
+    },
+    {
+      "id": "resource_allocation",
+      "name": "Resource Allocation",
+      "description": "Allocate resources (people, time, budget) effectively across projects and tasks. Optimize resource utilization and balance workload.",
+      "category": "project_management",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "1h",
+      "composable_with": [
+        "sprint_planning",
+        "coordination"
+      ],
+      "metadata": {
+        "tools": [
+          "resource planning tools"
+        ],
+        "docs": [
+          "Resource allocation guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.75,
+        "aliases": [
+          "resources",
+          "allocation",
+          "resource planning"
+        ]
+      }
+    },
+    {
+      "id": "responsive_design",
+      "name": "Responsive Design",
+      "description": "Create responsive user interfaces that work seamlessly across desktop, tablet, and mobile devices. Includes mobile-first approach and breakpoint management.",
+      "category": "ui_design",
+      "complexity": "intermediate",
+      "requires_skills": [
+        "tailwind_css"
+      ],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "45m",
+      "composable_with": [
+        "component_styling",
+        "accessibility"
+      ],
+      "metadata": {
+        "tools": [
+          "tailwind",
+          "responsive design tools"
+        ],
+        "docs": [
+          "Responsive design guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "responsive",
+          "mobile design",
+          "adaptive"
+        ]
+      }
+    },
+    {
+      "id": "risk_management",
+      "name": "Risk Management",
+      "description": "Identify, assess, and mitigate project risks. Create risk mitigation plans and monitor risk factors throughout the project lifecycle.",
+      "category": "project_management",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1h",
+      "composable_with": [
+        "tracking",
+        "sprint_planning"
+      ],
+      "metadata": {
+        "tools": [
+          "risk assessment tools"
+        ],
+        "docs": [
+          "Risk management guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "risk",
+          "risk assessment",
+          "risk mitigation"
+        ]
+      }
+    },
+    {
+      "id": "roadmap",
+      "name": "Product Roadmap",
+      "description": "Create and maintain product roadmaps that communicate planned features and timelines. Balance short-term delivery with long-term vision.",
+      "category": "product",
+      "complexity": "advanced",
+      "requires_skills": [
+        "strategy",
+        "prioritization"
+      ],
+      "required_mcps": [
+        "memory",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "2h",
+      "composable_with": [
+        "strategy",
+        "prioritization"
+      ],
+      "metadata": {
+        "tools": [
+          "roadmap tools"
+        ],
+        "docs": [
+          "Roadmap planning guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "roadmap",
+          "product plan",
+          "feature timeline"
+        ]
+      }
+    },
+    {
+      "id": "root_cause_analysis",
+      "name": "Root Cause Analysis",
+      "description": "Perform deep analysis to identify the fundamental cause of problems, not just symptoms. Includes systematic investigation, hypothesis testing, and documentation of findings.",
+      "category": "debugging",
+      "complexity": "expert",
+      "requires_skills": [
+        "bug_diagnosis"
+      ],
+      "required_mcps": [
+        "filesystem",
+        "memory"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "1h",
+      "composable_with": [
+        "bug_diagnosis",
+        "error_investigation"
+      ],
+      "metadata": {
+        "tools": [
+          "analysis frameworks",
+          "logs"
+        ],
+        "docs": [
+          "RCA methodology"
+        ],
+        "difficulty": 8,
+        "success_rate": 0.75,
+        "aliases": [
+          "rca",
+          "root cause",
+          "analysis"
+        ]
+      }
+    },
+    {
+      "id": "scalability_planning",
+      "name": "Scalability Planning",
+      "description": "Plan for system growth and performance under increased load. Includes capacity planning, load testing strategies, and designing for horizontal/vertical scaling.",
+      "category": "architecture",
+      "complexity": "expert",
+      "requires_skills": [
+        "system_design"
+      ],
+      "required_mcps": [
+        "memory",
+        "context7"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "1.5h",
+      "composable_with": [
+        "performance_analysis"
+      ],
+      "metadata": {
+        "tools": [
+          "load testing tools"
+        ],
+        "docs": [
+          "Scalability patterns"
+        ],
+        "difficulty": 9,
+        "success_rate": 0.75,
+        "aliases": [
+          "scalability",
+          "scale",
+          "growth planning"
+        ]
+      }
+    },
+    {
+      "id": "smoke_testing",
+      "name": "Smoke Testing",
+      "description": "Perform quick sanity checks to verify critical functionality works after deployments or major changes. Basic validation that the system is stable enough for further testing.",
+      "category": "testing",
+      "complexity": "basic",
+      "requires_skills": [],
+      "required_mcps": [
+        "playwright"
+      ],
+      "confidence_threshold": 0.7,
+      "estimated_time": "15m",
+      "composable_with": [
+        "e2e_testing"
+      ],
+      "metadata": {
+        "tools": [
+          "playwright"
+        ],
+        "docs": [
+          "Smoke testing checklist"
+        ],
+        "difficulty": 3,
+        "success_rate": 0.9,
+        "aliases": [
+          "smoke test",
+          "sanity check",
+          "quick test"
+        ]
+      }
+    },
+    {
+      "id": "sprint_planning",
+      "name": "Sprint Planning",
+      "description": "Plan sprint iterations, estimate effort, assign tasks, and define sprint goals. Facilitate sprint planning meetings and ensure team alignment.",
+      "category": "project_management",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "github"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "1h",
+      "composable_with": [
+        "coordination",
+        "user_stories"
+      ],
+      "metadata": {
+        "tools": [
+          "sprint planning tools"
+        ],
+        "docs": [
+          "Sprint planning guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "sprint",
+          "iteration planning",
+          "sprint setup"
+        ]
+      }
+    },
+    {
+      "id": "stakeholder_communication",
+      "name": "Stakeholder Communication",
+      "description": "Communicate effectively with stakeholders through status reports, presentations, and meetings. Manage expectations and maintain transparency.",
+      "category": "project_management",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "varies",
+      "composable_with": [
+        "stakeholder_management",
+        "tracking"
+      ],
+      "metadata": {
+        "tools": [
+          "communication tools"
+        ],
+        "docs": [
+          "Communication guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "communication",
+          "stakeholder updates",
+          "reporting"
+        ]
+      }
+    },
+    {
+      "id": "stakeholder_management",
+      "name": "Stakeholder Management",
+      "description": "Manage relationships with stakeholders, gather feedback, communicate progress, and align expectations. Ensure stakeholder satisfaction and engagement.",
+      "category": "business",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "varies",
+      "composable_with": [
+        "requirements",
+        "prioritization"
+      ],
+      "metadata": {
+        "tools": [
+          "communication tools"
+        ],
+        "docs": [
+          "Stakeholder management guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "stakeholders",
+          "stakeholder communication",
+          "relationship management"
+        ]
+      }
+    },
+    {
+      "id": "strategy",
+      "name": "Product Strategy",
+      "description": "Define product strategy, vision, and long-term direction. Includes market analysis, competitive positioning, and strategic planning.",
+      "category": "product",
+      "complexity": "expert",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "2h",
+      "composable_with": [
+        "roadmap",
+        "prioritization"
+      ],
+      "metadata": {
+        "tools": [
+          "strategy frameworks"
+        ],
+        "docs": [
+          "Product strategy guide"
+        ],
+        "difficulty": 9,
+        "success_rate": 0.75,
+        "aliases": [
+          "product strategy",
+          "strategic planning",
+          "vision"
+        ]
+      }
+    },
+    {
+      "id": "subagent_driven_development",
+      "name": "Subagent-Driven Development",
+      "description": "Выполнение implementation plan через dispatch fresh subagent per task из Superpowers.\n\n\n  Core principle: Fresh subagent per task + two-stage review (spec then quality) = high quality, fast iteration\n\n\n  ## Когда использовать\n\n\n  ✅ Используй когда:\n\n  - Есть implementation plan\n\n  - Задачи в основном независимые\n\n  - Хочешь остаться в текущей сессии (не переключаться)\n\n\n  ❌ НЕ используй когда:\n\n  - Нет плана (сначала brainstorm)\n\n  - Задачи тесно связаны (tight coupling)\n\n  - Нужна работа в параллельной сессии (используй executing-plans)\n\n\n  ## The Process\n\n\n  ### Для каждой задачи:\n\n\n  1. **Dispatch implementer subagent**\n\n  \\   - Дать полный текст задачи + контекст\n\n  \\   - Implementer может задавать вопросы\n\n  \\   - Implementer реализует, тестирует, коммитит, делает self-review\n\n\n  2. **Dispatch spec compliance reviewer subagent**\n\n  \\   - Проверяет: код соответствует спецификации?\n\n  \\   - ❌ Если нет → implementer fixes → review again\n\n  \\   - ✅ Если да → переходим к code quality\n\n\n  3. **Dispatch code quality reviewer subagent**\n\n  \\   - Проверяет: код хорошо написан?\n\n  \\   - ❌ Если нет → implementer fixes → review again\n\n  \\   - ✅ Если да → task complete\n\n\n  4. **Mark task complete in TodoWrite**\n\n\n  ### После всех задач:\n\n\n  5. **Dispatch final code reviewer** для всей имплементации\n\n  6. **Use superpowers:finishing-a-development-branch**\n\n\n  ## Workflow Flow\n\n\n  ```\n\n  Read plan → Extract all tasks → Create TodoWrite\n\n\n  ↓\n\n\n  For each task:\n\n  \\  Dispatch implementer → Questions? → Answer → Implement\n\n  \\  ↓\n\n  \\  Spec compliance review → Issues? → Fix → Re-review\n\n  \\  ↓\n\n  \\  Code quality review → Issues? → Fix → Re-review\n\n  \\  ↓\n\n  \\  Mark complete\n\n\n  ↓\n\n\n  Final code review → Finishing branch workflow\n\n  ```\n\n\n  ## Example Workflow\n\n\n  ```\n\n  Task 1: Hook installation script\n\n\n  [Dispatch implementation subagent]\n\n  Implementer: \\",
+      "category": "superpowers_workflows",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "N/A",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 8,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "system_design",
+      "name": "System Design",
+      "description": "Design system architecture, define component boundaries, establish data flows, and plan scalability. Includes creating high-level architecture diagrams and technical specifications.",
+      "category": "architecture",
+      "complexity": "expert",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "filesystem",
+        "context7"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1h",
+      "composable_with": [
+        "architecture_decisions",
+        "data_modeling"
+      ],
+      "metadata": {
+        "tools": [
+          "diagramming tools"
+        ],
+        "docs": [
+          "System design patterns"
+        ],
+        "difficulty": 9,
+        "success_rate": 0.8,
+        "aliases": [
+          "design",
+          "architecture",
+          "system architecture"
+        ]
+      }
+    },
+    {
+      "id": "systematic_debugging_workflow",
+      "name": "Systematic Debugging Workflow",
+      "description": "4-phase systematic debugging process from Superpowers.\n\n\n  Core principle: ALWAYS find root cause before attempting fixes. Symptom fixes are failure.\n\n\n  The Iron Law: NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST\n\n\n  The Four Phases (must complete each before next):\n\n\n  Phase 1: Root Cause Investigation\n\n  - Read error messages carefully (don't skip)\n\n  - Reproduce consistently\n\n  - Check recent changes (git diff, commits)\n\n  - Gather evidence in multi-component systems\n\n  - Trace data flow backward\n\n\n  Phase 2: Pattern Analysis\n\n  - Find working examples in codebase\n\n  - Compare against references\n\n  - Identify differences\n\n  - Understand dependencies\n\n\n  Phase 3: Hypothesis and Testing\n\n  - Form single hypothesis (\\",
+      "category": "superpowers_workflows",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.75,
+      "estimated_time": "N/A",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 6,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "tailwind_css",
+      "name": "Tailwind CSS",
+      "description": "Expert-level knowledge of Tailwind CSS v4, utility-first CSS, custom configurations, and design system integration. Build responsive, accessible UIs efficiently.",
+      "category": "ui_design",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "N/A",
+      "composable_with": [
+        "responsive_design",
+        "component_styling"
+      ],
+      "metadata": {
+        "tools": [
+          "tailwind v4"
+        ],
+        "docs": [
+          "Tailwind documentation"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.9,
+        "aliases": [
+          "tailwind",
+          "utility css",
+          "tw"
+        ]
+      }
+    },
+    {
+      "id": "tdd_workflow",
+      "name": "TDD Workflow",
+      "description": "Test-Driven Development workflow from Superpowers.\n\n\n  Core principle: Write test first, watch it fail, write minimal code to pass.\n\n\n  Process (Red-Green-Refactor):\n\n  1. RED - Write failing test\n\n  2. Verify RED - Watch it fail correctly (MANDATORY - never skip)\n\n  3. GREEN - Write minimal code to pass\n\n  4. Verify GREEN - Watch it pass\n\n  5. REFACTOR - Clean up while staying green\n\n  6. Repeat for next feature\n\n\n  The Iron Law: NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST\n\n\n  Key rules:\n\n  - If you didn't watch the test fail, you don't know if it tests the right thing\n\n  - Delete code written before tests, start fresh\n\n  - Tests written after code pass immediately - proving nothing\n\n  - No exceptions without human partner permission\n\n\n  When to use:\n\n  - New features\n\n  - Bug fixes\n\n  - Refactoring\n\n  - Behavior changes\n\n\n  Exceptions (ask first):\n\n  - Throwaway prototypes\n\n  - Generated code\n\n  - Configuration files\n\n\n  Good Tests:\n\n  - Minimal - one thing per test\n\n  - Clear name describing behavior\n\n  - Real code (no mocks unless unavoidable)\n\n  - Shows desired API\n\n\n  Why order matters:\n\n  - Tests-after pass immediately → prove nothing\n\n  - Tests-first force you to see failure → prove test works\n\n  - Tests-after biased by implementation\n\n  - Tests-first discover edge cases\n\n\n  Full guide with examples: ~/.claude/plugins/cache/claude-plugins-official/superpowers/4.0.3/skills/test-driven-development/skill.md\n\n  \\ Keywords: test driven development, tdd, red green refactor, test first development",
+      "category": "superpowers_workflows",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.75,
+      "estimated_time": "N/A",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 6,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "technology_evaluation",
+      "name": "Technology Evaluation",
+      "description": "Evaluate new technologies, frameworks, libraries, and tools for adoption. Includes proof-of-concept development, comparison analysis, and recommendation reports.",
+      "category": "architecture",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "context7",
+        "memory"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "2h",
+      "composable_with": [
+        "architecture_decisions"
+      ],
+      "metadata": {
+        "tools": [
+          "research tools"
+        ],
+        "docs": [
+          "Technology evaluation framework"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "tech eval",
+          "evaluation",
+          "technology assessment"
+        ]
+      }
+    },
+    {
+      "id": "test_coverage",
+      "name": "Test Coverage Analysis",
+      "description": "Analyze test coverage metrics, identify untested code paths, and improve overall test coverage to ensure code quality and reliability.",
+      "category": "testing",
+      "complexity": "intermediate",
+      "requires_skills": [
+        "unit_testing"
+      ],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "20m",
+      "composable_with": [
+        "unit_testing",
+        "e2e_testing"
+      ],
+      "metadata": {
+        "tools": [
+          "vitest",
+          "coverage tools"
+        ],
+        "docs": [
+          "Coverage analysis guide"
+        ],
+        "difficulty": 5,
+        "success_rate": 0.85,
+        "aliases": [
+          "coverage",
+          "test coverage",
+          "coverage analysis"
+        ]
+      }
+    },
+    {
+      "id": "test_suite_creation",
+      "name": "Test Suite Creation",
+      "description": "Create comprehensive test suite with unit tests, E2E tests, coverage analysis, and verification. Ensures thorough testing across all layers. Use when: setting up testing for new features, improving test coverage, creating test infrastructure. Keywords: testing, test suite, coverage, E2E",
+      "category": "testing",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "4-12h",
+      "composable_with": [],
+      "metadata": {
+        "tools": [],
+        "docs": [],
+        "difficulty": 6,
+        "success_rate": 0.8,
+        "aliases": []
+      }
+    },
+    {
+      "id": "tracking",
+      "name": "Progress Tracking",
+      "description": "Track project progress, monitor milestones, identify delays, and communicate status to stakeholders. Maintain project visibility.",
+      "category": "project_management",
+      "complexity": "basic",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "github"
+      ],
+      "confidence_threshold": 0.75,
+      "estimated_time": "30m",
+      "composable_with": [
+        "coordination",
+        "risk_management"
+      ],
+      "metadata": {
+        "tools": [
+          "project tracking tools"
+        ],
+        "docs": [
+          "Progress tracking guide"
+        ],
+        "difficulty": 4,
+        "success_rate": 0.9,
+        "aliases": [
+          "track progress",
+          "status tracking",
+          "project tracking"
+        ]
+      }
+    },
+    {
+      "id": "typescript_expert",
+      "name": "TypeScript Expert",
+      "description": "Deep knowledge of TypeScript strict mode, advanced types, generics, type inference, and type-safe patterns. Expertise in leveraging TypeScript's type system for maximum safety and developer experience.",
+      "category": "development",
+      "complexity": "expert",
+      "requires_skills": [],
+      "required_mcps": [
+        "context7"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "N/A",
+      "composable_with": [
+        "code_writing",
+        "refactoring"
+      ],
+      "metadata": {
+        "tools": [
+          "typescript",
+          "ts-node"
+        ],
+        "docs": [
+          "TypeScript Deep Dive"
+        ],
+        "difficulty": 9,
+        "success_rate": 0.9,
+        "aliases": [
+          "typescript",
+          "ts",
+          "types"
+        ]
+      }
+    },
+    {
+      "id": "unit_testing",
+      "name": "Unit Testing",
+      "description": "Write unit tests using Vitest to verify individual functions and components work correctly in isolation. Includes test setup, mocking, assertions, and achieving good test coverage.",
+      "category": "testing",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "30m",
+      "composable_with": [
+        "code_writing",
+        "e2e_testing"
+      ],
+      "metadata": {
+        "tools": [
+          "vitest",
+          "testing-library"
+        ],
+        "docs": [
+          "Vitest documentation"
+        ],
+        "difficulty": 5,
+        "success_rate": 0.9,
+        "aliases": [
+          "unit test",
+          "tests",
+          "testing"
+        ]
+      }
+    },
+    {
+      "id": "usability",
+      "name": "Usability",
+      "description": "Evaluate and improve usability of interfaces through heuristic evaluation, usability testing, and applying UX best practices. Ensure interfaces are intuitive and easy to use.",
+      "category": "ux_design",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "1h",
+      "composable_with": [
+        "user_research",
+        "user_testing"
+      ],
+      "metadata": {
+        "tools": [
+          "usability testing tools"
+        ],
+        "docs": [
+          "Usability heuristics"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "usability testing",
+          "ux evaluation",
+          "ease of use"
+        ]
+      }
+    },
+    {
+      "id": "user_flows",
+      "name": "User Flows",
+      "description": "Design user flows and journey maps to visualize how users navigate through the application. Identify pain points and optimize user paths.",
+      "category": "ux_design",
+      "complexity": "intermediate",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "filesystem"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "1h",
+      "composable_with": [
+        "wireframes",
+        "usability"
+      ],
+      "metadata": {
+        "tools": [
+          "diagramming tools"
+        ],
+        "docs": [
+          "User flow guide"
+        ],
+        "difficulty": 6,
+        "success_rate": 0.85,
+        "aliases": [
+          "flow",
+          "user journey",
+          "user path"
+        ]
+      }
+    },
+    {
+      "id": "user_research",
+      "name": "User Research",
+      "description": "Conduct user research through interviews, surveys, and data analysis to understand user needs, behaviors, and pain points. Inform design decisions with user insights.",
+      "category": "ux_design",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "supabase"
+      ],
+      "confidence_threshold": 0.85,
+      "estimated_time": "2h",
+      "composable_with": [
+        "usability",
+        "user_testing"
+      ],
+      "metadata": {
+        "tools": [
+          "survey tools",
+          "analytics"
+        ],
+        "docs": [
+          "User research guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "research",
+          "user interviews",
+          "user studies"
+        ]
+      }
+    },
+    {
+      "id": "user_stories",
+      "name": "User Stories",
+      "description": "Write user stories that capture functionality from the user's perspective. Includes acceptance criteria, story sizing, and backlog management.",
+      "category": "business",
+      "complexity": "basic",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory",
+        "github"
+      ],
+      "confidence_threshold": 0.75,
+      "estimated_time": "30m",
+      "composable_with": [
+        "requirements",
+        "sprint_planning"
+      ],
+      "metadata": {
+        "tools": [
+          "project management tools"
+        ],
+        "docs": [
+          "User story template"
+        ],
+        "difficulty": 4,
+        "success_rate": 0.9,
+        "aliases": [
+          "user story",
+          "stories",
+          "agile stories"
+        ]
+      }
+    },
+    {
+      "id": "user_testing",
+      "name": "User Testing",
+      "description": "Conduct user testing sessions to gather feedback on designs and functionality. Observe users interacting with the product and identify usability issues.",
+      "category": "ux_design",
+      "complexity": "advanced",
+      "requires_skills": [],
+      "required_mcps": [
+        "memory"
+      ],
+      "confidence_threshold": 0.8,
+      "estimated_time": "2h",
+      "composable_with": [
+        "usability",
+        "user_research"
+      ],
+      "metadata": {
+        "tools": [
+          "user testing platforms"
+        ],
+        "docs": [
+          "User testing guide"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.8,
+        "aliases": [
+          "testing with users",
+          "usability testing",
+          "user validation"
+        ]
+      }
+    },
+    {
+      "id": "verification",
+      "name": "Supplier Verification",
+      "description": "Verify supplier credentials, licenses, certifications, and compliance documentation. Ensure suppliers meet MeatConnect's standards before onboarding.",
+      "category": "project_specific",
+      "complexity": "advanced",
+      "requires_skills": [
+        "compliance"
+      ],
+      "required_mcps": [
+        "supabase",
+        "filesystem",
+        "memory"
+      ],
+      "confidence_threshold": 0.9,
+      "estimated_time": "1h",
+      "composable_with": [
+        "onboarding",
+        "compliance"
+      ],
+      "metadata": {
+        "tools": [
+          "document verification",
+          "supabase"
+        ],
+        "docs": [
+          "Supplier verification checklist"
+        ],
+        "difficulty": 7,
+        "success_rate": 0.85,
+        "aliases": [
+          "supplier verification",
+          "verify supplier",
+          "credential check"
+        ],
+        "domain": "MeatConnect"
+      }
+    },
+    {
+      "id": "wireframes",
+      "name": "Wireframes",
+      "description": "Create low-fidelity wireframes to visualize layout and structure before implementation. Quick iteration on design ideas and information architecture.",
+      "category": "ux_design",
+      "complexity": "basic",
+      "requires_skills": [],
+      "required_mcps": [
+        "filesystem"
+      ],
+      "confidence_threshold": 0.75,
+      "estimated_time": "45m",
+      "composable_with": [
+        "user_flows",
+        "prototyping"
+      ],
+      "metadata": {
+        "tools": [
+          "figma",
+          "sketching tools"
+        ],
+        "docs": [
+          "Wireframing guide"
+        ],
+        "difficulty": 4,
+        "success_rate": 0.9,
+        "aliases": [
+          "wireframe",
+          "mockup",
+          "sketch"
+        ]
+      }
+    }
+  ]
+}

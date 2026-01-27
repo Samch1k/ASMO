@@ -1,0 +1,108 @@
+{
+  "id": "feature_implementation_full",
+  "name": "Full Feature Implementation",
+  "description": "Complete feature lifecycle: Design → Implement → Test → Deploy",
+  "trigger_condition": {
+    "keywords": [
+      "implement feature",
+      "new feature",
+      "add functionality",
+      "create feature",
+      "реализуй фичу",
+      "новая функция"
+    ],
+    "task_types": [
+      "feature"
+    ],
+    "required_skills": [
+      "architecture_decisions",
+      "code_writing",
+      "feature_implementation"
+    ]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "architect",
+      "phase": "design",
+      "description": "Design architecture and create ADR",
+      "parallel_with": ["ux-designer"],
+      "deliverables": [
+        "adr",
+        "component_structure",
+        "api_design"
+      ],
+      "exit_criteria": "Architecture documented and approved",
+      "timeout": "20m"
+    },
+    {
+      "order": 1,
+      "role_id": "ux-designer",
+      "phase": "design",
+      "description": "Design user experience and UI flows",
+      "parallel_with": ["architect"],
+      "deliverables": [
+        "user_flows",
+        "wireframes",
+        "component_specifications"
+      ],
+      "exit_criteria": "UX design completed and approved",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "developer",
+      "phase": "implementation",
+      "description": "Implement backend logic and APIs with unit tests",
+      "parallel_with": ["ui-developer"],
+      "deliverables": [
+        "code",
+        "api_endpoints",
+        "unit_tests",
+        "documentation"
+      ],
+      "exit_criteria": "Backend implemented and unit tests pass",
+      "timeout": "60m"
+    },
+    {
+      "order": 2,
+      "role_id": "ui-developer",
+      "phase": "implementation",
+      "description": "Implement UI components following UX specifications",
+      "parallel_with": ["developer"],
+      "deliverables": [
+        "react_components",
+        "ui_tests",
+        "storybook_stories"
+      ],
+      "exit_criteria": "UI implemented, responsive, and accessible",
+      "timeout": "40m"
+    },
+    {
+      "order": 3,
+      "role_id": "tester",
+      "phase": "testing",
+      "description": "Create and run E2E tests",
+      "deliverables": [
+        "e2e_tests",
+        "test_results"
+      ],
+      "exit_criteria": "All E2E tests pass",
+      "timeout": "30m"
+    },
+    {
+      "order": 4,
+      "role_id": "devops",
+      "phase": "deployment",
+      "description": "Deploy to staging environment",
+      "deliverables": [
+        "deployment_logs"
+      ],
+      "exit_criteria": "Deployed to staging successfully",
+      "timeout": "15m",
+      "requires_approval": true
+    }
+  ],
+  "estimated_time": "2h 25m",
+  "success_criteria": "Feature deployed and working in staging with UX-designed UI"
+}

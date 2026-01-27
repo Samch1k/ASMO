@@ -1,0 +1,46 @@
+{
+  "version": "2.0.0",
+  "roles": [
+    {
+      "id": "example-project-role",
+      "name": "Example Project Role",
+      "description": "Example project-specific role. Replace with your own project-specific roles that handle domain logic unique to your application.",
+      "category": "project_specific",
+      "role_type": "hybrid",
+      "can_modify_code": true,
+      "required_skills": [
+        "example_skill_1",
+        "example_skill_2"
+      ],
+      "optional_skills": [
+        "example_optional_skill"
+      ],
+      "priority": 5,
+      "allowed_mcps": [
+        "filesystem",
+        "memory"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "example",
+          "project"
+        ],
+        "task_types": [
+          "feature",
+          "bug_fix"
+        ]
+      },
+      "agent_class": "ExampleProjectAgent",
+      "metadata": {
+        "llm_temperature": 0.2,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "documentation",
+          "code"
+        ],
+        "domain": "Project-Specific"
+      }
+    }
+  ]
+}

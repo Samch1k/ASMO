@@ -1,0 +1,76 @@
+{
+  "id": "ui_component_library",
+  "name": "UI Component Library Development",
+  "description": "UX-first component development: Design UX → Implement UI → Test Accessibility",
+  "trigger_condition": {
+    "keywords": [
+      "ui component",
+      "design system",
+      "component library",
+      "reusable component",
+      "ui элемент",
+      "компонент библиотеки"
+    ],
+    "task_types": [
+      "feature"
+    ],
+    "required_skills": [
+      "ui_development",
+      "react",
+      "accessibility",
+      "ux_design"
+    ]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "ux-designer",
+      "phase": "design",
+      "description": "Design component UX: user flows, wireframes, states, accessibility",
+      "deliverables": [
+        "user_flows",
+        "wireframes",
+        "component_specifications",
+        "accessibility_checklist",
+        "interaction_patterns"
+      ],
+      "exit_criteria": "Component UX designed with all states and accessibility requirements documented",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "ui-developer",
+      "phase": "implementation",
+      "description": "Implement React component following UX specifications",
+      "deliverables": [
+        "react_component",
+        "component_tests",
+        "storybook_stories",
+        "typescript_types"
+      ],
+      "exit_criteria": "Component implemented with all variants, responsive, and unit tested",
+      "timeout": "40m"
+    },
+    {
+      "order": 3,
+      "role_id": "tester",
+      "phase": "testing",
+      "description": "Test accessibility (WCAG 2.1 AA) and responsive behavior",
+      "deliverables": [
+        "accessibility_test_results",
+        "responsive_test_results",
+        "browser_compatibility_results"
+      ],
+      "exit_criteria": "Component passes WCAG 2.1 AA and works across breakpoints",
+      "timeout": "20m"
+    }
+  ],
+  "estimated_time": "1h 20m",
+  "success_criteria": "Component is accessible, responsive, and ready for production use",
+  "metadata": {
+    "phase": "2",
+    "phase_name": "feature-development",
+    "ux_first": true,
+    "accessibility_required": true
+  }
+}
