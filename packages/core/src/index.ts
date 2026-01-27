@@ -17,8 +17,9 @@ export class WorkflowEngine {
     // Will be implemented during extraction
   }
 
-  async execute(options: any): Promise<any> {
+  async execute(_options: any): Promise<any> {
     // Will be implemented during extraction
+    return {}
   }
 }
 
