@@ -2,7 +2,7 @@
 
 > Transform AI from "helpful assistant" to "autonomous team"
 
-**Status**: 🚧 Phase 1 Complete - Core library implemented
+**Status**: 🚧 BMAD Phase 1.5 Complete - Adaptive workflow selection implemented
 **Repository**: [github.com/Samch1k/ai1st-orchestration](https://github.com/Samch1k/ai1st-orchestration) (Private)
 
 ## What is AI1st?
@@ -15,11 +15,13 @@ AI1st is an autonomous AI development orchestration system that coordinates mult
 
 - 🤖 **Multi-Agent Orchestration**: Coordinate architect, developer, tester, UI/UX, and DevOps agents
 - 🔄 **Parallel Execution**: Run multiple agents simultaneously for faster delivery
+- 🎯 **Adaptive Workflow Selection**: Automatically choose workflows based on task complexity (NEW!)
+- 📊 **Complexity Analysis**: Intelligent task analysis with confidence scoring (NEW!)
 - ✅ **Quality Gates**: Automatic approval checkpoints and validation at each phase
 - 📝 **Instruction-Based**: Markdown-based agent guidance with project customization
 - ⚙️ **Configurable**: 3-tier configuration system (defaults → file → environment)
 - 🎯 **Skill-Based Matching**: 85 generic skills across 12 categories
-- 📊 **Metrics & Learning**: Track performance and optimize workflows over time
+- 📈 **Metrics & Learning**: Track performance and optimize workflows over time
 - ♿ **UX-First**: Built-in accessibility (WCAG 2.1 AA) and responsive design patterns
 
 ## 📦 Project Structure
@@ -65,12 +67,31 @@ ai1st-orchestration/
 - ✅ Test infrastructure: Jest + ts-jest
 - ✅ Package exports: Comprehensive public API
 
-**Validation Results:**
-- ✅ Package Structure: 100% complete
-- ✅ Template Completeness: 100% complete
-- ✅ Git Configuration: Properly set up
-- ✅ Codebase: Clean, generic, domain-agnostic
-- ⚠️ TypeScript Strict Mode: Has errors (to be fixed)
+### ✅ BMAD Phase 1: Complexity Analysis (Complete - Commit: 31c3be8)
+
+**What's Done:**
+- ✅ ComplexityAnalyzer class with heuristic-based analysis
+- ✅ WorkflowSelector for automatic workflow recommendation
+- ✅ New types: ComplexityLevel, ComplexityFactors, ComplexityScore, WorkflowSelection
+- ✅ 30 comprehensive tests (77% accuracy)
+- ✅ Support for 5 complexity levels: trivial, simple, medium, complex, enterprise
+
+### ✅ BMAD Phase 1.5: WorkflowEngine Integration (Complete - Commit: 48afaf7)
+
+**What's Done:**
+- ✅ Adaptive workflow selection integrated into WorkflowEngine
+- ✅ New method: `selectWorkflowAdaptively()` - natural language task → workflow selection
+- ✅ New method: `execute()` - unified entry point supporting both ID and description
+- ✅ Configuration support via ConfigManager
+- ✅ Comprehensive test suite (277 lines)
+- ✅ Fixed 20+ pre-existing TypeScript errors
+
+**Features:**
+- 🎯 Natural language task description → automatic workflow selection
+- 📊 Detailed complexity analysis with confidence scoring
+- 💡 Intelligent reasoning and alternative suggestions
+- ⚙️ Configurable thresholds and behavior
+- 🔄 Backward compatible with existing workflow execution
 
 ### 🔜 Phase 2: Demo Applications (Next)
 
@@ -126,54 +147,73 @@ pnpm --filter @ai1st/core typecheck
 
 ## 📚 Core Library Usage
 
+### Traditional Workflow Execution
+
 ```typescript
 import {
   WorkflowEngine,
-  AgentRegistry,
-  SkillMatcher,
-  ConfigLoader
+  AgentRegistry
 } from '@ai1st/core'
 
 // Initialize the orchestration system
-const configLoader = new ConfigLoader('.ai1st/config')
-await configLoader.initialize()
-
 const agentRegistry = new AgentRegistry()
-await agentRegistry.autoDiscover()
+const workflowEngine = new WorkflowEngine(agentRegistry)
+await workflowEngine.initialize()
 
-const skillMatcher = new SkillMatcher(configLoader, agentRegistry)
-const workflowEngine = new WorkflowEngine(agentRegistry, skillMatcher)
-
-// Execute a workflow
-const result = await workflowEngine.executeWorkflow({
-  id: 'feature-implementation',
-  name: 'Implement New Feature',
-  description: 'Add shopping cart functionality',
-  steps: [
-    {
-      id: 'design',
-      role: 'architect',
-      phase: 'design',
-      description: 'Design the shopping cart architecture',
-      requiredSkills: ['system_design', 'api_design']
-    },
-    {
-      id: 'implement',
-      role: 'developer',
-      phase: 'implementation',
-      description: 'Implement shopping cart backend',
-      requiredSkills: ['backend_development', 'database_design']
-    },
-    {
-      id: 'test',
-      role: 'tester',
-      phase: 'testing',
-      description: 'Test shopping cart functionality',
-      requiredSkills: ['unit_testing', 'integration_testing']
-    }
-  ]
-})
+// Execute a workflow by ID (traditional)
+const result = await workflowEngine.execute('feature-implementation')
 ```
+
+### Adaptive Workflow Selection (NEW!)
+
+```typescript
+// Execute with natural language description - workflow selected automatically!
+const result = await workflowEngine.execute(
+  'Add user authentication with OAuth2 and JWT tokens',
+  undefined,
+  {
+    projectSize: 'large',
+    techStack: ['Node.js', 'PostgreSQL']
+  }
+)
+
+// Get detailed workflow selection with reasoning
+const selection = await workflowEngine.selectWorkflowAdaptively(
+  'Fix memory leak in authentication service',
+  { projectSize: 'medium' }
+)
+
+console.log('Selected workflow:', selection.workflow.name)
+console.log('Complexity:', selection.complexity.level)
+console.log('Confidence:', selection.confidence)
+console.log('Reasoning:', selection.reasoning)
+console.log('Recommended agents:', selection.complexity.recommendedAgents)
+
+// Execute the selected workflow
+const result = await workflowEngine.executeWorkflow(
+  selection.workflow,
+  { task: 'Fix memory leak' }
+)
+```
+
+### Complexity Analysis
+
+The system automatically analyzes task complexity based on:
+- 📁 **Files Affected**: Number of files that need changes
+- 🔗 **Dependencies**: External integrations and libraries
+- ⚠️ **Risk Level**: Potential for breaking changes
+- 🎓 **Domain Expertise**: Specialized knowledge required
+- 📏 **Estimated LOC**: Lines of code to be modified
+- 💾 **Data Changes**: Database schema modifications
+- 🔒 **Security Impact**: Security implications
+- ⚡ **Performance Impact**: Performance considerations
+
+Complexity levels mapped to workflows:
+- **Trivial** (0-20): Quick fixes, typos → `1-quick-flow`
+- **Simple** (21-40): Bug fixes, small features → `1-quick-flow` or `2-feature-development`
+- **Medium** (41-60): Standard features → `2-feature-development`
+- **Complex** (61-80): Refactoring, security → `3-quality-assurance`
+- **Enterprise** (81-100): Architecture, migrations → `3-quality-assurance`
 
 ## 🎯 Agent Roles
 
@@ -265,7 +305,14 @@ This project is currently in active development. Contribution guidelines will be
 
 **Roadmap:**
 - ✅ Phase 1: Core Library Implementation (Complete)
-- 🔄 Phase 2: Demo Applications (In Progress)
+- ✅ BMAD Phase 1: Complexity Analysis & Workflow Selection (Complete)
+- ✅ BMAD Phase 1.5: WorkflowEngine Integration (Complete)
+- 📋 BMAD Phase 2: Add 7 New Workflows (10 total) (Next)
+- ⏳ BMAD Phase 3: Intelligent Help System
+- ⏳ BMAD Phase 4: Party Mode (Multi-Agent Collaboration)
+- ⏳ BMAD Phase 5: Add 5 New Agents (21 total)
+- ⏳ BMAD Phase 6: Documentation & Examples
+- ⏳ Phase 2: Demo Applications
 - ⏳ Phase 3: Documentation Site
 - ⏳ Phase 4: Visual Materials & Videos
 - ⏳ Phase 5: Final Polish & Release
