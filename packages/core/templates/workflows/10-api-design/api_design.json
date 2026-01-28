@@ -1,0 +1,119 @@
+{
+  "id": "api_design",
+  "name": "API Design",
+  "description": "Design REST/GraphQL API contracts with best practices",
+  "trigger_condition": {
+    "keywords": [
+      "api",
+      "endpoint",
+      "rest",
+      "graphql",
+      "api design",
+      "contract",
+      "openapi",
+      "swagger",
+      "апи",
+      "эндпоинт"
+    ],
+    "task_types": [
+      "api_design",
+      "interface_design",
+      "integration"
+    ],
+    "required_skills": [
+      "api_design",
+      "system_design",
+      "documentation"
+    ],
+    "complexity_range": ["simple", "medium", "complex"]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "architect",
+      "phase": "requirements",
+      "description": "Define API requirements and design principles",
+      "deliverables": [
+        "api_requirements",
+        "use_cases",
+        "design_principles",
+        "technology_selection"
+      ],
+      "exit_criteria": "API requirements and approach clearly defined",
+      "timeout": "30m"
+    },
+    {
+      "order": 2,
+      "role_id": "architect",
+      "phase": "contract_design",
+      "description": "Design API contracts following REST/GraphQL best practices",
+      "deliverables": [
+        "api_specification",
+        "resource_models",
+        "endpoint_definitions",
+        "authentication_design",
+        "versioning_strategy"
+      ],
+      "exit_criteria": "Complete API contract with endpoints and models",
+      "timeout": "90m"
+    },
+    {
+      "order": 3,
+      "role_id": "code-reviewer",
+      "phase": "review",
+      "description": "Review API design for consistency and best practices",
+      "deliverables": [
+        "design_review_report",
+        "recommendations",
+        "security_assessment"
+      ],
+      "exit_criteria": "API design reviewed and approved",
+      "timeout": "30m"
+    },
+    {
+      "order": 4,
+      "role_id": "developer",
+      "phase": "documentation",
+      "description": "Create comprehensive API documentation",
+      "deliverables": [
+        "openapi_spec",
+        "usage_examples",
+        "sdk_stubs",
+        "integration_guide",
+        "error_handling_guide"
+      ],
+      "exit_criteria": "Complete API documentation with examples",
+      "timeout": "60m"
+    },
+    {
+      "order": 5,
+      "role_id": "developer",
+      "phase": "implementation",
+      "description": "Implement API endpoints with proper validation and error handling",
+      "deliverables": [
+        "api_implementation",
+        "request_validation",
+        "error_responses",
+        "api_tests"
+      ],
+      "exit_criteria": "API implemented and tested",
+      "timeout": "120m"
+    },
+    {
+      "order": 6,
+      "role_id": "tester",
+      "phase": "testing",
+      "description": "Test API functionality, performance, and security",
+      "deliverables": [
+        "api_test_results",
+        "performance_benchmarks",
+        "security_test_results",
+        "integration_test_results"
+      ],
+      "exit_criteria": "API tested and meets all requirements",
+      "timeout": "60m"
+    }
+  ],
+  "estimated_time": "6h 30m",
+  "success_criteria": "Complete API design, documentation, implementation tested and approved"
+}

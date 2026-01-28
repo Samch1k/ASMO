@@ -1,0 +1,98 @@
+{
+  "id": "security_audit",
+  "name": "Security Audit",
+  "description": "Comprehensive security assessment and vulnerability mitigation",
+  "trigger_condition": {
+    "keywords": [
+      "security",
+      "vulnerability",
+      "audit",
+      "penetration test",
+      "security review",
+      "OWASP",
+      "безопасность",
+      "уязвимость",
+      "аудит"
+    ],
+    "task_types": [
+      "security",
+      "audit",
+      "compliance"
+    ],
+    "required_skills": [
+      "security",
+      "vulnerability_assessment",
+      "code_review"
+    ],
+    "complexity_range": ["complex", "enterprise"]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "architect",
+      "phase": "threat_modeling",
+      "description": "Identify potential security threats and attack vectors",
+      "deliverables": [
+        "threat_model",
+        "attack_surface_analysis",
+        "security_requirements"
+      ],
+      "exit_criteria": "Threat model complete with identified vulnerabilities",
+      "timeout": "45m"
+    },
+    {
+      "order": 2,
+      "role_id": "code-reviewer",
+      "phase": "code_audit",
+      "description": "Review code for security vulnerabilities and best practices",
+      "deliverables": [
+        "code_audit_report",
+        "vulnerability_findings",
+        "owasp_compliance_check"
+      ],
+      "exit_criteria": "Code reviewed for OWASP Top 10 and common vulnerabilities",
+      "timeout": "60m"
+    },
+    {
+      "order": 3,
+      "role_id": "tester",
+      "phase": "vulnerability_testing",
+      "description": "Perform security testing and penetration testing",
+      "deliverables": [
+        "penetration_test_results",
+        "vulnerability_scan_results",
+        "security_test_report"
+      ],
+      "exit_criteria": "Security testing complete with documented findings",
+      "timeout": "90m"
+    },
+    {
+      "order": 4,
+      "role_id": "developer",
+      "phase": "remediation",
+      "description": "Implement fixes for identified security vulnerabilities",
+      "deliverables": [
+        "security_fixes",
+        "hardening_improvements",
+        "security_tests"
+      ],
+      "exit_criteria": "Critical and high-severity vulnerabilities fixed",
+      "timeout": "120m"
+    },
+    {
+      "order": 5,
+      "role_id": "tester",
+      "phase": "validation",
+      "description": "Verify vulnerabilities are fixed and no new issues introduced",
+      "deliverables": [
+        "retest_results",
+        "security_compliance_report",
+        "final_audit_report"
+      ],
+      "exit_criteria": "All critical vulnerabilities fixed and verified",
+      "timeout": "45m"
+    }
+  ],
+  "estimated_time": "6h",
+  "success_criteria": "All critical and high-severity vulnerabilities fixed, security best practices implemented, compliance verified"
+}

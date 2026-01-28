@@ -1,0 +1,97 @@
+{
+  "id": "advanced_bug_fix",
+  "name": "Advanced Bug Fix",
+  "description": "Comprehensive bug resolution with root cause analysis and prevention",
+  "trigger_condition": {
+    "keywords": [
+      "complex bug",
+      "system bug",
+      "critical bug",
+      "production issue",
+      "outage",
+      "crash",
+      "критический баг",
+      "системная ошибка"
+    ],
+    "task_types": [
+      "bug_fix",
+      "incident_response"
+    ],
+    "required_skills": [
+      "debugging",
+      "root_cause_analysis",
+      "system_design"
+    ],
+    "complexity_range": ["medium", "complex"]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "debugger",
+      "phase": "investigation",
+      "description": "Deep investigation of the bug including system analysis",
+      "deliverables": [
+        "detailed_bug_report",
+        "root_cause_analysis",
+        "impact_assessment",
+        "reproduction_steps"
+      ],
+      "exit_criteria": "Root cause identified with full understanding of system impact",
+      "timeout": "45m"
+    },
+    {
+      "order": 2,
+      "role_id": "architect",
+      "phase": "solution_design",
+      "description": "Design comprehensive fix that addresses root cause and prevents recurrence",
+      "deliverables": [
+        "fix_design",
+        "prevention_strategy",
+        "testing_strategy"
+      ],
+      "exit_criteria": "Fix approach approved with prevention measures defined",
+      "timeout": "30m"
+    },
+    {
+      "order": 3,
+      "role_id": "developer",
+      "phase": "implementation",
+      "description": "Implement fix with proper error handling and logging",
+      "deliverables": [
+        "code",
+        "unit_tests",
+        "integration_tests",
+        "updated_documentation"
+      ],
+      "exit_criteria": "Fix implemented with comprehensive tests",
+      "timeout": "60m"
+    },
+    {
+      "order": 4,
+      "role_id": "tester",
+      "phase": "verification",
+      "description": "Thorough testing including edge cases and regression testing",
+      "deliverables": [
+        "test_results",
+        "regression_test_results",
+        "performance_impact_analysis"
+      ],
+      "exit_criteria": "Bug verified as fixed with no regressions",
+      "timeout": "45m"
+    },
+    {
+      "order": 5,
+      "role_id": "code-reviewer",
+      "phase": "review",
+      "description": "Review fix for quality and prevention measures",
+      "deliverables": [
+        "code_review_report",
+        "improvement_suggestions"
+      ],
+      "exit_criteria": "Code reviewed and approved",
+      "timeout": "20m"
+    }
+  ],
+  "estimated_time": "3h 20m",
+  "success_criteria": "Bug resolved, prevention measures in place, all tests passing, no regressions"
+}

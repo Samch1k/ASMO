@@ -1,0 +1,115 @@
+{
+  "id": "database_migration",
+  "name": "Database Migration",
+  "description": "Safe database schema changes and data migration workflow",
+  "trigger_condition": {
+    "keywords": [
+      "database",
+      "schema",
+      "migration",
+      "migrate data",
+      "alter table",
+      "db change",
+      "база данных",
+      "миграция",
+      "схема"
+    ],
+    "task_types": [
+      "database",
+      "migration",
+      "data_change"
+    ],
+    "required_skills": [
+      "database_design",
+      "data_migration",
+      "sql"
+    ],
+    "complexity_range": ["medium", "complex", "enterprise"]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "architect",
+      "phase": "planning",
+      "description": "Plan database schema changes and migration strategy",
+      "deliverables": [
+        "migration_plan",
+        "schema_design",
+        "data_mapping",
+        "rollback_strategy"
+      ],
+      "exit_criteria": "Migration plan complete with rollback strategy",
+      "timeout": "60m"
+    },
+    {
+      "order": 2,
+      "role_id": "developer",
+      "phase": "script_development",
+      "description": "Develop migration scripts with proper error handling",
+      "deliverables": [
+        "migration_scripts",
+        "rollback_scripts",
+        "data_validation_scripts",
+        "backup_scripts"
+      ],
+      "exit_criteria": "Migration and rollback scripts ready and tested",
+      "timeout": "90m"
+    },
+    {
+      "order": 3,
+      "role_id": "tester",
+      "phase": "testing",
+      "description": "Test migration on staging environment with production data",
+      "deliverables": [
+        "migration_test_results",
+        "data_integrity_report",
+        "performance_impact_assessment",
+        "rollback_test_results"
+      ],
+      "exit_criteria": "Migration tested successfully with no data loss",
+      "timeout": "120m"
+    },
+    {
+      "order": 4,
+      "role_id": "devops",
+      "phase": "execution_planning",
+      "description": "Plan production migration with minimal downtime",
+      "deliverables": [
+        "execution_plan",
+        "downtime_schedule",
+        "monitoring_checklist",
+        "communication_plan"
+      ],
+      "exit_criteria": "Production migration plan approved with downtime scheduled",
+      "timeout": "30m"
+    },
+    {
+      "order": 5,
+      "role_id": "developer",
+      "phase": "execution",
+      "description": "Execute migration with monitoring and validation",
+      "deliverables": [
+        "migration_execution_log",
+        "validation_results",
+        "performance_metrics"
+      ],
+      "exit_criteria": "Migration completed successfully with data validated",
+      "timeout": "Variable (depends on data size)"
+    },
+    {
+      "order": 6,
+      "role_id": "tester",
+      "phase": "validation",
+      "description": "Validate data integrity and application functionality",
+      "deliverables": [
+        "data_validation_report",
+        "application_test_results",
+        "post_migration_report"
+      ],
+      "exit_criteria": "Data integrity verified, application functioning correctly",
+      "timeout": "45m"
+    }
+  ],
+  "estimated_time": "6h+ (depends on data size)",
+  "success_criteria": "Schema migrated, data integrity preserved, application functional, rollback tested"
+}

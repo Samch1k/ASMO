@@ -2,7 +2,7 @@
 
 > Transform AI from "helpful assistant" to "autonomous team"
 
-**Status**: 🚧 BMAD Phase 1.5 Complete - Adaptive workflow selection implemented
+**Status**: 🚧 BMAD Phase 2 Complete - 10 production-ready workflows implemented
 **Repository**: [github.com/Samch1k/ai1st-orchestration](https://github.com/Samch1k/ai1st-orchestration) (Private)
 
 ## What is AI1st?
@@ -15,8 +15,9 @@ AI1st is an autonomous AI development orchestration system that coordinates mult
 
 - 🤖 **Multi-Agent Orchestration**: Coordinate architect, developer, tester, UI/UX, and DevOps agents
 - 🔄 **Parallel Execution**: Run multiple agents simultaneously for faster delivery
-- 🎯 **Adaptive Workflow Selection**: Automatically choose workflows based on task complexity (NEW!)
-- 📊 **Complexity Analysis**: Intelligent task analysis with confidence scoring (NEW!)
+- 🎯 **Adaptive Workflow Selection**: Automatically choose workflows based on task complexity
+- 📊 **Complexity Analysis**: Intelligent task analysis with confidence scoring
+- 📋 **10 Production-Ready Workflows**: From bug fixes to architecture design (NEW!)
 - ✅ **Quality Gates**: Automatic approval checkpoints and validation at each phase
 - 📝 **Instruction-Based**: Markdown-based agent guidance with project customization
 - ⚙️ **Configurable**: 3-tier configuration system (defaults → file → environment)
@@ -38,7 +39,7 @@ ai1st-orchestration/
 │   │   │   └── index.ts         # Public API
 │   │   ├── templates/           # Configuration templates
 │   │   │   ├── roles/           # 16 agent roles (core + specialized + business)
-│   │   │   ├── workflows/       # 5 generic workflows
+│   │   │   ├── workflows/       # 10 production-ready workflows
 │   │   │   ├── skills/          # 85 skills catalog + dependencies
 │   │   │   └── instructions/    # Agent instruction files (6 agents)
 │   │   └── tests/               # Jest tests (smoke tests implemented)
@@ -92,6 +93,24 @@ ai1st-orchestration/
 - 💡 Intelligent reasoning and alternative suggestions
 - ⚙️ Configurable thresholds and behavior
 - 🔄 Backward compatible with existing workflow execution
+
+### ✅ BMAD Phase 2: Workflow Expansion (Complete)
+
+**What's Done:**
+- ✅ Added 7 new workflows (total: 10 workflows)
+- ✅ `4-bug-fix`: Advanced bug resolution with root cause analysis
+- ✅ `5-refactoring`: Systematic code quality improvement
+- ✅ `6-performance-optimization`: Performance analysis and improvement
+- ✅ `7-security-audit`: Comprehensive security assessment and mitigation
+- ✅ `8-architecture-design`: System architecture design and documentation
+- ✅ `9-database-migration`: Safe database schema changes and data migration
+- ✅ `10-api-design`: REST/GraphQL API contract design
+
+**Coverage:**
+- ✅ All complexity levels covered (trivial → enterprise)
+- ✅ Each workflow includes JSON definition and checklist
+- ✅ Comprehensive phase breakdown with deliverables
+- ✅ Clear exit criteria and timeouts
 
 ### 🔜 Phase 2: Demo Applications (Next)
 
@@ -210,10 +229,10 @@ The system automatically analyzes task complexity based on:
 
 Complexity levels mapped to workflows:
 - **Trivial** (0-20): Quick fixes, typos → `1-quick-flow`
-- **Simple** (21-40): Bug fixes, small features → `1-quick-flow` or `2-feature-development`
-- **Medium** (41-60): Standard features → `2-feature-development`
-- **Complex** (61-80): Refactoring, security → `3-quality-assurance`
-- **Enterprise** (81-100): Architecture, migrations → `3-quality-assurance`
+- **Simple** (21-40): Bug fixes, small features → `1-quick-flow`, `4-bug-fix`
+- **Medium** (41-60): Standard features, refactoring → `2-feature-development`, `5-refactoring`, `6-performance-optimization`
+- **Complex** (61-80): Security, API design, database → `4-bug-fix`, `7-security-audit`, `9-database-migration`, `10-api-design`
+- **Enterprise** (81-100): Architecture, migrations → `8-architecture-design`, `9-database-migration`
 
 ## 🎯 Agent Roles
 
@@ -257,16 +276,39 @@ export default {
 
 ## 📊 Workflow Templates
 
-**Quick Flow:**
+AI1st includes **10 production-ready workflows** for common development tasks:
+
+**1. Quick Flow** (`1-quick-flow`)
 - `bug_fix_workflow` - Fast bug fix with testing
 
-**Feature Development:**
+**2. Feature Development** (`2-feature-development`)
 - `feature_implementation_full` - Complete feature with approval gates
 - `ui_component_library` - UI component development
 
-**Quality Assurance:**
+**3. Quality Assurance** (`3-quality-assurance`)
 - `comprehensive_testing` - Full testing suite (unit, integration, E2E)
 - `performance_investigation` - Performance profiling and optimization
+
+**4. Advanced Bug Fix** (`4-bug-fix`)
+- `advanced_bug_fix` - Comprehensive bug resolution with root cause analysis and prevention
+
+**5. Code Refactoring** (`5-refactoring`)
+- `code_refactoring` - Systematic code quality improvement while maintaining functionality
+
+**6. Performance Optimization** (`6-performance-optimization`)
+- `performance_optimization` - Systematic performance analysis and improvement
+
+**7. Security Audit** (`7-security-audit`)
+- `security_audit` - Comprehensive security assessment and vulnerability mitigation
+
+**8. Architecture Design** (`8-architecture-design`)
+- `architecture_design` - Complete system architecture design and documentation
+
+**9. Database Migration** (`9-database-migration`)
+- `database_migration` - Safe database schema changes and data migration
+
+**10. API Design** (`10-api-design`)
+- `api_design` - Design REST/GraphQL API contracts with best practices
 
 ## 🧪 Testing
 
@@ -307,8 +349,8 @@ This project is currently in active development. Contribution guidelines will be
 - ✅ Phase 1: Core Library Implementation (Complete)
 - ✅ BMAD Phase 1: Complexity Analysis & Workflow Selection (Complete)
 - ✅ BMAD Phase 1.5: WorkflowEngine Integration (Complete)
-- 📋 BMAD Phase 2: Add 7 New Workflows (10 total) (Next)
-- ⏳ BMAD Phase 3: Intelligent Help System
+- ✅ BMAD Phase 2: Add 7 New Workflows (10 total) (Complete)
+- 📋 BMAD Phase 3: Intelligent Help System (Next)
 - ⏳ BMAD Phase 4: Party Mode (Multi-Agent Collaboration)
 - ⏳ BMAD Phase 5: Add 5 New Agents (21 total)
 - ⏳ BMAD Phase 6: Documentation & Examples

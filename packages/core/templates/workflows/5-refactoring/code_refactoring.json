@@ -1,0 +1,96 @@
+{
+  "id": "code_refactoring",
+  "name": "Code Refactoring",
+  "description": "Systematic code quality improvement while maintaining functionality",
+  "trigger_condition": {
+    "keywords": [
+      "refactor",
+      "cleanup",
+      "improve code",
+      "technical debt",
+      "code quality",
+      "рефакторинг",
+      "улучшить код"
+    ],
+    "task_types": [
+      "refactoring",
+      "code_quality",
+      "maintenance"
+    ],
+    "required_skills": [
+      "code_writing",
+      "architecture_review",
+      "code_optimization"
+    ],
+    "complexity_range": ["simple", "medium", "complex"]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "architect",
+      "phase": "analysis",
+      "description": "Analyze current code structure and identify improvement opportunities",
+      "deliverables": [
+        "code_analysis_report",
+        "improvement_recommendations",
+        "refactoring_plan"
+      ],
+      "exit_criteria": "Refactoring scope and approach clearly defined",
+      "timeout": "30m"
+    },
+    {
+      "order": 2,
+      "role_id": "code-reviewer",
+      "phase": "assessment",
+      "description": "Review code quality issues and prioritize refactoring targets",
+      "deliverables": [
+        "quality_assessment",
+        "prioritized_issues",
+        "risk_analysis"
+      ],
+      "exit_criteria": "Refactoring priorities established with risk assessment",
+      "timeout": "20m"
+    },
+    {
+      "order": 3,
+      "role_id": "tester",
+      "phase": "test_preparation",
+      "description": "Establish baseline tests to ensure no functionality regression",
+      "deliverables": [
+        "baseline_tests",
+        "test_coverage_report",
+        "regression_test_suite"
+      ],
+      "exit_criteria": "Comprehensive test suite in place before refactoring",
+      "timeout": "40m"
+    },
+    {
+      "order": 4,
+      "role_id": "developer",
+      "phase": "refactoring",
+      "description": "Implement refactoring changes incrementally with continuous testing",
+      "deliverables": [
+        "refactored_code",
+        "updated_tests",
+        "migration_guide"
+      ],
+      "exit_criteria": "Code refactored, all tests passing, functionality preserved",
+      "timeout": "90m"
+    },
+    {
+      "order": 5,
+      "role_id": "code-reviewer",
+      "phase": "validation",
+      "description": "Verify refactoring improved code quality without breaking functionality",
+      "deliverables": [
+        "quality_comparison",
+        "review_report",
+        "approval"
+      ],
+      "exit_criteria": "Code quality improved and functionality verified",
+      "timeout": "30m"
+    }
+  ],
+  "estimated_time": "3h 30m",
+  "success_criteria": "Code quality improved, all tests passing, no functionality regression, documentation updated"
+}

@@ -1,0 +1,98 @@
+{
+  "id": "performance_optimization",
+  "name": "Performance Optimization",
+  "description": "Systematic performance analysis and improvement workflow",
+  "trigger_condition": {
+    "keywords": [
+      "slow",
+      "performance",
+      "optimize",
+      "speed up",
+      "latency",
+      "bottleneck",
+      "медленно",
+      "оптимизация",
+      "производительность"
+    ],
+    "task_types": [
+      "performance",
+      "optimization"
+    ],
+    "required_skills": [
+      "performance_analysis",
+      "profiling",
+      "code_optimization"
+    ],
+    "complexity_range": ["medium", "complex"]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "optimizer",
+      "phase": "profiling",
+      "description": "Profile system to identify performance bottlenecks",
+      "deliverables": [
+        "performance_baseline",
+        "profiling_results",
+        "bottleneck_analysis",
+        "metrics_report"
+      ],
+      "exit_criteria": "Performance bottlenecks identified with metrics",
+      "timeout": "45m"
+    },
+    {
+      "order": 2,
+      "role_id": "architect",
+      "phase": "strategy",
+      "description": "Design optimization strategy addressing identified bottlenecks",
+      "deliverables": [
+        "optimization_plan",
+        "architecture_improvements",
+        "risk_assessment"
+      ],
+      "exit_criteria": "Optimization strategy defined with expected improvements",
+      "timeout": "30m"
+    },
+    {
+      "order": 3,
+      "role_id": "developer",
+      "phase": "implementation",
+      "description": "Implement optimizations with performance monitoring",
+      "deliverables": [
+        "optimized_code",
+        "performance_tests",
+        "benchmarks"
+      ],
+      "exit_criteria": "Optimizations implemented with measurable improvements",
+      "timeout": "90m"
+    },
+    {
+      "order": 4,
+      "role_id": "tester",
+      "phase": "validation",
+      "description": "Validate performance improvements and ensure no regressions",
+      "deliverables": [
+        "performance_comparison",
+        "regression_test_results",
+        "load_test_results"
+      ],
+      "exit_criteria": "Performance improvements validated, no functional regressions",
+      "timeout": "40m"
+    },
+    {
+      "order": 5,
+      "role_id": "optimizer",
+      "phase": "monitoring",
+      "description": "Set up monitoring and establish performance baselines",
+      "deliverables": [
+        "monitoring_dashboard",
+        "performance_alerts",
+        "optimization_report"
+      ],
+      "exit_criteria": "Monitoring in place, improvements documented",
+      "timeout": "25m"
+    }
+  ],
+  "estimated_time": "3h 50m",
+  "success_criteria": "Measurable performance improvements achieved, no regressions, monitoring established"
+}

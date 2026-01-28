@@ -6,8 +6,9 @@ The core orchestration engine for AI1st autonomous development teams.
 
 - 🤖 **Multi-Agent System**: Coordinate multiple AI agents working together
 - 🔄 **Workflow Engine**: Define and execute complex development workflows
-- 🎯 **Adaptive Workflow Selection**: Automatically choose workflows based on task complexity (NEW!)
-- 📊 **Complexity Analysis**: Intelligent task analysis with 5 complexity levels (NEW!)
+- 🎯 **Adaptive Workflow Selection**: Automatically choose workflows based on task complexity
+- 📊 **Complexity Analysis**: Intelligent task analysis with 5 complexity levels
+- 📋 **10 Production-Ready Workflows**: From bug fixes to architecture design (NEW!)
 - ⚙️ **Configuration System**: 3-tier configuration (defaults → file → environment)
 - 📝 **Instruction Manager**: Markdown-based agent guidance with priority system
 - ✅ **Quality Gates**: Automatic approval checkpoints and validation
@@ -191,6 +192,27 @@ export default {
   }
 }
 ```
+
+## Available Workflows
+
+AI1st includes **10 production-ready workflows**:
+
+1. **Quick Flow** - Fast bug fixes and simple tasks
+2. **Feature Development** - Complete feature implementation with gates
+3. **Quality Assurance** - Comprehensive testing workflows
+4. **Advanced Bug Fix** - Deep bug resolution with root cause analysis
+5. **Code Refactoring** - Systematic code quality improvement
+6. **Performance Optimization** - Performance analysis and tuning
+7. **Security Audit** - Security assessment and vulnerability mitigation
+8. **Architecture Design** - System architecture design and documentation
+9. **Database Migration** - Safe database schema changes and data migration
+10. **API Design** - REST/GraphQL API contract design with best practices
+
+Each workflow includes:
+- JSON definition with steps, agents, and deliverables
+- Comprehensive checklist for execution
+- Clear exit criteria and timeouts
+- Complexity range mapping
 
 ## Documentation
 

@@ -1,0 +1,101 @@
+{
+  "id": "architecture_design",
+  "name": "Architecture Design",
+  "description": "Comprehensive system architecture design and documentation",
+  "trigger_condition": {
+    "keywords": [
+      "architecture",
+      "system design",
+      "design system",
+      "architectural",
+      "redesign",
+      "microservices",
+      "архитектура",
+      "проектирование"
+    ],
+    "task_types": [
+      "architecture",
+      "system_design",
+      "planning"
+    ],
+    "required_skills": [
+      "system_design",
+      "architecture_decisions",
+      "documentation"
+    ],
+    "complexity_range": ["complex", "enterprise"]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "architect",
+      "phase": "requirements_analysis",
+      "description": "Analyze requirements and constraints for architecture",
+      "deliverables": [
+        "requirements_document",
+        "constraints_analysis",
+        "quality_attributes"
+      ],
+      "exit_criteria": "Requirements and constraints clearly documented",
+      "timeout": "45m"
+    },
+    {
+      "order": 2,
+      "role_id": "architect",
+      "phase": "high_level_design",
+      "description": "Design high-level system architecture and components",
+      "deliverables": [
+        "system_architecture_diagram",
+        "component_diagram",
+        "technology_stack",
+        "architectural_patterns"
+      ],
+      "exit_criteria": "High-level architecture designed and documented",
+      "timeout": "90m"
+    },
+    {
+      "order": 3,
+      "role_id": "architect",
+      "phase": "detailed_design",
+      "description": "Create detailed architecture specifications",
+      "deliverables": [
+        "api_contracts",
+        "data_models",
+        "sequence_diagrams",
+        "deployment_architecture",
+        "adr_documents"
+      ],
+      "exit_criteria": "Detailed specifications complete with ADRs",
+      "timeout": "120m"
+    },
+    {
+      "order": 4,
+      "role_id": "code-reviewer",
+      "phase": "review",
+      "description": "Review architecture for quality, scalability, and maintainability",
+      "deliverables": [
+        "architecture_review_report",
+        "risk_assessment",
+        "improvement_recommendations"
+      ],
+      "exit_criteria": "Architecture reviewed and approved with documented decisions",
+      "timeout": "60m"
+    },
+    {
+      "order": 5,
+      "role_id": "devops",
+      "phase": "infrastructure_planning",
+      "description": "Plan infrastructure and deployment strategy",
+      "deliverables": [
+        "infrastructure_plan",
+        "deployment_strategy",
+        "monitoring_plan",
+        "disaster_recovery_plan"
+      ],
+      "exit_criteria": "Infrastructure and deployment plans complete",
+      "timeout": "45m"
+    }
+  ],
+  "estimated_time": "6h",
+  "success_criteria": "Complete architecture documentation, ADRs, approved design, infrastructure plan"
+}
