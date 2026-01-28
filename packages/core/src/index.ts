@@ -28,6 +28,10 @@ export { RoleManager } from './orchestration/role-manager'
 export { InstructionManager } from './orchestration/instruction-manager'
 export { SkillMDLoader } from './orchestration/skillmd-loader'
 
+// BMAD Phase 1: Complexity Analysis & Adaptive Selection
+export { ComplexityAnalyzer } from './orchestration/complexity-analyzer'
+export { WorkflowSelector } from './orchestration/workflow-selector'
+
 // ===================================
 // CONFIGURATION
 // ===================================

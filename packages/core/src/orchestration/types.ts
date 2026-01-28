@@ -160,3 +160,71 @@ export type {
   LearningLoopConfig,
   MetricsOptimizerConfig
 } from './config/types'
+
+// ============================================================================
+// BMAD PHASE 1: COMPLEXITY ANALYSIS TYPES (NEW)
+// ============================================================================
+
+/**
+ * Complexity level classification
+ */
+export type ComplexityLevel = 'trivial' | 'simple' | 'medium' | 'complex' | 'enterprise'
+
+/**
+ * Factors that contribute to task complexity
+ */
+export interface ComplexityFactors {
+  filesAffected: number
+  dependencies: number
+  riskLevel: 'low' | 'medium' | 'high'
+  domainExpertiseRequired: boolean
+  estimatedLOC: number
+  dataChanges: boolean
+  securityImpact: boolean
+  performanceImpact: boolean
+}
+
+/**
+ * Project context for complexity analysis
+ */
+export interface ProjectContext {
+  projectPath?: string
+  files?: string[]
+  recentChanges?: string[]
+  existingWorkflows?: string[]
+  techStack?: string[]
+  projectSize?: 'small' | 'medium' | 'large' | 'enterprise'
+}
+
+/**
+ * Complexity analysis result
+ */
+export interface ComplexityScore {
+  score: number  // 0-100
+  level: ComplexityLevel
+  confidence: number  // 0.0-1.0
+  reasoning: string
+  recommendedWorkflow: string
+  recommendedAgents: string[]
+  factors: ComplexityFactors
+  alternatives?: Array<{
+    workflowId: string
+    confidence: number
+    reasoning: string
+  }>
+}
+
+/**
+ * Workflow selection result
+ */
+export interface WorkflowSelection {
+  workflow: Workflow
+  confidence: number
+  reasoning: string
+  complexity: ComplexityScore
+  alternatives: Array<{
+    workflowId: string
+    confidence: number
+    reasoning: string
+  }>
+}
