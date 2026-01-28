@@ -206,7 +206,7 @@ export class MetricsOptimizer {
     const candidates = this.findParallelizationCandidates(workflow, allStepMetrics.flat())
 
     for (const candidate of candidates) {
-      const { step1, step2, reason, safetyScore } = candidate
+      const { step1, step2, reason: _reason, safetyScore } = candidate
 
       recommendations.push({
         type: 'parallelize',
@@ -439,7 +439,7 @@ export class MetricsOptimizer {
     // Analyze timeout for each step
     for (const step of workflow.steps) {
       const currentTimeout = this.parseTimeout(step.timeout || '30m')
-      const avgDuration = this.getAverageDuration(step, allStepMetrics.flat())
+      // const avgDuration = this.getAverageDuration(step, allStepMetrics.flat())
       const maxDuration = this.getMaxDuration(step, allStepMetrics.flat())
 
       // Recommend timeout adjustment if current timeout is too high or too low
@@ -514,8 +514,8 @@ export class MetricsOptimizer {
    * Identify step reordering opportunities
    */
   private async identifyReorderingOpportunities(
-    workflow: Workflow,
-    historicalMetrics: WorkflowMetrics[]
+    _workflow: Workflow,
+    _historicalMetrics: WorkflowMetrics[]
   ): Promise<OptimizationRecommendation[]> {
     const recommendations: OptimizationRecommendation[] = []
 
@@ -530,7 +530,7 @@ export class MetricsOptimizer {
    */
   private calculateTimeReduction(
     recommendations: OptimizationRecommendation[],
-    historicalMetrics: WorkflowMetrics[]
+    _historicalMetrics: WorkflowMetrics[]
   ): number {
     // Parse improvement percentages from recommendations
     let totalReduction = 0

@@ -102,7 +102,7 @@ export class TeamManager {
     }
 
     // Convert phases to steps
-    for (const [phase, agents] of Array.from(phaseGroups)) {
+    for (const [_phase, agents] of Array.from(phaseGroups)) {
       // Check if this phase should run in parallel
       const isParallel = team.default_parallel?.some(p =>
         agents.some(a => a.role_id === p || a.phase === p)

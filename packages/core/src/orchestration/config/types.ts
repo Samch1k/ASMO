@@ -143,6 +143,40 @@ export interface MetricsOptimizerConfig {
 }
 
 /**
+ * ComplexityAnalyzer configuration (BMAD Phase 1.5)
+ */
+export interface ComplexityAnalyzerConfig {
+  /** LLM model to use for analysis (default: 'claude-sonnet-3-5') */
+  model?: string
+  /** Temperature for LLM (0.0-1.0, default: 0.2) */
+  temperature?: number
+  /** Maximum tokens for LLM response (default: 2000) */
+  maxTokens?: number
+  /** Complexity thresholds for level mapping */
+  thresholds?: {
+    trivial: number    // 0-20
+    simple: number     // 21-40
+    medium: number     // 41-60
+    complex: number    // 61-80
+    enterprise: number // 81-100
+  }
+}
+
+/**
+ * WorkflowSelector configuration (BMAD Phase 1.5)
+ */
+export interface WorkflowSelectorConfig {
+  /** Enable automatic workflow selection (default: true) */
+  autoSelect?: boolean
+  /** Minimum confidence threshold for auto-selection (default: 0.7) */
+  confidenceThreshold?: number
+  /** Number of alternative workflows to suggest (default: 2) */
+  maxAlternatives?: number
+  /** ComplexityAnalyzer configuration (optional override) */
+  complexityConfig?: ComplexityAnalyzerConfig
+}
+
+/**
  * Master orchestration configuration
  *
  * Combines all component configurations into a single unified config.
@@ -163,4 +197,8 @@ export interface OrchestrationConfig {
   learningLoop: LearningLoopConfig
   /** MetricsOptimizer optimization settings */
   metricsOptimizer: MetricsOptimizerConfig
+  /** ComplexityAnalyzer settings (BMAD Phase 1.5) */
+  complexityAnalyzer?: ComplexityAnalyzerConfig
+  /** WorkflowSelector settings (BMAD Phase 1.5) */
+  workflowSelector?: WorkflowSelectorConfig
 }

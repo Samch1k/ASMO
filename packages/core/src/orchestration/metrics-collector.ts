@@ -98,7 +98,7 @@ export class MetricsCollector {
   /**
    * Start metrics collection for a workflow
    */
-  startWorkflowMetrics(workflow: Workflow, initialState: AgentState): string {
+  startWorkflowMetrics(workflow: Workflow, _initialState: AgentState): string {
     this.currentWorkflowId = randomUUID()
     this.currentWorkflowName = workflow.name
     this.workflowStartTime = Date.now()

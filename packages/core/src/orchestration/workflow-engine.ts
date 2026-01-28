@@ -29,13 +29,17 @@ import { getTeamManager, type TeamManager } from './team-manager'
 import { getChecklistManager, type ChecklistManager } from './checklist-manager'
 import { getConfigManager, type ConfigManager } from './config/config-manager'
 import { getInstructionManager, type InstructionManager } from './instruction-manager'
+// ✨ BMAD Phase 1.5: Adaptive workflow selection
+import { ComplexityAnalyzer } from './complexity-analyzer'
+import { WorkflowSelector } from './workflow-selector'
 import type {
   Workflow,
   WorkflowStep,
   WorkflowConfig,
   StepResult,
   WorkflowExecutionResult,
-  TeamMetrics
+  ProjectContext,
+  WorkflowSelection
 } from './types'
 import fs from 'fs/promises'
 import path from 'path'
@@ -70,10 +74,13 @@ export class WorkflowEngine {
   private configManager: ConfigManager
   // ✨ Priority 2 Phase 2: Instruction management
   private instructionManager: InstructionManager
+  // ✨ BMAD Phase 1.5: Adaptive workflow selection
+  private complexityAnalyzer: ComplexityAnalyzer
+  private workflowSelector: WorkflowSelector
 
   constructor(
     private agentRegistry: AgentRegistry,
-    private skillMatcher?: SkillMatcher,
+    _skillMatcher?: SkillMatcher,
     approvalConfig?: ApprovalCheckpointConfig,
     retryConfig?: RetryConfig,
     databaseUrl?: string
@@ -119,7 +126,19 @@ export class WorkflowEngine {
     // ✨ Priority 2 Phase 2: Initialize instruction manager
     this.instructionManager = getInstructionManager()
 
-    console.log('✨ WorkflowEngine: Phase tracking, approval checkpoints, retry logic, and BMad metrics enabled')
+    // ✨ BMAD Phase 1.5: Initialize adaptive workflow selection
+    const complexityConfig = this.configManager.isInitialized()
+      ? this.configManager.getConfig().complexityAnalyzer
+      : undefined
+
+    const workflowSelectorConfig = this.configManager.isInitialized()
+      ? this.configManager.getConfig().workflowSelector
+      : undefined
+
+    this.complexityAnalyzer = new ComplexityAnalyzer(complexityConfig)
+    this.workflowSelector = new WorkflowSelector(workflowSelectorConfig)
+
+    console.log('✨ WorkflowEngine: Phase tracking, approval checkpoints, retry logic, BMad metrics, and adaptive selection enabled')
   }
 
   /**
@@ -159,7 +178,14 @@ export class WorkflowEngine {
         }
 
         this.initialized = true
+
+        // ✨ BMAD Phase 1.5: Register workflows with complexity analyzer and selector
+        const workflowsToRegister = Array.from(this.workflows.values())
+        this.complexityAnalyzer.registerWorkflows(workflowsToRegister)
+        this.workflowSelector.registerWorkflows(workflowsToRegister)
+
         console.log(`✅ WorkflowEngine initialized: ${this.workflows.size} workflows loaded from phase-based structure`)
+        console.log(`🎯 Adaptive selection: enabled`)
 
         // ✨ Phase 2: Initialize team manager
         await this.teamManager.initialize()
@@ -187,7 +213,14 @@ export class WorkflowEngine {
         }
 
         this.initialized = true
+
+        // ✨ BMAD Phase 1.5: Register workflows with complexity analyzer and selector
+        const workflowsToRegister = Array.from(this.workflows.values())
+        this.complexityAnalyzer.registerWorkflows(workflowsToRegister)
+        this.workflowSelector.registerWorkflows(workflowsToRegister)
+
         console.log(`✅ WorkflowEngine initialized: ${this.workflows.size} workflows loaded from legacy workflows.json`)
+        console.log(`🎯 Adaptive selection: enabled`)
         console.log(`💡 Consider migrating to phase-based structure with: tsx .cursor/scripts/migrate-workflows-to-phases.ts`)
 
         // ✨ Phase 2: Initialize team manager
@@ -298,6 +331,122 @@ export class WorkflowEngine {
     }
 
     return null
+  }
+
+  /**
+   * Select workflow adaptively based on task complexity
+   *
+   * NEW: BMAD Phase 1.5 - Adaptive workflow selection
+   *
+   * This method uses ComplexityAnalyzer to understand the task complexity
+   * and WorkflowSelector to choose the most appropriate workflow.
+   *
+   * @param taskDescription - Natural language task description
+   * @param context - Optional project context for better analysis
+   * @param userPreference - Optional user-specified workflow ID (overrides auto-selection)
+   * @returns WorkflowSelection with workflow, complexity analysis, and reasoning
+   */
+  async selectWorkflowAdaptively(
+    taskDescription: string,
+    context?: ProjectContext,
+    userPreference?: string
+  ): Promise<WorkflowSelection> {
+    if (!this.initialized) {
+      throw new Error('WorkflowEngine not initialized. Call initialize() first.')
+    }
+
+    // Register current workflows with selector
+    const workflows = Array.from(this.workflows.values())
+    this.workflowSelector.registerWorkflows(workflows)
+
+    // Select workflow based on complexity
+    const selection = await this.workflowSelector.selectWorkflow(
+      taskDescription,
+      context,
+      userPreference
+    )
+
+    // Log complexity analysis and recommendation
+    console.log(`\n🎯 ═══════════════════════════════════════════════════`)
+    console.log(`🎯 ADAPTIVE WORKFLOW SELECTION`)
+    console.log(`🎯 ═══════════════════════════════════════════════════`)
+    console.log(`📝 Task: ${taskDescription}`)
+    console.log(`📊 Complexity: ${selection.complexity.level} (score: ${selection.complexity.score}/100)`)
+    console.log(`🔍 Confidence: ${(selection.confidence * 100).toFixed(0)}%`)
+    console.log(`✅ Selected: ${selection.workflow.name} (${selection.workflow.id})`)
+    console.log(`💡 Reasoning: ${selection.reasoning}`)
+
+    if (selection.complexity.recommendedAgents.length > 0) {
+      console.log(`👥 Recommended Agents: ${selection.complexity.recommendedAgents.join(', ')}`)
+    }
+
+    // If confidence is low, show alternatives
+    if (!this.workflowSelector.shouldAutoSelect(selection.confidence)) {
+      console.log(`\n⚠️  Low confidence (${(selection.confidence * 100).toFixed(0)}%). Consider alternatives:`)
+      for (const alt of selection.alternatives) {
+        const altWorkflow = this.workflows.get(alt.workflowId)
+        console.log(`   - ${altWorkflow?.name || alt.workflowId}: ${alt.reasoning} (${(alt.confidence * 100).toFixed(0)}%)`)
+      }
+    }
+
+    console.log(`🎯 ═══════════════════════════════════════════════════\n`)
+
+    return selection
+  }
+
+  /**
+   * Execute workflow with adaptive selection support
+   *
+   * NEW: BMAD Phase 1.5 - Supports both workflow ID and task description
+   *
+   * @param workflowIdOrDescription - Workflow ID or natural language task description
+   * @param initialState - Initial agent state (optional)
+   * @param context - Project context for adaptive selection (optional)
+   * @returns Workflow execution result
+   */
+  async execute(
+    workflowIdOrDescription: string,
+    initialState?: Partial<AgentState>,
+    context?: ProjectContext
+  ): Promise<WorkflowExecutionResult> {
+    if (!this.initialized) {
+      throw new Error('WorkflowEngine not initialized. Call initialize() first.')
+    }
+
+    // Determine if input is workflow ID or task description
+    const isWorkflowId = this.workflows.has(workflowIdOrDescription)
+
+    let workflow: Workflow
+
+    if (isWorkflowId) {
+      // Traditional: lookup by ID
+      workflow = this.workflows.get(workflowIdOrDescription)!
+      console.log(`📌 Using workflow: ${workflow.name} (${workflow.id})`)
+    } else {
+      // NEW: Adaptive selection by task description
+      const selection = await this.selectWorkflowAdaptively(
+        workflowIdOrDescription,
+        context
+      )
+      workflow = selection.workflow
+    }
+
+    // Initialize state with defaults
+    const state: AgentState = {
+      messages: initialState?.messages || [],
+      task: initialState?.task || workflowIdOrDescription,
+      taskType: initialState?.taskType || 'feature',
+      context: initialState?.context || {},
+      currentAgent: initialState?.currentAgent || '',
+      agentResults: initialState?.agentResults || [],
+      mcpData: initialState?.mcpData || {},
+      nextAction: initialState?.nextAction || '',
+      requiresApproval: initialState?.requiresApproval ?? false,
+      ...initialState // Spread any additional optional fields
+    }
+
+    // Execute workflow
+    return this.executeWorkflow(workflow, state)
   }
 
   /**
@@ -514,8 +663,8 @@ export class WorkflowEngine {
       return {
         workflow,
         success: true,
-        totalDuration,
-        stepResults,
+        duration: totalDuration,
+        steps: stepResults,
         finalState: state
       }
     } catch (error) {
@@ -533,8 +682,8 @@ export class WorkflowEngine {
       return {
         workflow,
         success: false,
-        totalDuration,
-        stepResults,
+        duration: totalDuration,
+        steps: stepResults,
         finalState: state,
         error: error instanceof Error ? error.message : String(error)
       }
@@ -751,8 +900,11 @@ export class WorkflowEngine {
         ...state.agentResults,
         {
           agentId: agent.agentId,
-          result: `Agent ${agent.agentId} executed successfully`,
-          timestamp: new Date().toISOString()
+          status: 'success' as const,
+          output: `Agent ${agent.agentId} executed successfully`,
+          artifacts: [],
+          confidence: 1.0,
+          timestamp: new Date()
         }
       ]
     }
@@ -864,9 +1016,11 @@ export class WorkflowEngine {
       .filter(r => r.success)
       .map(r => ({
         agentId: r.agentId,
-        phase: r.step.phase,
-        duration: r.duration,
-        timestamp: new Date().toISOString()
+        status: 'success' as const,
+        output: r.output,
+        artifacts: [],
+        confidence: 1.0,
+        timestamp: new Date()
       }))
 
     return {
@@ -1114,7 +1268,7 @@ export class WorkflowEngine {
   private async finalizeAndPersistMetrics(
     workflow: Workflow,
     state: AgentState,
-    stepResults: StepResult[],
+    _stepResults: StepResult[],
     success: boolean
   ): Promise<void> {
     try {

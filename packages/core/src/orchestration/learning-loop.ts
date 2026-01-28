@@ -12,7 +12,6 @@
  * - LLM-powered insight generation
  */
 
-import type { AgentState } from '../agents/types'
 import type { WorkflowMetrics, AgentStepMetrics } from './metrics-collector'
 import { ChatAnthropic } from '@langchain/anthropic'
 import { MetricsPersister } from './metrics-persister'

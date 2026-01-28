@@ -12,8 +12,7 @@
  */
 
 import { readFile } from 'fs/promises'
-import { join, dirname } from 'path'
-import type { Workflow, WorkflowStep } from './types'
+import type { Workflow } from './types'
 
 /**
  * Checklist item definition

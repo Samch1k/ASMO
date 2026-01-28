@@ -6,7 +6,7 @@
 
 import * as fs from 'fs/promises'
 import * as path from 'path'
-import type { RetrospectiveAnalysis } from './retrospective-agent'
+import type { RetrospectiveAnalysis, Recommendation } from './retrospective-agent'
 
 export class RetrospectiveReportGenerator {
   private reportsDir: string
@@ -224,7 +224,7 @@ export class RetrospectiveReportGenerator {
   /**
    * Format recommendations list
    */
-  private formatRecommendations(recommendations: typeof RetrospectiveAnalysis.prototype.recommendations): string[] {
+  private formatRecommendations(recommendations: Recommendation[]): string[] {
     const lines: string[] = []
 
     for (let i = 0; i < recommendations.length; i++) {

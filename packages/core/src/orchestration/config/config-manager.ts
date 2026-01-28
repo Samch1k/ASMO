@@ -9,7 +9,6 @@
  * Pattern: Mirrors ChecklistManager and TeamManager singleton pattern
  */
 
-import { readFile } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import type { OrchestrationConfig } from './types'

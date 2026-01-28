@@ -158,5 +158,32 @@ export const DEFAULT_ORCHESTRATION_CONFIG: OrchestrationConfig = {
       defaultTimeoutMs: 30000, // 30 seconds default
       timeoutConfidence: 0.8 // 80% confidence for timeout recommendations
     }
+  },
+
+  /**
+   * ComplexityAnalyzer Configuration (BMAD Phase 1.5)
+   * Source: complexity-analyzer.ts DEFAULT_CONFIG
+   */
+  complexityAnalyzer: {
+    model: 'claude-sonnet-3-5',
+    temperature: 0.2,
+    maxTokens: 2000,
+    thresholds: {
+      trivial: 20,
+      simple: 40,
+      medium: 60,
+      complex: 80,
+      enterprise: 100
+    }
+  },
+
+  /**
+   * WorkflowSelector Configuration (BMAD Phase 1.5)
+   * Source: workflow-selector.ts DEFAULT_CONFIG
+   */
+  workflowSelector: {
+    autoSelect: true,
+    confidenceThreshold: 0.7,
+    maxAlternatives: 2
   }
 }

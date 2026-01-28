@@ -275,7 +275,7 @@ export class RetrospectiveAgent {
 
     // Calculate averages and identify issues
     const analyses: PhaseAnalysis[] = []
-    for (const [phaseName, analysis] of phaseMap) {
+    for (const [_phaseName, analysis] of phaseMap) {
       analysis.successRate = (analysis.successRate / analysis.stepCount) * 100
       analysis.averageConfidence = analysis.averageConfidence / analysis.stepCount
 

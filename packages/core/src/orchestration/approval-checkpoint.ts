@@ -287,8 +287,8 @@ export class ApprovalCheckpoint {
    * Request human approval via CLI
    */
   private async requestHumanApproval(
-    phase: WorkflowPhase,
-    request: ApprovalRequest
+    _phase: WorkflowPhase,
+    _request: ApprovalRequest
   ): Promise<ApprovalResponse> {
     const rl = readline.createInterface({
       input: process.stdin,
