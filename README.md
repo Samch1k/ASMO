@@ -42,7 +42,7 @@ ai1st-orchestration/
 │   │   └── tests/               # Jest tests (smoke tests implemented)
 │   ├── examples/                # Demo applications (Phase 2 - Coming soon)
 │   └── docs/                    # VitePress documentation (Phase 3 - Coming soon)
-└── scripts/                     # Build and utility scripts
+└── turbo.json                   # Turbo build configuration
 ```
 
 ## 🚀 Current Status
