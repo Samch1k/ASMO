@@ -32,10 +32,10 @@ ai1st-orchestration/
 │   ├── core/                    # @ai1st/core - Main orchestration library
 │   │   ├── src/
 │   │   │   ├── orchestration/   # Workflow engine, agent registry, skill matching
-│   │   │   ├── agents/          # Base agent + 9 role implementations
+│   │   │   ├── agents/          # Base agent + 16 role implementations
 │   │   │   └── index.ts         # Public API
 │   │   ├── templates/           # Configuration templates
-│   │   │   ├── roles/           # 11 agent roles (core + specialized + project)
+│   │   │   ├── roles/           # 16 agent roles (core + specialized + business)
 │   │   │   ├── workflows/       # 5 generic workflows
 │   │   │   ├── skills/          # 85 skills catalog + dependencies
 │   │   │   └── instructions/    # Agent instruction files (6 agents)

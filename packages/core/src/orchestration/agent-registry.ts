@@ -1,5 +1,4 @@
 import type { Role, Skill, AgentWithRoleSkills } from '../agents/types'
-import type { AgentMetadata } from '../agents/base-agent'
 import path from 'path'
 import { fileURLToPath } from 'url'
 

@@ -1,0 +1,109 @@
+{
+  "version": "2.0.0",
+  "roles": [
+    {
+      "id": "design-validator",
+      "name": "Design Validator",
+      "description": "Architecture and API design validation specialist. Reviews system designs, API contracts, database schemas for best practices, scalability, and maintainability. Provides quality gate before implementation.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": ["design_review", "architecture_validation"],
+      "optional_skills": ["api_design", "database_design"],
+      "priority": 7,
+      "allowed_mcps": ["memory", "supabase", "context7", "filesystem"],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": ["validate design", "review architecture", "check api", "validate schema"],
+        "task_types": ["validation", "review"]
+      },
+      "agent_class": "DesignValidatorAgent",
+      "metadata": {
+        "llm_temperature": 0.2,
+        "max_tokens": 6144,
+        "output_artifacts": ["validation", "review"],
+        "domain": "System Architecture Validation",
+        "validation_threshold": 75
+      }
+    },
+    {
+      "id": "merge-coordinator",
+      "name": "Merge Coordinator",
+      "description": "Parallel agent output consolidation specialist. Merges results from multiple agents working in parallel, resolves conflicts intelligently using LLM reasoning, and produces unified output. Essential for parallel execution workflows.",
+      "category": "specialized",
+      "role_type": "hybrid",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": ["conflict_resolution", "data_consolidation"],
+      "optional_skills": ["decision_making"],
+      "priority": 8,
+      "allowed_mcps": ["memory"],
+      "activation_rules": {
+        "type": "manual",
+        "trigger_keywords": ["merge results", "consolidate", "combine outputs"],
+        "task_types": ["coordination", "consolidation"]
+      },
+      "agent_class": "MergeCoordinatorAgent",
+      "metadata": {
+        "llm_temperature": 0.3,
+        "max_tokens": 8192,
+        "output_artifacts": ["consolidated"],
+        "domain": "Parallel Output Consolidation",
+        "confidence_threshold": 70
+      }
+    },
+    {
+      "id": "post-deploy-monitor",
+      "name": "Post-Deploy Monitor",
+      "description": "Deployment health and smoke testing specialist. Monitors application health after deployment, runs smoke tests, checks error rates and performance metrics, and triggers rollback if critical issues detected.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": ["health_monitoring", "performance_validation"],
+      "optional_skills": ["smoke_testing", "incident_response"],
+      "priority": 9,
+      "allowed_mcps": ["memory", "supabase", "render", "vercel"],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": ["monitor deployment", "health check", "smoke test", "verify deployment"],
+        "task_types": ["monitoring", "validation"]
+      },
+      "agent_class": "PostDeployMonitorAgent",
+      "metadata": {
+        "llm_temperature": 0.1,
+        "max_tokens": 4096,
+        "output_artifacts": ["report", "alert"],
+        "domain": "Deployment Monitoring",
+        "error_threshold": 0.01
+      }
+    },
+    {
+      "id": "requirements-validator",
+      "name": "Requirements Validator",
+      "description": "Requirements quality assurance specialist. Validates requirements using INVEST criteria (Independent, Negotiable, Valuable, Estimable, Small, Testable), checks completeness, identifies missing edge cases. Quality gate before design phase.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": ["requirements_validation", "quality_assurance"],
+      "optional_skills": ["completeness_checking"],
+      "priority": 7,
+      "allowed_mcps": ["memory", "filesystem"],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": ["validate requirements", "check requirements", "review requirements"],
+        "task_types": ["validation", "quality_assurance"]
+      },
+      "agent_class": "RequirementsValidatorAgent",
+      "metadata": {
+        "llm_temperature": 0.2,
+        "max_tokens": 6144,
+        "output_artifacts": ["validation", "report"],
+        "domain": "Requirements Quality Assurance",
+        "approval_threshold": 70
+      }
+    }
+  ]
+}

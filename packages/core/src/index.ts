@@ -46,16 +46,31 @@ export * from './orchestration/types'
 export { BaseAgent } from './agents/base-agent'
 export * from './agents/types'
 
-// Agent roles
+// Core agent roles
 export { ArchitectAgent } from './agents/roles/architect.agent'
 export { DeveloperAgent } from './agents/roles/developer.agent'
 export { TesterAgent } from './agents/roles/tester.agent'
-export { UIDeeploperAgent } from './agents/roles/ui-developer.agent'
-export { UXDesignerAgent } from './agents/roles/ux-designer.agent'
 export { DebuggerAgent } from './agents/roles/debugger.agent'
 export { DevOpsAgent } from './agents/roles/devops.agent'
 export { OptimizerAgent } from './agents/roles/optimizer.agent'
+
+// Specialized UI/UX roles
+export { UIDevAgent } from './agents/roles/ui-developer.agent'
+export { UXDesignerAgent } from './agents/roles/ux-designer.agent'
+
+// Code quality roles
 export { CodeReviewerAgent } from './agents/roles/code-reviewer.agent'
+
+// Validation & coordination roles
+export { DesignValidatorAgent } from './agents/roles/design-validator.agent'
+export { MergeAgent } from './agents/roles/merge-coordinator.agent'
+export { PostDeployMonitorAgent } from './agents/roles/post-deploy-monitor.agent'
+export { RequirementsValidatorAgent } from './agents/roles/requirements-validator.agent'
+
+// Business domain roles
+export { BusinessAnalystAgent } from './agents/roles/business-analyst.agent'
+export { ProjectManagerAgent } from './agents/roles/project-manager.agent'
+export { ProductOwnerAgent } from './agents/roles/product-owner.agent'
 
 // ===================================
 // MCP INTEGRATION
