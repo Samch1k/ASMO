@@ -1,0 +1,22 @@
+{
+  "name": "@ai1st/blog-backend",
+  "version": "0.1.0",
+  "description": "Blog Platform Backend - AI1st Demo",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "db:migrate": "node src/db/migrate.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "cors": "^2.8.5",
+    "better-sqlite3": "^11.8.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/better-sqlite3": "^7.6.12"
+  }
+}
