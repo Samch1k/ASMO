@@ -76,6 +76,13 @@ export { BusinessAnalystAgent } from './agents/roles/business-analyst.agent'
 export { ProjectManagerAgent } from './agents/roles/project-manager.agent'
 export { ProductOwnerAgent } from './agents/roles/product-owner.agent'
 
+// Specialized agents (BMAD Phase 5)
+export { APIDesignerAgent } from './agents/roles/api-designer.agent'
+export { DataArchitectAgent } from './agents/roles/data-architect.agent'
+export { PerformanceEngineerAgent } from './agents/roles/performance-engineer.agent'
+export { ScrumMasterAgent } from './agents/roles/scrum-master.agent'
+export { SecuritySpecialistAgent } from './agents/roles/security-specialist.agent'
+
 // ===================================
 // MCP INTEGRATION
 // ===================================

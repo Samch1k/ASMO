@@ -270,6 +270,295 @@
         ],
         "domain": "Product Management"
       }
+    },
+    {
+      "id": "scrum-master",
+      "name": "Scrum Master",
+      "description": "Agile ceremonies and sprint management specialist. Facilitates sprint planning, daily standups, retrospectives, and backlog refinement. Tracks velocity, resolves impediments, coaches team on Agile practices.",
+      "category": "specialized",
+      "role_type": "hybrid",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "sprint_planning",
+        "backlog_management",
+        "agile_ceremonies"
+      ],
+      "optional_skills": [
+        "impediment_resolution",
+        "velocity_tracking",
+        "retrospective_facilitation",
+        "story_estimation",
+        "team_coaching"
+      ],
+      "priority": 6,
+      "allowed_mcps": [
+        "github",
+        "memory",
+        "linear"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "sprint",
+          "scrum",
+          "agile",
+          "standup",
+          "retrospective",
+          "backlog",
+          "velocity",
+          "ceremony"
+        ],
+        "task_types": [
+          "sprint_planning",
+          "agile_management",
+          "team_facilitation"
+        ]
+      },
+      "agent_class": "ScrumMasterAgent",
+      "metadata": {
+        "llm_temperature": 0.2,
+        "max_tokens": 4096,
+        "output_artifacts": [
+          "documentation",
+          "report"
+        ],
+        "domain": "Agile/Scrum Management"
+      }
+    },
+    {
+      "id": "security-specialist",
+      "name": "Security Specialist",
+      "description": "Security audit and vulnerability assessment specialist. Performs OWASP Top 10 compliance checking, vulnerability scanning, threat modeling, security testing. Reviews authentication, authorization, data protection, and API security.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "security_audit",
+        "vulnerability_scanning",
+        "threat_modeling"
+      ],
+      "optional_skills": [
+        "auth_authorization_review",
+        "data_protection",
+        "dependency_audit",
+        "owasp_compliance",
+        "incident_response",
+        "security_testing"
+      ],
+      "priority": 7,
+      "allowed_mcps": [
+        "github",
+        "sentry",
+        "memory"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "security",
+          "vulnerability",
+          "audit",
+          "owasp",
+          "authentication",
+          "authorization",
+          "encryption",
+          "threat",
+          "безопасность",
+          "уязвимость"
+        ],
+        "task_types": [
+          "security_audit",
+          "vulnerability_assessment",
+          "compliance_check"
+        ]
+      },
+      "agent_class": "SecuritySpecialistAgent",
+      "metadata": {
+        "llm_temperature": 0.1,
+        "max_tokens": 4096,
+        "output_artifacts": [
+          "documentation",
+          "audit_report"
+        ],
+        "domain": "Security & Compliance"
+      }
+    },
+    {
+      "id": "performance-engineer",
+      "name": "Performance Engineer",
+      "description": "Performance profiling and optimization specialist. Analyzes bottlenecks, optimizes database queries, implements caching strategies, tunes frontend and backend performance. Monitors Web Vitals, API response times, and capacity planning.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "performance_profiling",
+        "optimization",
+        "load_testing"
+      ],
+      "optional_skills": [
+        "database_tuning",
+        "caching_strategy",
+        "frontend_performance",
+        "backend_performance",
+        "capacity_planning",
+        "monitoring_setup"
+      ],
+      "priority": 6,
+      "allowed_mcps": [
+        "sentry",
+        "supabase",
+        "github",
+        "memory"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "performance",
+          "optimization",
+          "slow",
+          "bottleneck",
+          "profiling",
+          "caching",
+          "latency",
+          "speed",
+          "производительность",
+          "оптимизация"
+        ],
+        "task_types": [
+          "performance_optimization",
+          "profiling",
+          "load_testing"
+        ]
+      },
+      "agent_class": "PerformanceEngineerAgent",
+      "metadata": {
+        "llm_temperature": 0.1,
+        "max_tokens": 4096,
+        "output_artifacts": [
+          "documentation",
+          "optimization_report"
+        ],
+        "domain": "Performance Engineering"
+      }
+    },
+    {
+      "id": "data-architect",
+      "name": "Data Architect",
+      "description": "Database schema design and data migration specialist. Designs entity relationships, optimizes indexes, plans migrations, ensures data integrity. Handles normalization, backup/recovery strategies, and database performance tuning.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "database_design",
+        "schema_modeling",
+        "data_migration"
+      ],
+      "optional_skills": [
+        "database_normalization",
+        "index_optimization",
+        "data_integrity",
+        "backup_recovery",
+        "data_lifecycle",
+        "relationship_design"
+      ],
+      "priority": 7,
+      "allowed_mcps": [
+        "supabase",
+        "github",
+        "memory"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "database",
+          "schema",
+          "migration",
+          "table",
+          "index",
+          "sql",
+          "data model",
+          "entity",
+          "база данных",
+          "миграция"
+        ],
+        "task_types": [
+          "database_design",
+          "data_migration",
+          "schema_design"
+        ]
+      },
+      "agent_class": "DataArchitectAgent",
+      "metadata": {
+        "llm_temperature": 0.1,
+        "max_tokens": 4096,
+        "output_artifacts": [
+          "documentation",
+          "code"
+        ],
+        "domain": "Database Architecture"
+      }
+    },
+    {
+      "id": "api-designer",
+      "name": "API Designer",
+      "description": "RESTful API and OpenAPI specification specialist. Designs API endpoints, defines request/response schemas, creates OpenAPI specs, establishes API versioning and error handling standards. Ensures API security, rate limiting, and documentation.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "api_design",
+        "rest_api",
+        "openapi_spec"
+      ],
+      "optional_skills": [
+        "graphql_design",
+        "api_versioning",
+        "request_validation",
+        "response_design",
+        "error_handling",
+        "api_security",
+        "rate_limiting"
+      ],
+      "priority": 6,
+      "allowed_mcps": [
+        "github",
+        "context7",
+        "memory"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "api",
+          "endpoint",
+          "rest",
+          "graphql",
+          "openapi",
+          "swagger",
+          "request",
+          "response",
+          "интерфейс",
+          "эндпоинт"
+        ],
+        "task_types": [
+          "api_design",
+          "api_documentation",
+          "contract_design"
+        ]
+      },
+      "agent_class": "APIDesignerAgent",
+      "metadata": {
+        "llm_temperature": 0.2,
+        "max_tokens": 4096,
+        "output_artifacts": [
+          "documentation",
+          "code"
+        ],
+        "domain": "API Design"
+      }
     }
   ]
 }
