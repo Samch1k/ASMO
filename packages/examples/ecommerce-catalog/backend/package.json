@@ -28,9 +28,9 @@
     "@types/better-sqlite3": "^7.6.12",
     "@types/cors": "^2.8.17",
     "tsx": "^4.19.2",
-    "vitest": "^2.1.8",
+    "vitest": "^4.0.18",
     "supertest": "^7.0.0",
     "@types/supertest": "^6.0.2",
-    "drizzle-kit": "^0.30.2"
+    "drizzle-kit": "^0.31.8"
   }
 }
