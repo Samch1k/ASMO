@@ -32,6 +32,21 @@ export { SkillMDLoader } from './orchestration/skillmd-loader'
 export { ComplexityAnalyzer } from './orchestration/complexity-analyzer'
 export { WorkflowSelector } from './orchestration/workflow-selector'
 
+// BMAD Phase 2: YOLO Mode & Brainstorming
+export { YoloModeManager } from './orchestration/yolo-mode-manager'
+export { BrainstormingSession } from './orchestration/brainstorming-session'
+
+// BMAD Phase 3: Task Management
+export { TaskManager } from './orchestration/task-manager'
+export { TaskPersister } from './orchestration/task-persister'
+
+// BMAD Phase 4: Multi-Agent Collaboration
+export { PartySession } from './orchestration/party-session'
+
+// BMAD Phase 5: Help & Documentation
+export { HelpSystem } from './orchestration/help-system'
+export { DocumentationManager } from './orchestration/documentation-manager'
+
 // ===================================
 // CONFIGURATION
 // ===================================
@@ -83,7 +98,24 @@ export { PerformanceEngineerAgent } from './agents/roles/performance-engineer.ag
 export { ScrumMasterAgent } from './agents/roles/scrum-master.agent'
 export { SecuritySpecialistAgent } from './agents/roles/security-specialist.agent'
 
+// BMAD New Agents
+export { ProductManagerAgent } from './agents/roles/product-manager.agent'
+export { RFQSpecialistAgent } from './agents/roles/rfq-specialist.agent'
+export { SupplierOpsAgent } from './agents/roles/supplier-ops.agent'
+
+// Main Orchestrator
+export { createOrchestrationGraph, runOrchestration } from './agents/orchestrator'
+
+// Claude Code Integration
+export { ClaudeCodeAdapter } from './agents/claude-code-adapter'
+
 // ===================================
 // MCP INTEGRATION
 // ===================================
 export { MCPBridge } from './agents/mcp/mcp-bridge'
+
+// ===================================
+// TEMPLATES
+// ===================================
+export { TemplateEngine } from './templates/template-engine'
+export * from './templates/template-schema'
