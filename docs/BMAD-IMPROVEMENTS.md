@@ -420,8 +420,8 @@ If Party Mode reaches max rounds without consensus:
 ### New Agents Not Available
 
 If new agents don't appear:
-1. Check role definitions: `.cursor/config/roles/specialized-roles.json`
-2. Verify agent files exist: `.cursor/agents/roles/`
+1. Check role definitions: `packages/core/templates/roles/specialized-roles.json`
+2. Verify agent files exist: `packages/core/src/agents/roles/`
 3. Re-initialize WorkflowEngine: `await engine.initialize()`
 
 ---
@@ -456,11 +456,11 @@ If new agents don't appear:
 
 ### Code References
 
-- **PartySession**: `.cursor/lib/orchestration/party-session.ts`
-- **ComplexityAnalyzer**: `.cursor/lib/orchestration/complexity-analyzer.ts`
-- **WorkflowSelector**: `.cursor/lib/orchestration/workflow-selector.ts`
-- **HelpSystem**: `.cursor/lib/orchestration/help-system.ts`
-- **New Agents**: `.cursor/agents/roles/*.agent.ts`
+- **PartySession**: `packages/core/src/orchestration/party-session.ts`
+- **ComplexityAnalyzer**: `packages/core/src/orchestration/complexity-analyzer.ts`
+- **WorkflowSelector**: `packages/core/src/orchestration/workflow-selector.ts`
+- **HelpSystem**: `packages/core/src/orchestration/help-system.ts`
+- **New Agents**: `packages/core/src/agents/roles/*.agent.ts`
 
 ---
 
@@ -469,7 +469,7 @@ If new agents don't appear:
 For issues or questions:
 - Review documentation in `docs/`
 - Check test examples in `tests/`
-- Consult workflow checklists in `.cursor/workflows/`
+- Consult workflow checklists in `packages/core/templates/workflows/`
 
 ---
 

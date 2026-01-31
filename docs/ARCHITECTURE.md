@@ -6,7 +6,7 @@
 
 AI1ST Framework is a multi-agent orchestration system implementing BMAD (Business-driven Multi-Agent Development) methodology. It provides adaptive workflow selection, task lifecycle management, and structured decision-making processes.
 
-**Package:** `ai1st-framework` (npm)
+**Package:** `@ai1st/core` (npm)
 
 **Stack:** TypeScript, PostgreSQL, LRU-cache, Commander.js, tsup
 
@@ -48,7 +48,7 @@ AI1ST Framework is a multi-agent orchestration system implementing BMAD (Busines
 
 ### 1. YoloModeManager
 
-**File:** `.cursor/lib/orchestration/yolo-mode-manager.ts`
+**File:** `packages/core/src/orchestration/yolo-mode-manager.ts`
 
 Manages automatic bypass of approval checkpoints for trivial tasks.
 
@@ -94,7 +94,7 @@ if (this.yoloModeManager.shouldEnableYolo(state.metadata?.complexityScore)) {
 
 ### 2. BrainstormingSession
 
-**File:** `.cursor/lib/orchestration/brainstorming-session.ts`
+**File:** `packages/core/src/orchestration/brainstorming-session.ts`
 
 Extends PartySession with structured 4-round decision-making process.
 
@@ -139,7 +139,7 @@ class BrainstormingSession extends PartySession {
 **Usage:**
 
 ```typescript
-import { createBrainstormingSession } from 'ai1st-framework'
+import { createBrainstormingSession } from '@ai1st/core'
 
 const session = createBrainstormingSession(
   'API Authentication Strategy',
@@ -155,8 +155,8 @@ console.log(result.adrPath) // Path to generated ADR
 ### 3. TaskManager & TaskPersister
 
 **Files:**
-- `.cursor/lib/orchestration/task-manager.ts`
-- `.cursor/lib/orchestration/task-persister.ts`
+- `packages/core/src/orchestration/task-manager.ts`
+- `packages/core/src/orchestration/task-persister.ts`
 
 High-level task lifecycle management with PostgreSQL persistence and LRU caching.
 
@@ -227,8 +227,8 @@ class TaskPersister {
 ### 4. TemplateEngine
 
 **Files:**
-- `.cursor/lib/templates/template-engine.ts`
-- `.cursor/lib/templates/template-schema.ts`
+- `packages/core/src/templates/template-engine.ts`
+- `packages/core/src/templates/template-schema.ts`
 
 XML-structured templates for better LLM parsing and validation.
 
@@ -273,7 +273,7 @@ class TemplateEngine {
 
 ### 5. ComplexityAnalyzer
 
-**File:** `.cursor/lib/orchestration/complexity-analyzer.ts`
+**File:** `packages/core/src/orchestration/complexity-analyzer.ts`
 
 Heuristic-based task complexity scoring (0-100).
 
@@ -408,42 +408,42 @@ npx ai1st workflow full-planning-path --task "Add authentication"
 ## File Structure
 
 ```
-.cursor/lib/
-├── orchestration/
-│   ├── workflow-engine.ts        # Core engine + TaskManager integration
-│   ├── complexity-analyzer.ts    # Heuristic-based scoring
-│   ├── yolo-mode-manager.ts      # Bypass logic + audit trail
-│   ├── brainstorming-session.ts  # 4-round structured discussion
-│   ├── party-session.ts          # Base class for multi-agent sessions
-│   ├── task-manager.ts           # High-level task lifecycle
-│   ├── task-persister.ts         # PostgreSQL + LRU caching
-│   ├── approval-checkpoint.ts    # YOLO integration point
-│   ├── types.ts                  # Shared type definitions
-│   └── __tests__/
-│       ├── task-persister.test.ts
-│       └── task-manager.test.ts
-├── templates/
-│   ├── template-engine.ts        # Load, render, validate
-│   └── template-schema.ts        # AIFirstTemplate types
-└── ai1st-framework/
-    ├── package.json              # npm package config
-    ├── tsup.config.ts            # ESM + CJS build
-    ├── tsconfig.json
-    ├── src/
-    │   ├── index.ts              # Public exports
-    │   ├── orchestration/        # Re-exports
-    │   ├── templates/            # Re-exports
-    │   └── cli/
-    │       ├── index.ts          # Commander.js setup
-    │       └── commands/
-    │           ├── analyze.ts
-    │           ├── workflow.ts
-    │           └── task.ts
-    ├── bin/
-    │   └── ai1st.js              # CLI entry point
-    └── docs/
-        ├── OVERVIEW.md           # Non-technical summary
-        └── ARCHITECTURE.md       # This document
+packages/
+├── core/                         # @ai1st/core package
+│   ├── src/
+│   │   ├── orchestration/
+│   │   │   ├── workflow-engine.ts        # Core engine + TaskManager integration
+│   │   │   ├── complexity-analyzer.ts    # Heuristic-based scoring
+│   │   │   ├── yolo-mode-manager.ts      # Bypass logic + audit trail
+│   │   │   ├── brainstorming-session.ts  # 4-round structured discussion
+│   │   │   ├── party-session.ts          # Base class for multi-agent sessions
+│   │   │   ├── task-manager.ts           # High-level task lifecycle
+│   │   │   ├── task-persister.ts         # PostgreSQL + LRU caching
+│   │   │   ├── approval-checkpoint.ts    # YOLO integration point
+│   │   │   └── types.ts                  # Shared type definitions
+│   │   ├── agents/
+│   │   │   ├── orchestrator.ts           # LangGraph orchestration
+│   │   │   ├── base-agent.ts             # Abstract base class
+│   │   │   ├── types.ts                  # Agent type definitions
+│   │   │   └── roles/                    # 24 role agents
+│   │   ├── templates/
+│   │   │   ├── template-engine.ts        # Load, render, validate
+│   │   │   └── template-schema.ts        # AIFirstTemplate types
+│   │   └── index.ts                      # Public exports
+│   ├── templates/                        # Configuration templates
+│   └── tests/
+├── cli/                          # @ai1st/cli package
+│   ├── src/
+│   │   ├── index.ts              # Commander.js setup
+│   │   └── commands/
+│   │       ├── analyze.ts
+│   │       ├── workflow.ts
+│   │       └── task.ts
+│   └── bin/
+│       └── ai1st.js              # CLI entry point
+└── docs/
+    ├── OVERVIEW.md               # Non-technical summary
+    └── ARCHITECTURE.md           # This document
 ```
 
 ## CI/CD
@@ -471,7 +471,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: .cursor/lib/ai1st-framework
+        working-directory: packages/core
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
@@ -530,7 +530,7 @@ const mockQuery = vi.fn()
 const mockPool = { query: mockQuery, on: vi.fn(), end: vi.fn() }
 vi.mock('pg', () => ({ default: { Pool: vi.fn(() => mockPool) } }))
 
-import { TaskManager, getTaskManager } from '../../../.cursor/lib/orchestration/task-manager'
+import { TaskManager, getTaskManager } from '../../../packages/core/src/orchestration/task-manager'
 
 describe('TaskManager', () => {
   it('should create task with complexity score', async () => {
