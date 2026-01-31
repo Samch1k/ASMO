@@ -1,0 +1,28 @@
+{
+  "name": "@ai1st/cli",
+  "version": "1.0.0",
+  "description": "AI1ST Framework CLI - AI-First Software Development",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "ai1st": "./bin/ai1st.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai1st/core": "workspace:*",
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0"
+  },
+  "keywords": ["ai", "cli", "orchestration", "bmad"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Samch1k/ai1st-orchestration"
+  },
+  "license": "MIT"
+}
