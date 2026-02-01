@@ -14,6 +14,7 @@
  * Inspired by BMAD's Scale-Domain-Adaptive system
  */
 
+import Anthropic from '@anthropic-ai/sdk'
 import type {
   ComplexityScore,
   ComplexityLevel,
@@ -27,8 +28,15 @@ import type {
  */
 export interface ComplexityAnalyzerConfig {
   /**
+   * Enable LLM-based analysis (requires ANTHROPIC_API_KEY)
+   * When false, uses heuristic-based analysis
+   * @default false
+   */
+  useLLM?: boolean
+
+  /**
    * LLM model to use for analysis
-   * @default 'claude-sonnet-3-5'
+   * @default 'claude-3-5-sonnet-20241022'
    */
   model?: string
 
@@ -46,6 +54,12 @@ export interface ComplexityAnalyzerConfig {
   maxTokens?: number
 
   /**
+   * Number of retries for LLM calls
+   * @default 3
+   */
+  maxRetries?: number
+
+  /**
    * Complexity thresholds for level mapping
    */
   thresholds?: {
@@ -61,9 +75,11 @@ export interface ComplexityAnalyzerConfig {
  * Default configuration
  */
 const DEFAULT_CONFIG: Required<ComplexityAnalyzerConfig> = {
-  model: 'claude-sonnet-3-5',
+  useLLM: false,
+  model: 'claude-3-5-sonnet-20241022',
   temperature: 0.2,
   maxTokens: 2000,
+  maxRetries: 3,
   thresholds: {
     trivial: 20,
     simple: 40,
@@ -79,9 +95,20 @@ const DEFAULT_CONFIG: Required<ComplexityAnalyzerConfig> = {
 export class ComplexityAnalyzer {
   private config: Required<ComplexityAnalyzerConfig>
   private workflows: Map<string, Workflow> = new Map()
+  private anthropic: Anthropic | null = null
 
   constructor(config?: ComplexityAnalyzerConfig) {
     this.config = { ...DEFAULT_CONFIG, ...config }
+
+    // Initialize Anthropic client if LLM mode is enabled
+    if (this.config.useLLM) {
+      const apiKey = process.env.ANTHROPIC_API_KEY
+      if (apiKey) {
+        this.anthropic = new Anthropic({ apiKey })
+      } else {
+        console.warn('[ComplexityAnalyzer] useLLM enabled but ANTHROPIC_API_KEY not set, falling back to heuristics')
+      }
+    }
   }
 
   /**
@@ -113,9 +140,8 @@ export class ComplexityAnalyzer {
     // Build analysis prompt
     const prompt = this.buildAnalysisPrompt(taskDescription, context)
 
-    // TODO: Call LLM for analysis (placeholder for now)
-    // In production, this would call Anthropic Claude API
-    const analysisResult = await this.callLLM(prompt)
+    // Call LLM for analysis (or use heuristics if LLM not available)
+    const analysisResult = await this.callLLM(prompt, taskDescription)
 
     // Parse LLM response
     const complexity = this.parseComplexityResponse(analysisResult)
@@ -203,18 +229,84 @@ Be objective and realistic in your assessment. Consider both the immediate task 
   }
 
   /**
-   * Call LLM for analysis (placeholder)
+   * Call LLM for analysis with fallback to heuristics
    *
-   * TODO: Implement actual LLM call using Anthropic SDK
-   * For now, returns a simple heuristic-based analysis
+   * When useLLM is enabled and Anthropic client is available, calls Claude API.
+   * Otherwise falls back to heuristic-based analysis.
    */
-  private async callLLM(prompt: string): Promise<string> {
-    // PLACEHOLDER: Heuristic-based analysis until LLM integration
-    // In production, this would be:
-    // const response = await anthropic.messages.create({ ... })
+  private async callLLM(prompt: string, taskDescription: string): Promise<string> {
+    // Try LLM analysis if enabled
+    if (this.config.useLLM && this.anthropic) {
+      try {
+        return await this.callAnthropicWithRetry(prompt)
+      } catch (error) {
+        console.warn('[ComplexityAnalyzer] LLM call failed, falling back to heuristics:', error)
+      }
+    }
 
-    // Simple heuristic: analyze keywords in task description
-    const taskLower = prompt.toLowerCase()
+    // Fallback to heuristic-based analysis
+    return this.analyzeWithHeuristics(taskDescription)
+  }
+
+  /**
+   * Call Anthropic API with retry logic
+   */
+  private async callAnthropicWithRetry(prompt: string): Promise<string> {
+    const { maxRetries, model, temperature, maxTokens } = this.config
+    let lastError: Error | null = null
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const response = await this.anthropic!.messages.create({
+          model,
+          max_tokens: maxTokens,
+          temperature,
+          messages: [{
+            role: 'user',
+            content: prompt
+          }]
+        })
+
+        const content = response.content[0]
+        if (content.type === 'text') {
+          // Extract JSON from response (may be wrapped in markdown)
+          const jsonMatch = content.text.match(/\{[\s\S]*\}/)
+          if (jsonMatch) {
+            return jsonMatch[0]
+          }
+          return content.text
+        }
+
+        throw new Error('Unexpected response format from Anthropic')
+      } catch (error) {
+        lastError = error as Error
+
+        // Don't retry on certain errors
+        if (error instanceof Error) {
+          const message = error.message.toLowerCase()
+          if (message.includes('invalid_api_key') || message.includes('authentication')) {
+            throw error // Don't retry auth errors
+          }
+        }
+
+        // Wait before retry (exponential backoff)
+        if (attempt < maxRetries - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt)))
+        }
+      }
+    }
+
+    throw lastError || new Error('LLM call failed after retries')
+  }
+
+  /**
+   * Heuristic-based complexity analysis
+   *
+   * Used as fallback when LLM is not available or fails.
+   * Analyzes keywords in task description to estimate complexity.
+   */
+  private analyzeWithHeuristics(taskDescription: string): string {
+    const taskLower = taskDescription.toLowerCase()
 
     let score = 30 // Default: simple task
     const factors: ComplexityFactors = {
@@ -240,7 +332,17 @@ Be objective and realistic in your assessment. Consider both the immediate task 
       factors.estimatedLOC = 5
       recommendedAgents.push('tester')
     }
-    // Priority 2: Architecture/design - check before generic keywords
+    // Priority 2: Bug fixes - check early as "fix" is very specific
+    else if (taskLower.includes('bug') || taskLower.includes('fix') || taskLower.includes('error') ||
+             taskLower.includes('memory leak') || taskLower.includes('crash')) {
+      score = 25
+      factors.filesAffected = 1
+      factors.estimatedLOC = 30
+      // Replace developer with debugger for bug fixes
+      recommendedAgents[0] = 'debugger'
+      recommendedAgents.push('tester')
+    }
+    // Priority 3: Architecture/design - check before generic keywords
     else if (taskLower.includes('architecture') || taskLower.includes('design system') ||
              (taskLower.includes('design') && taskLower.includes('implement')) ||
              (taskLower.includes('entire') && taskLower.includes('system'))) {
@@ -314,16 +416,6 @@ Be objective and realistic in your assessment. Consider both the immediate task 
       factors.estimatedLOC = 300
       recommendedAgents.push('architect', 'ui-developer', 'tester')
     }
-    // Priority 9: Bug fixes - simple
-    else if (taskLower.includes('bug') || taskLower.includes('fix') || taskLower.includes('error')) {
-      score = 25
-      factors.filesAffected = 1
-      factors.estimatedLOC = 30
-      // Replace developer with debugger for bug fixes
-      recommendedAgents[0] = 'debugger'
-      recommendedAgents.push('tester')
-    }
-
     // Post-processing: Add impact flags based on keywords (can be combined)
     if (taskLower.includes('database') || taskLower.includes('schema') || taskLower.includes('migration')) {
       factors.dataChanges = true
