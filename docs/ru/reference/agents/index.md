@@ -1,13 +1,13 @@
 # Каталог агентов
 
-AI1st включает **20 агентов**, организованных в три категории.
+AI1st включает **24 агента**, организованных в три категории.
 
 ## Обзор
 
 | Категория | Количество | Описание |
 |-----------|------------|----------|
 | [Core](#core-агенты) | 6 | Базовые агенты разработки |
-| [Specialized](#специализированные-агенты) | 14 | Специализированные роли |
+| [Specialized](#специализированные-агенты) | 18 | Специализированные роли |
 | [Validation](#агенты-валидации) | 0 | Агенты проверки и контроля |
 
 ## Core агенты
@@ -43,6 +43,10 @@ AI1st включает **20 агентов**, организованных в т
 | [🔀 Merge Coordinator](./specialized/merge-coordinator.md) | Parallel agent output consolidation specialist. Me... | Parallel Output Consolidation |
 | [👁️ Post-Deploy Monitor](./specialized/post-deploy-monitor.md) | Deployment health and smoke testing specialist. Mo... | Deployment Monitoring |
 | [📝 Requirements Validator](./specialized/requirements-validator.md) | Requirements quality assurance specialist. Validat... | Requirements Quality Assurance |
+| [📊 Analyst](./specialized/analyst.md) | Стратегический анализ, маркетинговые исследования, brainstorming, SWOT | Стратегический анализ |
+| [📝 Tech Writer](./specialized/tech-writer.md) | Специалист по документации: API docs, руководства, README | Техническая документация |
+| [🧪 Test Architect (TEA)](./specialized/test-architect.md) | Тест-стратегия, риск-тестирование, quality gates, релизная готовность | Тестирование и QA |
+| [👁️ Adversarial Reviewer](./specialized/adversarial-reviewer.md) | Критический code review, ОБЯЗАТЕЛЬНЫЙ поиск проблем | Code Review |
 
 ## Агенты валидации
 

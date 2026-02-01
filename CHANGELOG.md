@@ -7,7 +7,85 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.7.0] - 2026-02-XX
+## [3.0.0] - 2026-02-01
+
+### Added
+- **Dynamic Orchestrator v3.0**: Native TypeScript orchestration engine
+
+#### Core Features
+- **DynamicOrchestrator** (`getDynamicOrchestrator()`)
+  - Native TypeScript replacement for external orchestration dependencies
+  - Task routing, execution, and result aggregation
+  - Workflow execution with multi-task support
+  - Routing preview for cost estimation
+  - Comprehensive statistics tracking
+
+- **Intelligent Model Routing** (`TaskRouter`)
+  - Automatic model selection: Haiku (0-30), Sonnet (31-70), Opus (71-100)
+  - Task type overrides (quick_fix → Haiku, security_audit → Opus)
+  - Keyword detection for smart routing
+  - Configurable complexity thresholds
+  - Alternative model suggestions
+
+- **Dual Execution Modes** (`ExecutorFactory`)
+  - **Session Mode** ($0): Uses Claude subscription for development
+  - **API Mode** (pay-per-use): Direct Anthropic API for production
+  - **Auto Mode**: Intelligent fallback between modes
+  - Cost tracking and token usage metrics
+
+- **AgentExecutor** with reliability features
+  - Retry with exponential backoff
+  - Configurable timeouts
+  - Error categorization (retryable vs fatal)
+  - Circuit breaker integration
+
+#### Reliability
+- **Circuit Breaker** (`CircuitBreaker`, `getCircuitBreakerManager()`)
+  - State machine: CLOSED → OPEN → HALF_OPEN → CLOSED
+  - Configurable failure thresholds and recovery timeouts
+  - Event-based monitoring
+  - Named breakers for different services
+
+- **Zod Validation** (`getInputValidator()`, `withValidation()`)
+  - `TaskInputSchema` - Task input validation
+  - `AgentStateSchema` - Agent state validation
+  - `AgentOutputSchema` - Agent output validation
+  - Validation middleware for type-safe functions
+
+#### Configuration
+- **YAML-based Configuration**
+  - `agents.yaml` - Agent definitions with skills and model preferences
+  - `models.yaml` - Model tiers, routing rules, cost estimation
+  - `YamlConfigLoader` for TypeScript integration
+
+#### Documentation
+- `docs/en/concepts/dynamic-orchestrator.md`
+- `docs/en/guides/model-routing.md`
+- `docs/en/guides/execution-modes.md`
+- `docs/en/guides/reliability.md`
+- Russian translations in `docs/ru/`
+
+#### Tests
+- `dynamic-orchestrator.test.ts` (14 tests)
+- `task-router.test.ts` (22 tests)
+- `circuit-breaker.test.ts` (30 tests)
+- `validation.test.ts` (28 tests)
+- **Total: 94 new tests**
+
+### Changed
+- Replaced LangGraph StateGraph with native DynamicOrchestrator
+- Updated README.md with v3.0 features and examples
+- Extended exports in `index.ts`
+
+### Removed
+- `orchestrator.ts` - LangGraph-based orchestrator (replaced by DynamicOrchestrator)
+
+### Technical
+- Zero TypeScript errors
+- Build output: core 1.35MB, CLI 10.15KB
+- All 94 new tests passing
+
+## [0.7.0] - 2026-02-01
 
 ### Added
 - **BMAD Integration**: Full integration of BMAD Method features

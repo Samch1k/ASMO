@@ -1,13 +1,13 @@
 # Agent Catalog
 
-AI1st includes **20 agents** organized into three categories.
+AI1st includes **24 agents** organized into three categories.
 
 ## Overview
 
 | Category | Count | Description |
 |----------|-------|-------------|
 | [Core](#core-agents) | 6 | Essential development agents |
-| [Specialized](#specialized-agents) | 14 | Domain-specific roles |
+| [Specialized](#specialized-agents) | 18 | Domain-specific roles |
 | [Validation](#validation-agents) | 0 | Quality and control agents |
 
 ## Core Agents
@@ -43,6 +43,10 @@ Agents for specific domains and tasks.
 | [🔀 Merge Coordinator](./specialized/merge-coordinator.md) | Parallel agent output consolidation specialist. Me... | Parallel Output Consolidation |
 | [👁️ Post-Deploy Monitor](./specialized/post-deploy-monitor.md) | Deployment health and smoke testing specialist. Mo... | Deployment Monitoring |
 | [📝 Requirements Validator](./specialized/requirements-validator.md) | Requirements quality assurance specialist. Validat... | Requirements Quality Assurance |
+| [📊 Analyst](./specialized/analyst.md) | Strategic analysis, market research, brainstorming, SWOT analysis | Strategic Analysis |
+| [📝 Tech Writer](./specialized/tech-writer.md) | Documentation specialist for API docs, user guides, READMEs | Technical Documentation |
+| [🧪 Test Architect (TEA)](./specialized/test-architect.md) | Test strategy, risk-based testing, quality gates, release readiness | Testing & QA |
+| [👁️ Adversarial Reviewer](./specialized/adversarial-reviewer.md) | Critical code review that MUST find issues, escalating scrutiny | Code Review |
 
 ## Validation Agents
 
