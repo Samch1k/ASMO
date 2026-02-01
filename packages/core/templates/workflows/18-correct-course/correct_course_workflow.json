@@ -1,0 +1,86 @@
+{
+  "id": "correct_course_workflow",
+  "name": "Correct Course Workflow",
+  "description": "Handle mid-sprint scope changes, reprioritization, and course corrections based on new information or blockers.",
+  "trigger_condition": {
+    "keywords": [
+      "correct course",
+      "scope change",
+      "reprioritize",
+      "blocker",
+      "mid-sprint change",
+      "pivot",
+      "изменение скопа",
+      "корректировка"
+    ],
+    "task_types": [
+      "planning",
+      "coordination",
+      "management"
+    ],
+    "required_skills": [
+      "sprint_planning",
+      "coordination",
+      "risk_management"
+    ]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "project-manager",
+      "phase": "impact_assessment",
+      "description": "Assess impact of the change on current sprint and project",
+      "deliverables": [
+        "impact_analysis"
+      ],
+      "exit_criteria": "Impact on timeline, scope, and resources documented",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "product-owner",
+      "phase": "prioritization",
+      "description": "Re-evaluate priorities based on new information",
+      "deliverables": [
+        "updated_priorities"
+      ],
+      "exit_criteria": "Priorities adjusted based on business value",
+      "timeout": "15m"
+    },
+    {
+      "order": 3,
+      "role_id": "scrum-master",
+      "phase": "sprint_adjustment",
+      "description": "Adjust sprint backlog and commitments",
+      "deliverables": [
+        "adjusted_sprint_backlog"
+      ],
+      "exit_criteria": "Sprint backlog updated to reflect changes",
+      "timeout": "15m"
+    },
+    {
+      "order": 4,
+      "role_id": "architect",
+      "phase": "technical_impact",
+      "description": "Assess technical implications of the change",
+      "deliverables": [
+        "technical_impact_assessment"
+      ],
+      "exit_criteria": "Technical risks and changes identified",
+      "timeout": "20m"
+    },
+    {
+      "order": 5,
+      "role_id": "project-manager",
+      "phase": "communication",
+      "description": "Document decisions and communicate to stakeholders",
+      "deliverables": [
+        "change_communication"
+      ],
+      "exit_criteria": "All stakeholders informed of changes",
+      "timeout": "10m"
+    }
+  ],
+  "estimated_time": "1h 20m",
+  "success_criteria": "Course correction documented and communicated with adjusted plan"
+}

@@ -9,10 +9,13 @@ AI1st is built around four key concepts:
 | Concept | Description | Learn More |
 |---------|-------------|------------|
 | [Architecture](./architecture.md) | System design and components | Technical deep-dive |
-| [Agents](./agents.md) | Specialized AI roles | 24 available agents |
-| [Workflows](./workflows.md) | Task execution pipelines | 10 production workflows |
+| [Agents](./agents.md) | Specialized AI roles | 28 available agents |
+| [Workflows](./workflows.md) | Task execution pipelines | 28 production workflows |
 | [Skills](./skills.md) | Agent capabilities | 85 skills catalog |
 | [Complexity](./complexity.md) | Task analysis system | 5 complexity levels |
+| [Adversarial Review](./adversarial-review.md) | Critical code review | MUST find issues |
+| [Elicitation](./elicitation.md) | Advanced analysis techniques | 5 techniques |
+| [Context Cascade](./context-cascade.md) | Cascading context flow | Document dependencies |
 
 ## The AI1st Philosophy
 
@@ -61,7 +64,7 @@ AI1st doesn't use one-size-fits-all approaches. Instead:
 │                                                                  │
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │                    Agent Registry                         │   │
-│  │  24 specialized agents: Architect, Developer, Tester...  │   │
+│  │  28 specialized agents: Architect, Developer, Tester...  │   │
 │  └──────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
 ```

@@ -1,0 +1,98 @@
+{
+  "id": "retrospective_workflow",
+  "name": "Retrospective Workflow",
+  "description": "Post-epic or post-sprint retrospective to identify lessons learned, improvements, and action items.",
+  "trigger_condition": {
+    "keywords": [
+      "retrospective",
+      "retro",
+      "lessons learned",
+      "post-mortem",
+      "sprint review",
+      "epic complete",
+      "ретроспектива",
+      "уроки"
+    ],
+    "task_types": [
+      "retrospective",
+      "team_facilitation",
+      "agile_management"
+    ],
+    "required_skills": [
+      "retrospective_facilitation",
+      "agile_ceremonies",
+      "team_coaching"
+    ]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "scrum-master",
+      "phase": "data_gathering",
+      "description": "Gather metrics and data from completed work",
+      "deliverables": [
+        "sprint_metrics",
+        "completion_data"
+      ],
+      "exit_criteria": "All relevant metrics collected",
+      "timeout": "15m"
+    },
+    {
+      "order": 2,
+      "role_id": "scrum-master",
+      "phase": "what_went_well",
+      "description": "Identify successes and positive practices",
+      "deliverables": [
+        "successes_list"
+      ],
+      "exit_criteria": "Positive patterns documented",
+      "timeout": "15m"
+    },
+    {
+      "order": 3,
+      "role_id": "scrum-master",
+      "phase": "what_didnt_go_well",
+      "description": "Identify problems, blockers, and pain points",
+      "deliverables": [
+        "problems_list"
+      ],
+      "exit_criteria": "Issues and pain points documented",
+      "timeout": "15m"
+    },
+    {
+      "order": 4,
+      "role_id": "scrum-master",
+      "phase": "root_cause_analysis",
+      "description": "Analyze root causes of key issues",
+      "deliverables": [
+        "root_cause_analysis"
+      ],
+      "exit_criteria": "Root causes identified for top issues",
+      "timeout": "20m"
+    },
+    {
+      "order": 5,
+      "role_id": "scrum-master",
+      "phase": "action_items",
+      "description": "Define actionable improvements with owners",
+      "deliverables": [
+        "action_items"
+      ],
+      "exit_criteria": "Each action item has owner and deadline",
+      "timeout": "15m"
+    },
+    {
+      "order": 6,
+      "role_id": "tech-writer",
+      "phase": "documentation",
+      "description": "Document retrospective findings",
+      "deliverables": [
+        "retrospective_report"
+      ],
+      "exit_criteria": "Retrospective documented for future reference",
+      "timeout": "15m"
+    }
+  ],
+  "estimated_time": "1h 35m",
+  "success_criteria": "Actionable improvements identified with owners and deadlines"
+}

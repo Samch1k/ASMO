@@ -1,0 +1,85 @@
+{
+  "id": "tea_test_maintenance_workflow",
+  "name": "TEA Test Maintenance Workflow",
+  "description": "Maintain and optimize test suite health.",
+  "trigger_condition": {
+    "keywords": [
+      "test maintenance",
+      "flaky tests",
+      "test cleanup",
+      "test optimization",
+      "обслуживание тестов"
+    ],
+    "task_types": [
+      "test_maintenance",
+      "optimization",
+      "quality_assurance"
+    ],
+    "required_skills": [
+      "test_maintenance",
+      "test_automation"
+    ]
+  },
+  "context_dependencies": [
+    "test-strategy"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "test-architect",
+      "phase": "health_assessment",
+      "description": "Assess test suite health",
+      "deliverables": [
+        "health_report"
+      ],
+      "exit_criteria": "Health metrics collected",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "test-architect",
+      "phase": "flaky_analysis",
+      "description": "Identify and analyze flaky tests",
+      "deliverables": [
+        "flaky_test_list"
+      ],
+      "exit_criteria": "Flaky tests identified",
+      "timeout": "15m"
+    },
+    {
+      "order": 3,
+      "role_id": "tester",
+      "phase": "cleanup",
+      "description": "Remove or fix problematic tests",
+      "deliverables": [
+        "cleanup_report"
+      ],
+      "exit_criteria": "Problematic tests addressed",
+      "timeout": "30m"
+    },
+    {
+      "order": 4,
+      "role_id": "tester",
+      "phase": "optimization",
+      "description": "Optimize test execution time",
+      "deliverables": [
+        "optimization_changes"
+      ],
+      "exit_criteria": "Execution time improved",
+      "timeout": "25m"
+    },
+    {
+      "order": 5,
+      "role_id": "test-architect",
+      "phase": "maintenance_plan",
+      "description": "Create ongoing maintenance schedule",
+      "deliverables": [
+        "maintenance_plan"
+      ],
+      "exit_criteria": "Maintenance cadence established",
+      "timeout": "15m"
+    }
+  ],
+  "estimated_time": "1h 45m",
+  "success_criteria": "Test suite health improved with maintenance plan"
+}

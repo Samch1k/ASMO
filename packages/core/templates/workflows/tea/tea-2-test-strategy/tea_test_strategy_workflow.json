@@ -1,0 +1,98 @@
+{
+  "id": "tea_test_strategy_workflow",
+  "name": "TEA Test Strategy Workflow",
+  "description": "Create comprehensive test strategy including test types, coverage goals, and execution approach.",
+  "trigger_condition": {
+    "keywords": [
+      "test strategy",
+      "testing strategy",
+      "test plan",
+      "quality strategy",
+      "стратегия тестирования"
+    ],
+    "task_types": [
+      "test_strategy",
+      "quality_assurance",
+      "planning"
+    ],
+    "required_skills": [
+      "test_strategy",
+      "quality_gates"
+    ]
+  },
+  "context_dependencies": [
+    "prd",
+    "architecture",
+    "epics"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "test-architect",
+      "phase": "scope_definition",
+      "description": "Define test scope and objectives",
+      "deliverables": [
+        "test_scope"
+      ],
+      "exit_criteria": "Clear scope with in/out boundaries",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "test-architect",
+      "phase": "test_types",
+      "description": "Define test types and coverage targets",
+      "deliverables": [
+        "test_type_matrix"
+      ],
+      "exit_criteria": "Test types defined with coverage goals",
+      "timeout": "20m"
+    },
+    {
+      "order": 3,
+      "role_id": "test-architect",
+      "phase": "environment",
+      "description": "Define test environment requirements",
+      "deliverables": [
+        "environment_requirements"
+      ],
+      "exit_criteria": "Environment needs documented",
+      "timeout": "15m"
+    },
+    {
+      "order": 4,
+      "role_id": "test-architect",
+      "phase": "data_strategy",
+      "description": "Define test data strategy",
+      "deliverables": [
+        "test_data_strategy"
+      ],
+      "exit_criteria": "Test data approach defined",
+      "timeout": "15m"
+    },
+    {
+      "order": 5,
+      "role_id": "test-architect",
+      "phase": "metrics",
+      "description": "Define quality metrics and KPIs",
+      "deliverables": [
+        "quality_metrics"
+      ],
+      "exit_criteria": "Measurable quality metrics defined",
+      "timeout": "15m"
+    },
+    {
+      "order": 6,
+      "role_id": "tech-writer",
+      "phase": "documentation",
+      "description": "Document the test strategy",
+      "deliverables": [
+        "test_strategy_document"
+      ],
+      "exit_criteria": "Complete test strategy document",
+      "timeout": "20m"
+    }
+  ],
+  "estimated_time": "1h 45m",
+  "success_criteria": "Complete test strategy ready for implementation"
+}

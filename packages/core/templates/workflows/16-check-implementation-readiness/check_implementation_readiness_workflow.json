@@ -1,0 +1,91 @@
+{
+  "id": "check_implementation_readiness_workflow",
+  "name": "Check Implementation Readiness Workflow",
+  "description": "Validate that all planning artifacts are coherent and complete before implementation begins.",
+  "trigger_condition": {
+    "keywords": [
+      "implementation readiness",
+      "ready to implement",
+      "planning complete",
+      "readiness check",
+      "go/no-go",
+      "готовность к реализации"
+    ],
+    "task_types": [
+      "validation",
+      "planning",
+      "gate"
+    ],
+    "required_skills": [
+      "requirements",
+      "architecture",
+      "validation"
+    ]
+  },
+  "context_dependencies": [
+    "product-brief",
+    "prd",
+    "architecture",
+    "epics"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "requirements-validator",
+      "phase": "requirements_check",
+      "description": "Verify all requirements are complete and testable",
+      "deliverables": [
+        "requirements_checklist"
+      ],
+      "exit_criteria": "All requirements validated",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "architect",
+      "phase": "architecture_check",
+      "description": "Verify architecture addresses all requirements",
+      "deliverables": [
+        "architecture_checklist"
+      ],
+      "exit_criteria": "Architecture covers all requirements",
+      "timeout": "20m"
+    },
+    {
+      "order": 3,
+      "role_id": "design-validator",
+      "phase": "design_check",
+      "description": "Verify UX designs align with requirements",
+      "deliverables": [
+        "design_checklist"
+      ],
+      "exit_criteria": "Designs align with all user stories",
+      "timeout": "15m"
+    },
+    {
+      "order": 4,
+      "role_id": "test-architect",
+      "phase": "testability_check",
+      "description": "Verify all acceptance criteria are testable",
+      "deliverables": [
+        "testability_checklist"
+      ],
+      "exit_criteria": "All acceptance criteria can be automated",
+      "timeout": "15m"
+    },
+    {
+      "order": 5,
+      "role_id": "project-manager",
+      "phase": "readiness_assessment",
+      "description": "Compile readiness report and make go/no-go decision",
+      "deliverables": [
+        "readiness_report",
+        "go_no_go_decision"
+      ],
+      "exit_criteria": "Clear go/no-go decision with any blockers identified",
+      "timeout": "15m"
+    }
+  ],
+  "estimated_time": "1h 25m",
+  "success_criteria": "Implementation readiness confirmed or blockers identified"
+}

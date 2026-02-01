@@ -1,0 +1,90 @@
+{
+  "id": "create_epics_and_stories_workflow",
+  "name": "Create Epics and Stories Workflow",
+  "description": "Break down PRD and architecture into epics and implementable user stories.",
+  "trigger_condition": {
+    "keywords": [
+      "epics",
+      "user stories",
+      "backlog",
+      "story breakdown",
+      "work breakdown",
+      "эпики",
+      "пользовательские истории"
+    ],
+    "task_types": [
+      "planning",
+      "requirements",
+      "backlog_management"
+    ],
+    "required_skills": [
+      "user_stories",
+      "requirements",
+      "backlog_management"
+    ]
+  },
+  "context_dependencies": [
+    "prd",
+    "architecture"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "business-analyst",
+      "phase": "epic_identification",
+      "description": "Identify epics from PRD features and architecture components",
+      "deliverables": [
+        "epic_list"
+      ],
+      "exit_criteria": "All major features organized into epics",
+      "timeout": "25m"
+    },
+    {
+      "order": 2,
+      "role_id": "business-analyst",
+      "phase": "story_breakdown",
+      "description": "Break down epics into implementable user stories",
+      "deliverables": [
+        "user_stories"
+      ],
+      "exit_criteria": "Each epic has 3-8 implementable stories",
+      "timeout": "35m"
+    },
+    {
+      "order": 3,
+      "role_id": "scrum-master",
+      "phase": "estimation",
+      "description": "Estimate story points and identify dependencies",
+      "deliverables": [
+        "estimated_stories",
+        "dependency_map"
+      ],
+      "exit_criteria": "All stories estimated and dependencies identified",
+      "timeout": "25m"
+    },
+    {
+      "order": 4,
+      "role_id": "project-manager",
+      "phase": "prioritization",
+      "description": "Prioritize stories and create implementation order",
+      "deliverables": [
+        "prioritized_backlog"
+      ],
+      "exit_criteria": "Backlog prioritized and ready for sprint planning",
+      "timeout": "20m"
+    },
+    {
+      "order": 5,
+      "role_id": "requirements-validator",
+      "phase": "validation",
+      "description": "Validate stories meet INVEST criteria",
+      "deliverables": [
+        "validation_report"
+      ],
+      "exit_criteria": "All stories pass INVEST validation",
+      "timeout": "15m"
+    }
+  ],
+  "estimated_time": "2h",
+  "success_criteria": "Complete prioritized backlog ready for sprint planning"
+}

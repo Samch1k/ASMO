@@ -1,0 +1,77 @@
+{
+  "id": "create_product_brief_workflow",
+  "name": "Create Product Brief Workflow",
+  "description": "Create a strategic product brief document with vision, problem statement, target users, and success metrics.",
+  "trigger_condition": {
+    "keywords": [
+      "product brief",
+      "product-brief",
+      "strategic vision",
+      "product vision",
+      "new product",
+      "feature brief",
+      "краткое описание",
+      "видение продукта"
+    ],
+    "task_types": [
+      "product",
+      "strategy",
+      "planning"
+    ],
+    "required_skills": [
+      "analysis",
+      "research",
+      "strategic_planning"
+    ]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "analyst",
+      "phase": "research",
+      "description": "Conduct market research and competitive analysis",
+      "deliverables": [
+        "market_analysis",
+        "competitive_analysis"
+      ],
+      "exit_criteria": "Market context and competitive landscape documented",
+      "timeout": "30m"
+    },
+    {
+      "order": 2,
+      "role_id": "analyst",
+      "phase": "brainstorming",
+      "description": "Brainstorm product ideas and value propositions",
+      "deliverables": [
+        "brainstorm_results",
+        "value_propositions"
+      ],
+      "exit_criteria": "Key ideas and value propositions identified",
+      "timeout": "25m"
+    },
+    {
+      "order": 3,
+      "role_id": "analyst",
+      "phase": "brief_creation",
+      "description": "Create the product brief document",
+      "deliverables": [
+        "product_brief"
+      ],
+      "exit_criteria": "Product brief with vision, problem, users, and metrics complete",
+      "timeout": "30m"
+    },
+    {
+      "order": 4,
+      "role_id": "product-owner",
+      "phase": "validation",
+      "description": "Validate and refine the product brief",
+      "deliverables": [
+        "validated_brief"
+      ],
+      "exit_criteria": "Product brief approved by product owner",
+      "timeout": "20m"
+    }
+  ],
+  "estimated_time": "1h 45m",
+  "success_criteria": "Complete product brief ready for PRD creation"
+}

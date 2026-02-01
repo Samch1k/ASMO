@@ -12,6 +12,14 @@ Practical how-to guides for using AI1st effectively.
 | [Party Mode](./party-mode.md) | Multi-agent collaborative sessions |
 | [YOLO Mode](./yolo-mode.md) | Automatic approval bypass for simple tasks |
 
+### BMAD Features
+
+| Guide | Description |
+|-------|-------------|
+| [Document Registry](./document-registry.md) | Centralized document storage with versioning |
+| [Document Sharding](./document-sharding.md) | Split large documents for AI processing |
+| [TEA Testing](./tea-testing.md) | Test Architecture module with 8 workflows |
+
 ### Customization
 
 | Guide | Description |

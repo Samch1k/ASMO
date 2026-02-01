@@ -1,0 +1,80 @@
+{
+  "id": "adversarial_review_workflow",
+  "name": "Adversarial Review Workflow",
+  "description": "BMAD adversarial code review that MUST find issues. Implements escalating scrutiny with multiple review passes.",
+  "trigger_condition": {
+    "keywords": [
+      "adversarial review",
+      "critical review",
+      "deep review",
+      "find issues",
+      "thorough review",
+      "security review",
+      "критический анализ"
+    ],
+    "task_types": [
+      "code_review",
+      "security_review",
+      "adversarial_review"
+    ],
+    "required_skills": [
+      "adversarial_review",
+      "code_review"
+    ]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "adversarial-reviewer",
+      "phase": "first_pass",
+      "description": "Initial adversarial review pass - look for obvious and non-obvious issues",
+      "deliverables": [
+        "issue_list",
+        "review_report"
+      ],
+      "exit_criteria": "At least 1 issue found OR escalate to second pass",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "adversarial-reviewer",
+      "phase": "escalated_pass",
+      "description": "Escalated review with increased scrutiny if first pass found no issues",
+      "condition": "previous_step.issue_count == 0",
+      "deliverables": [
+        "issue_list",
+        "review_report"
+      ],
+      "exit_criteria": "At least 1 issue or suggestion found OR escalate to final pass",
+      "timeout": "25m"
+    },
+    {
+      "order": 3,
+      "role_id": "adversarial-reviewer",
+      "phase": "final_pass",
+      "description": "Final maximum scrutiny pass - find at least suggestions for improvement",
+      "condition": "previous_step.issue_count == 0",
+      "deliverables": [
+        "issue_list",
+        "suggestions",
+        "final_report"
+      ],
+      "exit_criteria": "Complete review with findings or no-issues warning",
+      "timeout": "30m"
+    },
+    {
+      "order": 4,
+      "role_id": "developer",
+      "phase": "issue_resolution",
+      "description": "Address critical and major issues identified in review",
+      "condition": "has_blocking_issues",
+      "deliverables": [
+        "code_fixes"
+      ],
+      "exit_criteria": "All critical and major issues addressed",
+      "timeout": "60m"
+    }
+  ],
+  "estimated_time": "1h 30m",
+  "success_criteria": "Review complete with issues addressed or documented warning for no-issues case"
+}

@@ -7,17 +7,91 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-02-XX
+
 ### Added
-- Comprehensive bilingual documentation (EN/RU)
-- Documentation auto-generation scripts from JSON configs
-- Agent catalog documentation (24 agents)
-- Workflow catalog documentation (10 workflows)
-- Skills catalog documentation (85 skills)
+- **BMAD Integration**: Full integration of BMAD Method features
+
+#### Core Concepts
+- **Adversarial Review** (`AdversarialReviewSession`)
+  - Mandatory issue finding in code review
+  - 3-level escalation with increasing scrutiny
+  - Configurable minimum issues requirement
+- **Advanced Elicitation** (`ElicitationManager`)
+  - 5 techniques: First Principles, Red Team/Blue Team, Pre-mortem, Socratic, Devil's Advocate
+  - Multi-technique application with insight deduplication
+  - Configurable per-workflow application
+- **Context Cascade** (`ContextCascade`)
+  - Cascading context flow: Product Brief → PRD → Architecture → Epics → Stories
+  - Automatic dependency resolution
+  - Context chain building for workflows
+- **Document Registry** (`DocumentRegistry`)
+  - Centralized document storage and retrieval
+  - Version tracking and metadata management
+  - File system persistence in `_ai1st-output/`
+- **Document Sharding** (`DocumentSharder`)
+  - Split large markdown files by headings
+  - Configurable token limits per file
+  - Automatic index generation with cross-references
+
+#### New Agents (4)
+- `AnalystAgent` - Strategic analysis, market research, brainstorming, SWOT analysis
+- `TechWriterAgent` - Documentation specialist for API docs, user guides, READMEs
+- `TestArchitectAgent` (TEA) - Test strategy, risk-based testing, quality gates
+- `AdversarialReviewerAgent` - Critical code review that MUST find issues
+
+#### New Workflows (18)
+- **Planning Workflows (7)**:
+  - `11-adversarial-review` - Critical code review with mandatory issue finding
+  - `12-create-product-brief` - Strategic product vision document
+  - `13-create-prd` - Product Requirements Document generation
+  - `14-create-ux-design` - UX specifications and wireframes
+  - `15-create-epics-and-stories` - Break down into work units
+  - `16-check-implementation-readiness` - Gate validation
+  - `17-sprint-planning` - Sprint initialization and task allocation
+- **Implementation Workflows (3)**:
+  - `18-correct-course` - Mid-sprint scope adjustments
+  - `19-retrospective` - Post-epic lessons learned
+  - `20-automate-tests` - Generate test suites for existing features
+- **TEA Testing Workflows (8)**:
+  - `tea-1-risk-assessment` - Identify testing risks and priorities
+  - `tea-2-test-strategy` - Define comprehensive test approach
+  - `tea-3-test-design` - Design test cases and scenarios
+  - `tea-4-test-automation` - Automation framework and scripts
+  - `tea-5-quality-gates` - Define quality criteria and gates
+  - `tea-6-release-readiness` - Validate release criteria
+  - `tea-7-regression-analysis` - Analyze regression impact
+  - `tea-8-test-maintenance` - Test suite maintenance and optimization
+
+#### Configuration
+- `adversarialReview`: enabled, minIssuesRequired, maxRetries
+- `elicitation`: enabled, defaultTechniques, applyToWorkflows, maxInsightsPerTechnique
+- `contextCascade`: enabled, outputDir, autoLoad
+- `documentSharding`: enabled, maxTokensPerFile, splitLevel, minTokensPerSection
+- `tea`: enabled, qualityGateThreshold
+
+#### Tests
+- `adversarial-review.test.ts` - Adversarial review session tests
+- `context-cascade.test.ts` - Context cascade and document registry tests
+- `elicitation.test.ts` - Elicitation manager and techniques tests
+- `document-sharding.test.ts` - Document sharding utility tests
+- `bmad-agents.test.ts` - New agent instantiation and capability tests
+
+### Changed
+- Updated agent count from 24 to 28
+- Updated workflow count from 10 to 28
+- Enhanced `specialized-roles.json` with 4 new role definitions
+- Extended `OrchestrationConfig` with 5 new configuration sections
 
 ## [0.6.0] - 2026-01-XX
 
 ### Added
 - **BMAD Phase 6**: Documentation & Templates
+- Comprehensive bilingual documentation (EN/RU)
+- Documentation auto-generation scripts from JSON configs
+- Agent catalog documentation (24 agents)
+- Workflow catalog documentation (10 workflows)
+- Skills catalog documentation (85 skills)
 - Full agent instruction files for all 24 agents
 - Workflow checklists for all 10 workflows
 - Project templates and configuration examples

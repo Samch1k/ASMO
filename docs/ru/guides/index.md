@@ -12,6 +12,14 @@
 | [Party Mode](./party-mode.md) | Многоагентные коллаборативные сессии |
 | [YOLO Mode](./yolo-mode.md) | Автоматический bypass утверждений |
 
+### BMAD Фичи
+
+| Руководство | Описание |
+|-------------|----------|
+| [Document Registry](./document-registry.md) | Централизованное хранилище документов с версионированием |
+| [Document Sharding](./document-sharding.md) | Разбивка больших документов для AI |
+| [TEA Testing](./tea-testing.md) | Модуль Test Architecture с 8 workflows |
+
 ### Кастомизация
 
 | Руководство | Описание |

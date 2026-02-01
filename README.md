@@ -13,13 +13,18 @@ AI1st is an autonomous AI development orchestration system that coordinates mult
 
 ## ✨ Key Features
 
-- 🤖 **24 Specialized Agents** — Architect, Developer, Tester, Security, UX, DevOps, and more
-- 🔄 **10 Production Workflows** — From quick fixes to enterprise architecture
+- 🤖 **28 Specialized Agents** — Architect, Developer, Tester, Security, UX, DevOps, Analyst, Tech Writer, and more
+- 🔄 **28 Production Workflows** — From quick fixes to enterprise architecture + TEA testing workflows
 - 🎯 **85 Skills Catalog** — Automatic skill matching across 12 categories
 - 📊 **Complexity Analysis** — 5-level task analysis with intelligent workflow selection
 - ⚡ **YOLO Mode** — Automatic approval bypass for trivial tasks
 - 🎉 **Party Mode** — Multi-agent collaboration with consensus building
 - ⚙️ **3-Tier Configuration** — Defaults → File → Environment
+- 🔴 **Adversarial Review** — Critical code review that MUST find issues
+- 🧠 **Advanced Elicitation** — 5 techniques: First Principles, Red Team/Blue Team, Pre-mortem, Socratic, Devil's Advocate
+- 📄 **Context Cascade** — Automatic context flow between workflow phases
+- 📚 **Document Sharding** — Split large documents into manageable sections
+- 🧪 **TEA Module** — 8 specialized testing workflows (Test Architect)
 
 ## 📦 Quick Install
 
@@ -110,18 +115,18 @@ ai1st-orchestration/
 └── turbo.json          # Turbo build config
 ```
 
-## 🎯 Agents (24)
+## 🎯 Agents (28)
 
 | Category | Agents | Description |
 |----------|--------|-------------|
 | **Core** | 6 | Architect, Developer, Tester, UI Developer, UX Designer, DevOps |
-| **Specialized** | 10 | Security, Performance, Database, API, Documentation, etc. |
+| **Specialized** | 14 | Security, Performance, Database, API, Analyst, Tech Writer, Test Architect, Adversarial Reviewer, etc. |
 | **Validation** | 5 | Code Reviewer, Design Validator, etc. |
 | **Business** | 3 | Product Owner, Business Analyst, Scrum Master |
 
 [View full catalog →](./docs/en/reference/agents/index.md)
 
-## 📋 Workflows (10)
+## 📋 Workflows (28)
 
 | Level | Workflows | Complexity Score |
 |-------|-----------|------------------|
@@ -129,6 +134,9 @@ ai1st-orchestration/
 | Standard | Feature Dev, Refactoring, Performance | 41-60 |
 | Complex | Security Audit, API Design, Database Migration | 61-80 |
 | Enterprise | Architecture Design | 81-100 |
+| **BMAD Planning** | Product Brief, PRD, UX Design, Epics & Stories, Sprint Planning | N/A |
+| **BMAD Implementation** | Correct Course, Retrospective, Automate Tests | N/A |
+| **TEA Testing** | 8 workflows: Risk Assessment, Test Strategy, Quality Gates, Release Readiness, etc. | N/A |
 
 [View full catalog →](./docs/en/reference/workflows/index.md)
 

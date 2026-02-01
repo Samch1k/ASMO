@@ -185,5 +185,57 @@ export const DEFAULT_ORCHESTRATION_CONFIG: OrchestrationConfig = {
     autoSelect: true,
     confidenceThreshold: 0.7,
     maxAlternatives: 2
+  },
+
+  /**
+   * Adversarial Review Configuration (BMAD Integration)
+   */
+  adversarialReview: {
+    enabled: true,
+    minIssuesRequired: 1,
+    maxRetries: 3,
+    blockingSeverities: ['critical', 'major']
+  },
+
+  /**
+   * Elicitation Configuration (BMAD Integration)
+   */
+  elicitation: {
+    enabled: true,
+    defaultTechniques: ['first-principles', 'pre-mortem'],
+    applyToWorkflows: ['create-prd', 'create-architecture'],
+    maxInsightsPerTechnique: 10
+  },
+
+  /**
+   * Context Cascade Configuration (BMAD Integration)
+   */
+  contextCascade: {
+    enabled: true,
+    outputDir: '_ai1st-output',
+    autoLoad: true
+  },
+
+  /**
+   * Document Sharding Configuration (BMAD Integration)
+   */
+  documentSharding: {
+    enabled: true,
+    maxTokensPerFile: 10000,
+    splitLevel: 2,
+    minTokensPerSection: 500
+  },
+
+  /**
+   * TEA Module Configuration (BMAD Integration)
+   */
+  tea: {
+    enabled: false, // Opt-in
+    qualityGateThreshold: 80,
+    coverageTargets: {
+      unit: 80,
+      integration: 70,
+      e2e: 50
+    }
   }
 }

@@ -1,0 +1,97 @@
+{
+  "id": "automate_tests_workflow",
+  "name": "Automate Tests Workflow",
+  "description": "Generate automated test suites for existing features that lack coverage.",
+  "trigger_condition": {
+    "keywords": [
+      "automate tests",
+      "generate tests",
+      "add tests",
+      "test coverage",
+      "missing tests",
+      "автоматизация тестов",
+      "генерация тестов"
+    ],
+    "task_types": [
+      "testing",
+      "test_automation",
+      "qa"
+    ],
+    "required_skills": [
+      "test_automation",
+      "code_writing",
+      "testing"
+    ]
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "test-architect",
+      "phase": "coverage_analysis",
+      "description": "Analyze current test coverage and identify gaps",
+      "deliverables": [
+        "coverage_report",
+        "gap_analysis"
+      ],
+      "exit_criteria": "Coverage gaps identified and prioritized",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "test-architect",
+      "phase": "test_strategy",
+      "description": "Define test strategy for uncovered areas",
+      "deliverables": [
+        "test_strategy"
+      ],
+      "exit_criteria": "Test types and approaches defined for each gap",
+      "timeout": "15m"
+    },
+    {
+      "order": 3,
+      "role_id": "tester",
+      "phase": "unit_tests",
+      "description": "Generate unit tests for uncovered functions",
+      "deliverables": [
+        "unit_tests"
+      ],
+      "exit_criteria": "Unit tests created for priority functions",
+      "timeout": "40m"
+    },
+    {
+      "order": 4,
+      "role_id": "tester",
+      "phase": "integration_tests",
+      "description": "Generate integration tests for uncovered flows",
+      "deliverables": [
+        "integration_tests"
+      ],
+      "exit_criteria": "Integration tests created for key flows",
+      "timeout": "40m"
+    },
+    {
+      "order": 5,
+      "role_id": "tester",
+      "phase": "e2e_tests",
+      "description": "Generate E2E tests for critical user journeys",
+      "deliverables": [
+        "e2e_tests"
+      ],
+      "exit_criteria": "E2E tests created for critical paths",
+      "timeout": "45m"
+    },
+    {
+      "order": 6,
+      "role_id": "code-reviewer",
+      "phase": "test_review",
+      "description": "Review generated tests for quality and coverage",
+      "deliverables": [
+        "test_review_report"
+      ],
+      "exit_criteria": "Tests reviewed and approved",
+      "timeout": "20m"
+    }
+  ],
+  "estimated_time": "3h",
+  "success_criteria": "Test coverage improved with quality automated tests"
+}

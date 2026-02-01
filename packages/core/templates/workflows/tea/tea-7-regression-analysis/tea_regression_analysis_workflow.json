@@ -1,0 +1,86 @@
+{
+  "id": "tea_regression_analysis_workflow",
+  "name": "TEA Regression Analysis Workflow",
+  "description": "Analyze changes and select appropriate regression tests.",
+  "trigger_condition": {
+    "keywords": [
+      "regression",
+      "regression analysis",
+      "impact analysis",
+      "change impact",
+      "регрессия"
+    ],
+    "task_types": [
+      "regression_analysis",
+      "testing",
+      "quality_assurance"
+    ],
+    "required_skills": [
+      "regression_analysis",
+      "test_strategy"
+    ]
+  },
+  "context_dependencies": [
+    "test-strategy",
+    "architecture"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "test-architect",
+      "phase": "change_analysis",
+      "description": "Analyze code changes and affected areas",
+      "deliverables": [
+        "change_impact"
+      ],
+      "exit_criteria": "Affected areas identified",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "test-architect",
+      "phase": "test_selection",
+      "description": "Select regression tests based on impact",
+      "deliverables": [
+        "selected_tests"
+      ],
+      "exit_criteria": "Regression suite selected",
+      "timeout": "15m"
+    },
+    {
+      "order": 3,
+      "role_id": "test-architect",
+      "phase": "risk_assessment",
+      "description": "Assess regression risk",
+      "deliverables": [
+        "regression_risk"
+      ],
+      "exit_criteria": "Risk areas prioritized",
+      "timeout": "15m"
+    },
+    {
+      "order": 4,
+      "role_id": "tester",
+      "phase": "execution",
+      "description": "Execute regression tests",
+      "deliverables": [
+        "test_results"
+      ],
+      "exit_criteria": "Regression tests completed",
+      "timeout": "45m"
+    },
+    {
+      "order": 5,
+      "role_id": "test-architect",
+      "phase": "analysis",
+      "description": "Analyze results and report",
+      "deliverables": [
+        "regression_report"
+      ],
+      "exit_criteria": "Results analyzed and documented",
+      "timeout": "15m"
+    }
+  ],
+  "estimated_time": "1h 50m",
+  "success_criteria": "Regression analysis complete with clear results"
+}

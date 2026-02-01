@@ -1,0 +1,91 @@
+{
+  "id": "create_ux_design_workflow",
+  "name": "Create UX Design Workflow",
+  "description": "Create UX specifications including user flows, wireframes, and design guidelines.",
+  "trigger_condition": {
+    "keywords": [
+      "ux design",
+      "user experience",
+      "wireframe",
+      "user flow",
+      "design spec",
+      "ui design",
+      "дизайн",
+      "пользовательский опыт"
+    ],
+    "task_types": [
+      "design",
+      "ux",
+      "prototyping"
+    ],
+    "required_skills": [
+      "user_flows",
+      "wireframes",
+      "usability"
+    ]
+  },
+  "context_dependencies": [
+    "prd"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "ux-designer",
+      "phase": "user_research",
+      "description": "Analyze user personas and requirements from PRD",
+      "deliverables": [
+        "persona_analysis",
+        "user_needs"
+      ],
+      "exit_criteria": "User personas and needs documented",
+      "timeout": "25m"
+    },
+    {
+      "order": 2,
+      "role_id": "ux-designer",
+      "phase": "flow_design",
+      "description": "Design user flows and journey maps",
+      "deliverables": [
+        "user_flows",
+        "journey_maps"
+      ],
+      "exit_criteria": "All key user flows documented",
+      "timeout": "30m"
+    },
+    {
+      "order": 3,
+      "role_id": "ux-designer",
+      "phase": "wireframing",
+      "description": "Create wireframes for key screens",
+      "deliverables": [
+        "wireframes"
+      ],
+      "exit_criteria": "Wireframes for all main screens complete",
+      "timeout": "40m"
+    },
+    {
+      "order": 4,
+      "role_id": "design-validator",
+      "phase": "validation",
+      "description": "Validate designs for usability and accessibility",
+      "deliverables": [
+        "design_validation_report"
+      ],
+      "exit_criteria": "Designs pass usability and accessibility checks",
+      "timeout": "20m"
+    },
+    {
+      "order": 5,
+      "role_id": "tech-writer",
+      "phase": "documentation",
+      "description": "Document UX specifications",
+      "deliverables": [
+        "ux_spec_document"
+      ],
+      "exit_criteria": "UX specification document complete",
+      "timeout": "20m"
+    }
+  ],
+  "estimated_time": "2h 15m",
+  "success_criteria": "Complete UX design specification ready for implementation"
+}

@@ -1,0 +1,89 @@
+{
+  "id": "create_prd_workflow",
+  "name": "Create PRD Workflow",
+  "description": "Create a comprehensive Product Requirements Document based on the product brief.",
+  "trigger_condition": {
+    "keywords": [
+      "prd",
+      "product requirements",
+      "requirements document",
+      "feature requirements",
+      "документ требований",
+      "требования к продукту"
+    ],
+    "task_types": [
+      "requirements",
+      "product",
+      "planning"
+    ],
+    "required_skills": [
+      "requirements",
+      "user_stories",
+      "business_logic"
+    ]
+  },
+  "context_dependencies": [
+    "product-brief"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "business-analyst",
+      "phase": "requirements_gathering",
+      "description": "Extract and structure requirements from product brief",
+      "deliverables": [
+        "requirements_list",
+        "user_stories"
+      ],
+      "exit_criteria": "All requirements identified and categorized",
+      "timeout": "35m"
+    },
+    {
+      "order": 2,
+      "role_id": "business-analyst",
+      "phase": "acceptance_criteria",
+      "description": "Define acceptance criteria for each requirement",
+      "deliverables": [
+        "acceptance_criteria"
+      ],
+      "exit_criteria": "All user stories have Given-When-Then criteria",
+      "timeout": "25m"
+    },
+    {
+      "order": 3,
+      "role_id": "business-analyst",
+      "phase": "metrics_definition",
+      "description": "Define success metrics and KPIs",
+      "deliverables": [
+        "success_metrics",
+        "kpis"
+      ],
+      "exit_criteria": "Measurable success metrics defined",
+      "timeout": "20m"
+    },
+    {
+      "order": 4,
+      "role_id": "requirements-validator",
+      "phase": "validation",
+      "description": "Validate requirements using INVEST criteria",
+      "deliverables": [
+        "validation_report"
+      ],
+      "exit_criteria": "All requirements pass INVEST validation",
+      "timeout": "20m"
+    },
+    {
+      "order": 5,
+      "role_id": "tech-writer",
+      "phase": "documentation",
+      "description": "Format and finalize the PRD document",
+      "deliverables": [
+        "prd_document"
+      ],
+      "exit_criteria": "PRD document complete and formatted",
+      "timeout": "25m"
+    }
+  ],
+  "estimated_time": "2h 5m",
+  "success_criteria": "Complete PRD ready for architecture and UX design"
+}

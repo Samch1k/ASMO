@@ -559,6 +559,224 @@
         ],
         "domain": "API Design"
       }
+    },
+    {
+      "id": "analyst",
+      "name": "Analyst",
+      "description": "Strategic analysis and research specialist. Conducts market research, competitive analysis, brainstorming sessions, SWOT analysis, and creates product briefs. Provides data-driven insights for decision making.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "analysis",
+        "research",
+        "brainstorming"
+      ],
+      "optional_skills": [
+        "market_analysis",
+        "competitive_analysis",
+        "strategic_planning",
+        "trend_analysis",
+        "product_brief_creation"
+      ],
+      "priority": 6,
+      "allowed_mcps": [
+        "filesystem",
+        "memory",
+        "context7"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "analyze",
+          "research",
+          "brainstorm",
+          "market",
+          "competitive",
+          "swot",
+          "product brief",
+          "анализ",
+          "исследование"
+        ],
+        "task_types": [
+          "analysis",
+          "research",
+          "brainstorming"
+        ]
+      },
+      "agent_class": "AnalystAgent",
+      "metadata": {
+        "llm_temperature": 0.4,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "documentation",
+          "analysis"
+        ],
+        "domain": "Strategic Analysis"
+      }
+    },
+    {
+      "id": "tech-writer",
+      "name": "Tech Writer",
+      "description": "Technical documentation specialist. Creates API documentation, user guides, README files, architecture documentation, release notes, and tutorials. Ensures clear, comprehensive, and maintainable documentation.",
+      "category": "specialized",
+      "role_type": "execution",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "documentation",
+        "technical_writing",
+        "api_documentation"
+      ],
+      "optional_skills": [
+        "user_guides",
+        "readme_creation",
+        "release_notes",
+        "architecture_docs",
+        "tutorial_creation"
+      ],
+      "priority": 5,
+      "allowed_mcps": [
+        "filesystem",
+        "memory",
+        "context7",
+        "github"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "document",
+          "documentation",
+          "readme",
+          "user guide",
+          "api docs",
+          "release notes",
+          "tutorial",
+          "документация",
+          "руководство"
+        ],
+        "task_types": [
+          "documentation",
+          "technical_writing"
+        ]
+      },
+      "agent_class": "TechWriterAgent",
+      "metadata": {
+        "llm_temperature": 0.3,
+        "max_tokens": 8192,
+        "output_artifacts": [
+          "documentation"
+        ],
+        "domain": "Technical Documentation"
+      }
+    },
+    {
+      "id": "test-architect",
+      "name": "Test Architect (TEA)",
+      "description": "Testing strategy and quality specialist. Part of TEA (Test Architect) module. Designs test strategies, performs risk-based testing assessment, defines quality gates, plans test automation, assesses release readiness, and manages test maintenance.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "test_strategy",
+        "risk_based_testing",
+        "quality_gates"
+      ],
+      "optional_skills": [
+        "test_automation",
+        "release_readiness",
+        "regression_analysis",
+        "test_maintenance",
+        "coverage_analysis"
+      ],
+      "priority": 7,
+      "allowed_mcps": [
+        "filesystem",
+        "memory",
+        "github"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "test strategy",
+          "test architecture",
+          "quality gate",
+          "release readiness",
+          "regression",
+          "test automation",
+          "tea",
+          "тестирование",
+          "качество"
+        ],
+        "task_types": [
+          "test_strategy",
+          "quality_assurance",
+          "release_validation"
+        ]
+      },
+      "agent_class": "TestArchitectAgent",
+      "metadata": {
+        "llm_temperature": 0.2,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "test",
+          "documentation"
+        ],
+        "domain": "Test Architecture (TEA)"
+      }
+    },
+    {
+      "id": "adversarial-reviewer",
+      "name": "Adversarial Reviewer",
+      "description": "Critical code review specialist implementing BMAD adversarial review pattern. Must find issues in every review. Performs deep security analysis, performance review, design critique, and edge case discovery. Forces thorough review with escalating scrutiny.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "adversarial_review",
+        "code_review",
+        "security_review"
+      ],
+      "optional_skills": [
+        "design_review",
+        "performance_review",
+        "issue_detection",
+        "critical_analysis"
+      ],
+      "priority": 8,
+      "allowed_mcps": [
+        "filesystem",
+        "memory",
+        "github"
+      ],
+      "activation_rules": {
+        "type": "agent_requested",
+        "trigger_keywords": [
+          "adversarial review",
+          "critical review",
+          "deep review",
+          "find issues",
+          "security review",
+          "критический анализ"
+        ],
+        "task_types": [
+          "code_review",
+          "security_review",
+          "adversarial_review"
+        ]
+      },
+      "agent_class": "AdversarialReviewerAgent",
+      "metadata": {
+        "llm_temperature": 0.1,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "documentation"
+        ],
+        "domain": "Adversarial Code Review"
+      }
     }
   ]
 }

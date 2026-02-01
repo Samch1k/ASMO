@@ -47,6 +47,15 @@ export { PartySession } from './orchestration/party-session'
 export { HelpSystem } from './orchestration/help-system'
 export { DocumentationManager } from './orchestration/documentation-manager'
 
+// BMAD Integration: Core Concepts
+export { AdversarialReviewSession } from './orchestration/adversarial-review'
+export { ContextCascade } from './orchestration/context-cascade'
+export { DocumentRegistry } from './orchestration/document-registry'
+export { ElicitationManager } from './orchestration/elicitation'
+
+// BMAD Integration: Utilities
+export { DocumentSharder } from './utils/document-sharding'
+
 // ===================================
 // CONFIGURATION
 // ===================================
@@ -103,8 +112,21 @@ export { ProductManagerAgent } from './agents/roles/product-manager.agent'
 export { RFQSpecialistAgent } from './agents/roles/rfq-specialist.agent'
 export { SupplierOpsAgent } from './agents/roles/supplier-ops.agent'
 
+// BMAD Integration: New Agents
+export { AnalystAgent } from './agents/roles/analyst.agent'
+export { TechWriterAgent } from './agents/roles/tech-writer.agent'
+export { TestArchitectAgent } from './agents/roles/test-architect.agent'
+export { AdversarialReviewerAgent } from './agents/roles/adversarial-reviewer.agent'
+
 // Main Orchestrator
-export { createOrchestrationGraph, runOrchestration } from './agents/orchestrator'
+export {
+  orchestratorApp,
+  runMultiAgentTask,
+  runWorkflow,
+  getOrchestratorStats,
+  getAvailableWorkflows,
+  getWorkflowEngine
+} from './agents/orchestrator'
 
 // Claude Code Integration
 export { ClaudeCodeAdapter } from './agents/claude-code-adapter'

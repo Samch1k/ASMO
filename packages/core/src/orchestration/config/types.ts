@@ -177,6 +177,76 @@ export interface WorkflowSelectorConfig {
 }
 
 /**
+ * Adversarial Review configuration (BMAD Integration)
+ */
+export interface AdversarialReviewConfig {
+  /** Enable adversarial review (default: true) */
+  enabled?: boolean
+  /** Minimum number of issues required (default: 1) */
+  minIssuesRequired?: number
+  /** Maximum retry attempts (default: 3) */
+  maxRetries?: number
+  /** Severities that block approval (default: ['critical', 'major']) */
+  blockingSeverities?: Array<'critical' | 'major' | 'minor' | 'suggestion'>
+}
+
+/**
+ * Elicitation configuration (BMAD Integration)
+ */
+export interface ElicitationConfig {
+  /** Enable elicitation (default: true) */
+  enabled?: boolean
+  /** Default techniques to apply */
+  defaultTechniques?: Array<'first-principles' | 'red-team-blue-team' | 'pre-mortem' | 'socratic' | 'devils-advocate'>
+  /** Workflows that should have elicitation applied */
+  applyToWorkflows?: string[]
+  /** Maximum insights per technique (default: 10) */
+  maxInsightsPerTechnique?: number
+}
+
+/**
+ * Context Cascade configuration (BMAD Integration)
+ */
+export interface ContextCascadeConfig {
+  /** Enable context cascade (default: true) */
+  enabled?: boolean
+  /** Output directory for documents (default: '_ai1st-output') */
+  outputDir?: string
+  /** Auto-load context before workflow execution (default: true) */
+  autoLoad?: boolean
+}
+
+/**
+ * Document Sharding configuration (BMAD Integration)
+ */
+export interface DocumentShardingConfig {
+  /** Enable document sharding (default: true) */
+  enabled?: boolean
+  /** Maximum tokens per file (default: 10000) */
+  maxTokensPerFile?: number
+  /** Heading level to split at (default: 2 = ##) */
+  splitLevel?: number
+  /** Minimum tokens for a section to be its own file (default: 500) */
+  minTokensPerSection?: number
+}
+
+/**
+ * TEA (Test Architect) Module configuration (BMAD Integration)
+ */
+export interface TEAConfig {
+  /** Enable TEA module (default: false - opt-in) */
+  enabled?: boolean
+  /** Quality gate threshold percentage (default: 80) */
+  qualityGateThreshold?: number
+  /** Default test coverage targets */
+  coverageTargets?: {
+    unit?: number
+    integration?: number
+    e2e?: number
+  }
+}
+
+/**
  * Master orchestration configuration
  *
  * Combines all component configurations into a single unified config.
@@ -201,4 +271,14 @@ export interface OrchestrationConfig {
   complexityAnalyzer?: ComplexityAnalyzerConfig
   /** WorkflowSelector settings (BMAD Phase 1.5) */
   workflowSelector?: WorkflowSelectorConfig
+  /** Adversarial Review settings (BMAD Integration) */
+  adversarialReview?: AdversarialReviewConfig
+  /** Elicitation settings (BMAD Integration) */
+  elicitation?: ElicitationConfig
+  /** Context Cascade settings (BMAD Integration) */
+  contextCascade?: ContextCascadeConfig
+  /** Document Sharding settings (BMAD Integration) */
+  documentSharding?: DocumentShardingConfig
+  /** TEA Module settings (BMAD Integration) */
+  tea?: TEAConfig
 }
