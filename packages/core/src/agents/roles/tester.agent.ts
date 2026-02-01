@@ -43,7 +43,8 @@ export class TesterAgent extends BaseAgent {
     try {
       // STEP 1: Get implementation context
       const implementation = state.context.implementation || state.task
-      const codeArtifact = state.context.codeArtifact
+      // codeArtifact is available in state.context for future use in test generation
+      void state.context.codeArtifact
 
       this.log('📖 Analyzing implementation for test scenarios...')
 

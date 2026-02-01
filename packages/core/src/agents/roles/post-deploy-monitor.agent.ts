@@ -1,5 +1,5 @@
 import { BaseAgent } from "../base-agent"
-import { AgentState, Artifact } from "../types"
+import { AgentState } from "../types"
 import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
@@ -314,7 +314,7 @@ export class PostDeployMonitorAgent extends BaseAgent {
   /**
    * Check error rates from logs or monitoring
    */
-  private async checkErrorRates(deploymentInfo: any): Promise<{
+  private async checkErrorRates(_deploymentInfo: any): Promise<{
     errorRate: number
     totalRequests: number
     errors: number
@@ -340,7 +340,7 @@ export class PostDeployMonitorAgent extends BaseAgent {
   /**
    * Validate performance metrics
    */
-  private async validatePerformance(deploymentInfo: any): Promise<{
+  private async validatePerformance(_deploymentInfo: any): Promise<{
     p50: number
     p95: number
     p99: number
@@ -393,7 +393,7 @@ export class PostDeployMonitorAgent extends BaseAgent {
   /**
    * Run smoke tests (basic functionality checks)
    */
-  private async runSmokeTests(deploymentInfo: any): Promise<{
+  private async runSmokeTests(_deploymentInfo: any): Promise<{
     passed: number
     total: number
     tests: Array<{ name: string; status: string; message: string }>

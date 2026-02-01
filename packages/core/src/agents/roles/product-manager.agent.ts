@@ -56,16 +56,17 @@ export class ProductManagerAgent extends BaseAgent {
     this.log('📋 Product Manager analyzing request...')
 
     try {
-      const task = state.task || this.extractTaskFromMessages(state)
+      const task = state.task || this.extractTaskFromState(state)
 
       if (!task) {
         this.log('No task provided', 'warn')
-        return this.createEmptyResult(state)
+        return this.createFailedResult(state, 'No task provided')
       }
 
       // Check Memory MCP for similar decisions
       this.log('Checking product decision history...')
-      const pastDecisions = await this.requestMCP('memory', {
+      // Check for similar past decisions (result used for future context improvements)
+      await this.requestMCP('memory', {
         action: 'search_nodes',
         query: `product ${task}`,
         type: 'product_decision',
@@ -90,7 +91,7 @@ export class ProductManagerAgent extends BaseAgent {
 
     } catch (error) {
       this.log(`Error in Product Manager execution: ${error}`, 'error')
-      return this.createErrorResult(state, error as Error)
+      return this.createFailedResult(state, (error as Error).message)
     }
   }
 
@@ -153,33 +154,26 @@ Format the output as a structured markdown document.`
 
     this.log('✅ Product brief created')
 
+    const artifact = this.createArtifact('documentation', productBrief, {
+      documentType: 'product_brief',
+      name: 'Product Brief'
+    })
+
+    const result = this.createResult('success', {
+      product_vision: this.extractSection(productBrief, 'Product Vision'),
+      target_audience: this.extractSection(productBrief, 'Target Audience'),
+      problem_statement: this.extractSection(productBrief, 'Problem Statement'),
+      product_brief_document: productBrief
+    }, [artifact])
+
     return {
-      ...state,
-      artifacts: [
-        ...(state.artifacts || []),
-        {
-          type: 'product_brief',
-          name: 'Product Brief',
-          content: productBrief,
-          format: 'markdown',
-          agent: this.agentId
-        }
-      ],
-      messages: [
-        ...(state.messages || []),
-        {
-          role: 'assistant',
-          content: `Product brief created:\n\n${productBrief}`,
-          name: this.agentId
-        }
-      ],
-      deliverables: {
-        ...state.deliverables,
-        product_vision: this.extractSection(productBrief, 'Product Vision'),
-        target_audience: this.extractSection(productBrief, 'Target Audience'),
-        problem_statement: this.extractSection(productBrief, 'Problem Statement'),
-        product_brief_document: productBrief
-      }
+      messages: [...state.messages],
+      agentResults: [...state.agentResults, result],
+      context: {
+        ...state.context,
+        productBrief
+      },
+      nextAction: 'continue'
     }
   }
 
@@ -194,7 +188,7 @@ Format the output as a structured markdown document.`
 Task: ${task}
 
 Context: ${state.context || 'No additional context provided'}
-Product Brief: ${state.deliverables?.product_brief_document || 'No product brief available'}
+Product Brief: ${state.context?.productBrief || 'No product brief available'}
 
 Create a ONE-PAGE PRD following this structure:
 
@@ -259,32 +253,25 @@ IMPORTANT:
 
     this.log('✅ One-page PRD created')
 
+    const artifact = this.createArtifact('documentation', prd, {
+      documentType: 'prd',
+      name: 'Product Requirements Document'
+    })
+
+    const result = this.createResult('success', {
+      feature_requirements: this.extractSection(prd, 'Problem Statement'),
+      user_stories: this.extractSection(prd, 'User Stories'),
+      prd_document_one_page: prd
+    }, [artifact])
+
     return {
-      ...state,
-      artifacts: [
-        ...(state.artifacts || []),
-        {
-          type: 'prd',
-          name: 'Product Requirements Document',
-          content: prd,
-          format: 'markdown',
-          agent: this.agentId
-        }
-      ],
-      messages: [
-        ...(state.messages || []),
-        {
-          role: 'assistant',
-          content: `One-page PRD created:\n\n${prd}`,
-          name: this.agentId
-        }
-      ],
-      deliverables: {
-        ...state.deliverables,
-        feature_requirements: this.extractSection(prd, 'Problem Statement'),
-        user_stories: this.extractSection(prd, 'User Stories'),
-        prd_document_one_page: prd
-      }
+      messages: [...state.messages],
+      agentResults: [...state.agentResults, result],
+      context: {
+        ...state.context,
+        prd
+      },
+      nextAction: 'continue'
     }
   }
 
@@ -358,30 +345,23 @@ Format as a prioritized list with clear reasoning.`
 
     this.log('✅ Features prioritized')
 
+    const artifact = this.createArtifact('documentation', prioritization, {
+      documentType: 'prioritization',
+      name: 'Feature Prioritization'
+    })
+
+    const result = this.createResult('success', {
+      prioritized_backlog: prioritization
+    }, [artifact])
+
     return {
-      ...state,
-      artifacts: [
-        ...(state.artifacts || []),
-        {
-          type: 'prioritization',
-          name: 'Feature Prioritization',
-          content: prioritization,
-          format: 'markdown',
-          agent: this.agentId
-        }
-      ],
-      messages: [
-        ...(state.messages || []),
-        {
-          role: 'assistant',
-          content: `Feature prioritization:\n\n${prioritization}`,
-          name: this.agentId
-        }
-      ],
-      deliverables: {
-        ...state.deliverables,
-        prioritized_backlog: prioritization
-      }
+      messages: [...state.messages],
+      agentResults: [...state.agentResults, result],
+      context: {
+        ...state.context,
+        prioritization
+      },
+      nextAction: 'continue'
     }
   }
 
@@ -434,30 +414,23 @@ Keep it ultra-concise (max 10 lines total).`
 
     this.log('✅ Quick spec created')
 
+    const artifact = this.createArtifact('documentation', quickSpec, {
+      documentType: 'quick_spec',
+      name: 'Quick Spec'
+    })
+
+    const result = this.createResult('success', {
+      quick_spec: quickSpec
+    }, [artifact])
+
     return {
-      ...state,
-      artifacts: [
-        ...(state.artifacts || []),
-        {
-          type: 'quick_spec',
-          name: 'Quick Spec',
-          content: quickSpec,
-          format: 'markdown',
-          agent: this.agentId
-        }
-      ],
-      messages: [
-        ...(state.messages || []),
-        {
-          role: 'assistant',
-          content: `Quick spec:\n\n${quickSpec}`,
-          name: this.agentId
-        }
-      ],
-      deliverables: {
-        ...state.deliverables,
-        quick_spec: quickSpec
-      }
+      messages: [...state.messages],
+      agentResults: [...state.agentResults, result],
+      context: {
+        ...state.context,
+        quickSpec
+      },
+      nextAction: 'continue'
     }
   }
 
@@ -468,5 +441,32 @@ Keep it ultra-concise (max 10 lines total).`
     const regex = new RegExp(`##?\\s*${sectionName}[^#]*([\\s\\S]*?)(?=##|$)`, 'i')
     const match = content.match(regex)
     return match ? match[1].trim() : ''
+  }
+
+  /**
+   * Helper: Extract task from state when state.task is not set
+   */
+  private extractTaskFromState(state: AgentState): string {
+    // Try messages
+    for (const message of state.messages.slice().reverse()) {
+      const content = typeof message.content === 'string' ? message.content : ''
+      if (content && content.length > 10) {
+        return content
+      }
+    }
+    return ''
+  }
+
+  /**
+   * Helper: Create a failed result
+   */
+  private createFailedResult(state: AgentState, errorMessage: string): Partial<AgentState> {
+    const result = this.createResult('failed', { error: errorMessage }, [])
+
+    return {
+      messages: [...state.messages],
+      agentResults: [...state.agentResults, result],
+      nextAction: 'error_recovery'
+    }
   }
 }

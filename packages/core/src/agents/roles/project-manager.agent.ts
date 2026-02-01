@@ -339,7 +339,7 @@ Provide response in JSON format:
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       // Fallback: 8 hours per task
-      const fallbackEstimates = tasks.map((t, idx) => ({
+      const fallbackEstimates = tasks.map((t, _idx) => ({
         taskId: t.id,
         storyPoints: 2,
         hours: 8,
@@ -574,7 +574,7 @@ Provide response in JSON format:
   /**
    * Create sprint plan (2-week sprints)
    */
-  private createSprintPlan(tasks: any[], estimates: any, dependencies: any): {
+  private createSprintPlan(tasks: any[], estimates: any, _dependencies: any): {
     sprints: Array<{
       number: number
       duration: string
@@ -779,7 +779,7 @@ ${sprint.tasks.map((taskId: string) => {
 
 ## Milestones
 
-${sprintPlan.sprints.map((sprint: any, idx: number) =>
+${sprintPlan.sprints.map((sprint: any, _idx: number) =>
   `- [ ] Sprint ${sprint.number} Complete (End of Week ${sprint.number * 2})`
 ).join('\n')}
 - [ ] Code Review Complete

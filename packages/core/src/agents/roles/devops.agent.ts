@@ -1,13 +1,10 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * DevOps Agent - Deployment, CI/CD, infrastructure management
  */
 export class DevOpsAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('devops', [
       'deployment',
@@ -16,12 +13,6 @@ export class DevOpsAgent extends BaseAgent {
       'monitoring',
       'incident_response'
     ])
-    
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.1,
-      maxTokens: 4096
-    })
   }
 
   async execute(state: AgentState): Promise<Partial<AgentState>> {

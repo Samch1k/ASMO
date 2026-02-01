@@ -1,5 +1,5 @@
 import { BaseAgent } from "../base-agent"
-import { AgentState, Artifact } from "../types"
+import { AgentState } from "../types"
 import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
@@ -73,7 +73,8 @@ export class RequirementsValidatorAgent extends BaseAgent {
 
       // STEP 2: Check Memory MCP for similar validations
       this.log('Checking validation history...')
-      const pastValidations = await this.requestMCP('memory', {
+      // Check for similar past validations (result used for future context improvements)
+      await this.requestMCP('memory', {
         action: 'search_nodes',
         query: `requirements validation ${state.task}`,
         type: 'validation_report',

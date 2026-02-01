@@ -21,6 +21,7 @@
 import { BaseAgent } from '../base-agent'
 import { AgentState } from '../types'
 import { ChatAnthropic } from '@langchain/anthropic'
+import { AIMessage } from '@langchain/core/messages'
 
 export interface ParallelOutput {
   agentId: string
@@ -82,10 +83,7 @@ export class MergeAgent extends BaseAgent {
       if (parallelOutputs.length === 0) {
         console.log('⚠️  No parallel outputs found to merge')
         return {
-          messages: [...state.messages, {
-            role: 'assistant',
-            content: 'No parallel outputs to merge'
-          }],
+          messages: [...state.messages, new AIMessage('No parallel outputs to merge')],
           nextAction: 'END'
         }
       }
@@ -130,10 +128,7 @@ export class MergeAgent extends BaseAgent {
 
       // 6. Return result
       return {
-        messages: [...state.messages, {
-          role: 'assistant',
-          content: JSON.stringify(consolidatedReport, null, 2)
-        }],
+        messages: [...state.messages, new AIMessage(JSON.stringify(consolidatedReport, null, 2))],
         context: {
           ...state.context,
           consolidatedReport,
@@ -153,13 +148,10 @@ export class MergeAgent extends BaseAgent {
       console.error('❌ Merge Agent execution failed:', error.message)
 
       return {
-        messages: [...state.messages, {
-          role: 'assistant',
-          content: JSON.stringify({
-            error: 'Merge failed',
-            message: error.message
-          })
-        }],
+        messages: [...state.messages, new AIMessage(JSON.stringify({
+          error: 'Merge failed',
+          message: error.message
+        }))],
         nextAction: 'error'
       }
     }
@@ -200,7 +192,7 @@ export class MergeAgent extends BaseAgent {
           agentRole: result.agentId,
           phase: (result as any).phase || 'unknown',
           findings: result.result,
-          timestamp: result.timestamp
+          timestamp: typeof result.timestamp === 'string' ? result.timestamp : result.timestamp.toISOString()
         })
       }
     }
@@ -468,22 +460,23 @@ Provide only the JSON output, no additional text.`
     mergeResult: MergeResult,
     parallelOutputs: ParallelOutput[]
   ): Promise<void> {
-    if (!this.hasMemoryMCP()) {
-      console.log('⚠️  Memory MCP not available - skipping storage')
-      return
-    }
-
     try {
       const memoryKey = `merge_${Date.now()}_${parallelOutputs.map(o => o.agentId).join('_')}`
 
-      await this.memoryStore(memoryKey, {
-        timestamp: new Date().toISOString(),
-        contributingAgents: mergeResult.contributingAgents,
-        confidenceScore: mergeResult.confidenceScore,
-        conflictsResolved: mergeResult.conflicts.length - mergeResult.unresolvedConflicts.length,
-        conflictsUnresolved: mergeResult.unresolvedConflicts.length,
-        resolutionStrategy: mergeResult.resolutionStrategy,
-        mergedFindings: mergeResult.mergedFindings
+      await this.requestMCP('memory', {
+        action: 'create_entities',
+        entities: [{
+          name: memoryKey,
+          entityType: 'merge_result',
+          observations: [
+            `Timestamp: ${new Date().toISOString()}`,
+            `Contributing Agents: ${mergeResult.contributingAgents.join(', ')}`,
+            `Confidence Score: ${mergeResult.confidenceScore}`,
+            `Conflicts Resolved: ${mergeResult.conflicts.length - mergeResult.unresolvedConflicts.length}`,
+            `Conflicts Unresolved: ${mergeResult.unresolvedConflicts.length}`,
+            `Resolution Strategy: ${mergeResult.resolutionStrategy}`
+          ]
+        }]
       })
 
       console.log(`💾 Merge result stored: ${memoryKey}`)

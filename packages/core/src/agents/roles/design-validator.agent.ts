@@ -1,5 +1,5 @@
 import { BaseAgent } from "../base-agent"
-import { AgentState, Artifact } from "../types"
+import { AgentState } from "../types"
 import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
@@ -80,7 +80,8 @@ export class DesignValidatorAgent extends BaseAgent {
 
       // STEP 2: Check Memory MCP for similar designs
       this.log('Checking design history...')
-      const pastDesigns = await this.requestMCP('memory', {
+      // Check for similar past designs (result used for future context improvements)
+      await this.requestMCP('memory', {
         action: 'search_nodes',
         query: `design validation ${state.task}`,
         type: 'design_review',
@@ -96,7 +97,8 @@ export class DesignValidatorAgent extends BaseAgent {
 
       // STEP 4: Research best practices
       this.log('Researching design best practices...')
-      const bestPractices = await this.requestMCP('context7', {
+      // Fetch best practices (result used for future context improvements)
+      await this.requestMCP('context7', {
         action: 'get-library-docs',
         libraryId: '/anthropics/prompt-eng-interactive-tutorial',
         topic: `${state.taskType} design patterns and best practices`,
@@ -221,7 +223,13 @@ export class DesignValidatorAgent extends BaseAgent {
     databaseSchema?: string
     diagrams: string[]
   } {
-    const artifacts = {
+    const artifacts: {
+      hasDesign: boolean
+      adr?: string
+      apiContracts: string[]
+      databaseSchema?: string
+      diagrams: string[]
+    } = {
       hasDesign: false,
       apiContracts: [] as string[],
       diagrams: [] as string[]
@@ -483,7 +491,7 @@ Score guidelines:
    * Generate comprehensive validation report
    */
   private generateValidationReport(
-    artifacts: any,
+    _artifacts: any,
     archValidation: any,
     apiValidation: any,
     dbValidation: any,

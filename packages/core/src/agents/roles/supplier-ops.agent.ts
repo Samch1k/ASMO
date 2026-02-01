@@ -523,7 +523,7 @@ Provide response in JSON format:
     // Decision matrix
     const compliancePass = compliance.approved && compliance.score >= 75
     const relationshipPass = relationshipScore.overallScore >= 65
-    const riskAcceptable = riskAssessment.riskLevel !== 'Critical'
+    // riskAcceptable is checked via riskAssessment.riskLevel comparisons below
 
     if (compliancePass && relationshipPass && riskAssessment.riskLevel === 'Low') {
       return {

@@ -58,7 +58,8 @@ export class UXDesignerAgent extends BaseAgent {
       // STEP 1: Extract user stories and context
       const task = state.task || this.extractTaskFromMessages(state)
       const userStories = state.context?.requirements?.userStories || []
-      const acceptanceCriteria = state.context?.requirements?.acceptanceCriteria || []
+      // acceptanceCriteria available in state.context for future UX validation
+      void (state.context?.requirements?.acceptanceCriteria || [])
 
       if (!task) {
         this.log('No task provided', 'warn')

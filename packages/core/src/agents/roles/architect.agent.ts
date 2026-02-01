@@ -1,17 +1,27 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
 import { ChatAnthropic } from "@langchain/anthropic"
+import { getYamlConfigLoader, type AgentConfig } from "../../orchestration/config/yaml-config-loader"
+
+// Model mapping from config tier to actual model
+const MODEL_MAP: Record<string, string> = {
+  opus: "claude-opus-4-20250514",
+  sonnet: "claude-sonnet-4-20250514",
+  haiku: "claude-3-5-haiku-20241022"
+}
 
 /**
  * Architect Agent - Responsible for system design and architecture decisions
- * 
+ *
+ * Configuration loaded from: agents.yaml
+ *
  * Capabilities:
  * - System design and architecture planning
  * - Technology evaluation and selection
  * - Creating Architecture Decision Records (ADRs)
  * - Database schema design
  * - API contract definition
- * 
+ *
  * MCP Integrations:
  * - Memory MCP (P0): Store and retrieve architecture decisions
  * - Supabase MCP (P0): Analyze current database schema
@@ -20,25 +30,44 @@ import { ChatAnthropic } from "@langchain/anthropic"
  */
 export class ArchitectAgent extends BaseAgent {
   private llm: ChatAnthropic
+  private _agentConfig: AgentConfig | undefined
 
   constructor() {
-    super('architect', [
+    // Load config from YAML
+    const configLoader = getYamlConfigLoader()
+    const config = configLoader.getAgent('architect')
+
+    // Extract skills from config or use defaults
+    const skills = config?.skills.map(s => s.id) || [
       'system_design',
       'architecture_decisions',
-      'design_brainstorming_workflow', // Superpowers design brainstorming workflow
-      'implementation_planning_workflow', // Superpowers implementation planning workflow
       'adr_creation',
       'technology_evaluation',
       'data_modeling',
       'scalability_planning'
-    ])
-    
-    // Initialize Claude LLM
+    ]
+
+    super('architect', skills)
+
+    this._agentConfig = config
+
+    // Get model from config or default to sonnet
+    const modelTier = config?.model_preference || 'sonnet'
+    const modelName = MODEL_MAP[modelTier] || MODEL_MAP.sonnet
+
+    // Initialize Claude LLM with config-based settings
     this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
+      modelName,
       temperature: 0.1, // Low temperature for consistent architectural decisions
       maxTokens: 4096
     })
+  }
+
+  /**
+   * Get agent configuration from YAML
+   */
+  getConfig(): AgentConfig | undefined {
+    return this._agentConfig
   }
 
   /**
