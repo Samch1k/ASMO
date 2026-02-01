@@ -21,8 +21,8 @@ import type {
   ProjectContext,
   ComplexityScore,
   Workflow
-} from './types.js'
-import { ComplexityAnalyzer } from './complexity-analyzer.js'
+} from './types'
+import { ComplexityAnalyzer } from './complexity-analyzer'
 
 /**
  * Help system configuration
@@ -388,7 +388,7 @@ export class HelpSystem {
    */
   private generateSuggestedFix(
     analysis: { category: string; explanation: string },
-    errorContext?: ErrorContext
+    _errorContext?: ErrorContext
   ): string {
     switch (analysis.category) {
       case 'typescript':
@@ -416,7 +416,7 @@ export class HelpSystem {
    */
   private generateResolutionSteps(
     analysis: { category: string },
-    errorContext?: ErrorContext
+    _errorContext?: ErrorContext
   ): string[] {
     const commonSteps = [
       'Review the error message and stack trace',
@@ -465,7 +465,7 @@ export class HelpSystem {
    */
   private generateAlternativeFixes(
     analysis: { category: string },
-    errorContext?: ErrorContext
+    _errorContext?: ErrorContext
   ): string[] {
     const alternatives: Record<string, string[]> = {
       typescript: [
@@ -507,7 +507,7 @@ export class HelpSystem {
    */
   private findRelevantDocs(
     analysis: { category: string },
-    errorContext?: ErrorContext
+    _errorContext?: ErrorContext
   ): string[] {
     // TODO: Replace with actual documentation URLs when available
     const docsByCategory: Record<string, string[]> = {
