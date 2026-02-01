@@ -158,6 +158,40 @@ export class MergeAgent extends BaseAgent {
   }
 
   /**
+   * Public method to consolidate parallel outputs from party sessions
+   * Used by PartySession.finalizeRound()
+   */
+  async consolidateParallelOutputs(params: {
+    parallelOutputs: ParallelOutput[]
+    task: string
+    phase: string
+  }): Promise<{
+    conflicts: ConflictDetection[]
+    summary: string
+    mergedFindings: Record<string, unknown>
+    contributingAgents: string[]
+    confidenceScore: number
+    resolutionStrategy: string
+  }> {
+    const { parallelOutputs } = params
+
+    // Detect conflicts
+    const conflicts = await this.detectConflicts(parallelOutputs)
+
+    // Merge outputs
+    const mergeResult = await this.mergeOutputs(parallelOutputs, conflicts)
+
+    return {
+      conflicts,
+      summary: `Merged findings from ${parallelOutputs.length} agents`,
+      mergedFindings: mergeResult.mergedFindings,
+      contributingAgents: mergeResult.contributingAgents,
+      confidenceScore: mergeResult.confidenceScore,
+      resolutionStrategy: mergeResult.resolutionStrategy
+    }
+  }
+
+  /**
    * Extract parallel outputs from state
    * Looks for namespaced findings like "${agentId}_${phase}_findings"
    */

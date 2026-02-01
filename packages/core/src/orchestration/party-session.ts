@@ -22,11 +22,10 @@ import type {
   Agreement,
   Proposal,
   Vote,
-  AgentState,
   AgentWithRoleSkills,
   ConflictDetection
-} from './types.js'
-import { MergeAgent } from '../agents/roles/merge-coordinator.agent.js'
+} from './types'
+import { MergeAgent } from '../agents/roles/merge-coordinator.agent'
 
 /**
  * PartySession - Manages collaborative multi-agent sessions
@@ -50,7 +49,7 @@ export class PartySession {
       id,
       name,
       description,
-      agents: agents.map(a => a.role.role_id),
+      agents: agents.map(a => a.role.id),
       facilitator,
       state: this.createInitialState(id, agents),
       rounds: [],
@@ -68,7 +67,7 @@ export class PartySession {
   private createInitialState(partyId: string, agents: AgentWithRoleSkills[]): PartyState {
     return {
       partyId,
-      activeAgents: new Set(agents.map(a => a.role.role_id)),
+      activeAgents: new Set(agents.map(a => a.role.id)),
       sharedContext: {
         decisions: {},
         artifacts: [],
@@ -217,14 +216,17 @@ export class PartySession {
     console.log(`\n🔍 Analyzing round ${currentRound.roundNumber}...`)
 
     // 1. Collect all agent outputs
-    const outputs = Array.from(currentRound.agentOutputs.entries()).map(([agentId, output]) => ({
-      agentId,
-      agentRole: agentId,
-      phase: currentRound.phase,
-      findings: output,
-      confidence: output.confidence || 0.8,
-      timestamp: new Date().toISOString()
-    }))
+    const outputs = Array.from(currentRound.agentOutputs.entries()).map(([agentId, output]) => {
+      const typedOutput = output as Record<string, unknown>
+      return {
+        agentId,
+        agentRole: agentId,
+        phase: currentRound.phase,
+        findings: typedOutput,
+        confidence: typeof typedOutput.confidence === 'number' ? typedOutput.confidence : 0.8,
+        timestamp: new Date().toISOString()
+      }
+    })
 
     // 2. Use MergeAgent to consolidate and detect conflicts
     const mergeResult = await this.mergeAgent.consolidateParallelOutputs({
@@ -233,8 +235,17 @@ export class PartySession {
       phase: currentRound.phase
     })
 
-    // 3. Extract agreements and conflicts
-    currentRound.conflicts = mergeResult.conflicts
+    // 3. Extract agreements and conflicts - convert MergeAgent conflicts to PartySession format
+    const convertedConflicts: ConflictDetection[] = mergeResult.conflicts.map((c, index) => ({
+      id: `conflict-${Date.now()}-${index}`,
+      type: 'technical' as const,
+      description: `Conflict in field: ${c.field}`,
+      involvedAgents: c.conflictingValues.map(cv => cv.agentId),
+      severity: c.severity,
+      resolvable: c.resolvable,
+      timestamp: new Date()
+    }))
+    currentRound.conflicts = convertedConflicts
     currentRound.agreements = this.extractAgreements(mergeResult)
     currentRound.summary = mergeResult.summary || 'Round completed'
 
@@ -243,7 +254,7 @@ export class PartySession {
     this.session.state.convergenceScore = currentRound.convergenceScore
 
     // 5. Update session state
-    this.session.state.conflictLog.push(...mergeResult.conflicts)
+    this.session.state.conflictLog.push(...convertedConflicts)
     this.session.state.agreements.push(...currentRound.agreements)
 
     console.log(`✅ Round ${currentRound.roundNumber} finalized`)

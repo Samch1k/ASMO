@@ -25,12 +25,12 @@ import type {
   ParsedTemplateOutput,
   ParsedSection,
   TemplateSectionTag
-} from './template-schema.js'
+} from './template-schema'
 import {
   AIFirstTemplateSchema,
   validateTemplate,
   validateVariable
-} from './template-schema.js'
+} from './template-schema'
 
 // =============================================================================
 // TYPES
@@ -488,7 +488,7 @@ export class TemplateEngine {
   /**
    * Parse LLM output according to template
    */
-  parseOutput<T = any>(output: string, templateId: string, options?: ParseOptions): ParsedTemplateOutput {
+  parseOutput(output: string, templateId: string, options?: ParseOptions): ParsedTemplateOutput {
     const template = this.getTemplate(templateId)
     if (!template) {
       throw new Error(`Template not found: ${templateId}`)
@@ -580,7 +580,7 @@ export class TemplateEngine {
       // Parse subsections
       let subsections: ParsedSection[] | undefined
       if (section.subsections && section.subsections.length > 0) {
-        subsections = section.subsections.map(sub =>
+        subsections = section.subsections.map((sub: TemplateSection) =>
           this.parseSection(content, sub, customExtractors)
         )
       }
@@ -695,26 +695,20 @@ export class TemplateEngine {
   private parseSimpleYaml(content: string): unknown {
     // This is a very basic parser - use js-yaml in production
     const lines = content.split('\n')
-    const result: Record<string, any> = {}
-    let currentKey = ''
-    let currentValue: any = null
-    let indent = 0
+    const result: Record<string, unknown> = {}
 
     for (const line of lines) {
       if (line.trim().startsWith('#') || line.trim() === '') continue
 
       const match = line.match(/^(\s*)(\w+):\s*(.*)$/)
       if (match) {
-        const [, spaces, key, value] = match
-        const newIndent = spaces.length
+        const [, _spaces, key, value] = match
 
         if (value) {
           result[key] = value.trim()
         } else {
           result[key] = {}
         }
-        currentKey = key
-        indent = newIndent
       }
     }
 

@@ -84,9 +84,9 @@ export const TemplateVariableSchema = z.object({
 })
 
 /**
- * Template section definition schema
+ * Base template section schema fields (non-recursive)
  */
-export const TemplateSectionSchema = z.object({
+const baseSectionFields = {
   /** Section tag/type */
   tag: z.enum([
     'context', 'requirements', 'constraints', 'decision', 'output',
@@ -103,8 +103,6 @@ export const TemplateSectionSchema = z.object({
   format: z.enum(['xml', 'markdown', 'json', 'text']).default('markdown'),
   /** Section content template */
   content: z.string().optional(),
-  /** Nested subsections */
-  subsections: z.array(z.lazy(() => TemplateSectionSchema)).optional(),
   /** Variables specific to this section */
   variables: z.array(TemplateVariableSchema).optional(),
   /** Validation constraints */
@@ -116,7 +114,27 @@ export const TemplateSectionSchema = z.object({
   }).optional(),
   /** Order within parent (for sorting) */
   order: z.number().optional()
-})
+}
+
+/**
+ * Template section type (base without subsections)
+ */
+type BaseSectionType = z.infer<z.ZodObject<typeof baseSectionFields>>
+
+/**
+ * Template section type for recursive structure
+ */
+export interface TemplateSection extends BaseSectionType {
+  subsections?: TemplateSection[]
+}
+
+/**
+ * Template section definition schema
+ */
+export const TemplateSectionSchema: z.ZodType<TemplateSection> = z.object(baseSectionFields).extend({
+  /** Nested subsections */
+  subsections: z.lazy(() => z.array(TemplateSectionSchema)).optional()
+}) as z.ZodType<TemplateSection>
 
 /**
  * Main AI-First Template schema
@@ -174,7 +192,7 @@ export const AIFirstTemplateSchema = z.object({
 // =============================================================================
 
 export type TemplateVariable = z.infer<typeof TemplateVariableSchema>
-export type TemplateSection = z.infer<typeof TemplateSectionSchema>
+// TemplateSection is already defined as an interface above
 export type AIFirstTemplate = z.infer<typeof AIFirstTemplateSchema>
 
 // =============================================================================

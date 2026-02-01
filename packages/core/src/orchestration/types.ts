@@ -236,20 +236,24 @@ export interface WorkflowSelection {
 /**
  * Brainstorming phase definition
  */
-export type BrainstormingPhase = 'diverge' | 'critique' | 'converge' | 'synthesize'
+export type BrainstormingPhase = 'independent_proposals' | 'cross_critique' | 'synthesis' | 'decision'
 
 /**
  * Brainstorming round
  */
 export interface BrainstormingRound {
   roundNumber: number
-  phase: BrainstormingPhase
-  proposals: BrainstormingProposal[]
-  critiques: Critique[]
-  votes: BrainstormingVote[]
-  synthesisPoints: SynthesisPoint[]
-  duration: number
-  timestamp: string
+  phase: BrainstormingPhase | string
+  startTime: Date
+  endTime?: Date
+  durationMs?: number
+  proposals?: Map<string, BrainstormingProposal[]>
+  critiques?: Map<string, Critique[]>
+  synthesisPoints?: SynthesisPoint[]
+  participationRate: number
+  convergenceScore: number
+  finalDecision?: Agreement
+  adrPath?: string
 }
 
 /**
@@ -258,12 +262,13 @@ export interface BrainstormingRound {
 export interface BrainstormingProposal {
   id: string
   agentId: string
-  content: string
-  rationale: string
-  votes: BrainstormingVote[]
-  critiques: Critique[]
-  score: number
-  timestamp: string
+  title: string
+  description: string
+  approach: string
+  pros: string[]
+  cons: string[]
+  confidenceScore: number
+  createdAt: Date
 }
 
 /**
@@ -271,12 +276,16 @@ export interface BrainstormingProposal {
  */
 export interface Critique {
   id: string
-  proposalId: string
-  agentId: string
-  strength: 'strong' | 'moderate' | 'weak' | 'opposed'
-  comment: string
+  fromAgent: string
+  toAgent: string
+  toProposalId: string
+  score: number
+  endorsement: 'strong' | 'moderate' | 'weak' | 'opposed'
+  pros: string[]
+  cons: string[]
   suggestions: string[]
-  timestamp: string
+  blockers?: string[]
+  createdAt: Date
 }
 
 /**
@@ -284,62 +293,71 @@ export interface Critique {
  */
 export interface SynthesisPoint {
   id: string
-  content: string
-  supportingProposals: string[]
-  confidence: number
-  agentId: string
-  timestamp: string
+  topic: string
+  synthesizedApproach: string
+  contributingProposals: string[]
+  contributingAgents: string[]
+  votes: BrainstormingVote[]
+  consensusLevel: 'unanimous' | 'majority' | 'split' | 'contested'
+  finalScore: number
+  createdAt: Date
 }
 
 /**
  * Vote in brainstorming
  */
 export interface BrainstormingVote {
-  agentId: string
-  proposalId: string
-  weight: number
-  rationale: string
-  timestamp: string
+  voter: string
+  synthesisPointId: string
+  score: number
+  reasoning: string
+  conditions?: string[]
+  timestamp: Date
 }
 
 /**
  * Brainstorming configuration
  */
 export interface BrainstormingConfig {
-  maxRounds: number
-  minProposalsPerRound: number
+  topic: string
   convergenceThreshold: number
-  timeoutPerRound: number
-  requiredConsensus: number
-  allowDissent: boolean
-  phases: BrainstormingPhase[]
+  maxRoundDurationMs: number
+  generateADR: boolean
+  requireUnanimity: boolean
+  minParticipation: number
+  context?: string
+  constraints?: string[]
+  adrOutputPath?: string
 }
 
 /**
  * Brainstorming result
  */
 export interface BrainstormingResult {
-  success: boolean
-  rounds: BrainstormingRound[]
-  finalProposals: BrainstormingProposal[]
-  synthesisPoints: SynthesisPoint[]
-  consensus: number
-  dissents: string[]
-  duration: number
+  sessionId: string
+  topic: string
   participants: string[]
+  rounds: BrainstormingRound[]
+  finalDecision: Agreement
+  generatedADR?: string
+  adrPath?: string
+  totalDurationMs: number
+  convergenceHistory: number[]
+  success: boolean
+  completionReason: 'consensus' | 'max_rounds' | 'timeout' | 'manual'
 }
 
 /**
  * Agreement in multi-agent collaboration
  */
 export interface Agreement {
-  id: string
   topic: string
-  content: string
+  decision: string
   supportingAgents: string[]
-  opposingAgents: string[]
-  consensusLevel: number
-  timestamp: string
+  confidence: number
+  reasoning: string
+  alternatives: string[]
+  timestamp: Date
 }
 
 // ============================================================================
@@ -347,19 +365,37 @@ export interface Agreement {
 // ============================================================================
 
 /**
- * Party session state
+ * Shared context for party session
+ */
+export interface PartySharedContext {
+  decisions: Record<string, unknown>
+  artifacts: unknown[]
+  votes: unknown[]
+  openQuestions: unknown[]
+  proposals: Proposal[]
+}
+
+/**
+ * Party session state - extends AgentState with party-specific fields
  */
 export interface PartyState {
-  sessionId: string
-  topic: string
-  participants: string[]
-  currentRound: number
-  rounds: PartyRound[]
+  partyId: string
+  activeAgents: Set<string>
+  sharedContext: PartySharedContext
+  messages: PartyMessage[]
   agreements: Agreement[]
-  conflicts: ConflictDetection[]
-  status: 'active' | 'paused' | 'completed' | 'failed'
-  startTime: string
-  endTime?: string
+  conflictLog: ConflictDetection[]
+  currentRound: number
+  convergenceScore: number
+  // Base AgentState fields
+  task: string
+  taskType: string
+  context: Record<string, unknown>
+  currentAgent: string
+  agentResults: unknown[]
+  mcpData: Record<string, unknown>
+  nextAction: string
+  requiresApproval: boolean
 }
 
 /**
@@ -369,9 +405,13 @@ export interface PartySession {
   id: string
   name: string
   description: string
-  participants: string[]
-  config: PartyConfig
+  agents: string[]
+  facilitator?: string
   state: PartyState
+  rounds: PartyRound[]
+  status: 'initializing' | 'active' | 'converged' | 'completed'
+  createdAt: Date
+  updatedAt: Date
 }
 
 /**
@@ -390,25 +430,25 @@ export interface PartyConfig {
  */
 export interface PartyRound {
   roundNumber: number
+  phase: string
+  agentOutputs: Map<string, unknown>
   messages: PartyMessage[]
-  proposals: Proposal[]
-  votes: Vote[]
   agreements: Agreement[]
   conflicts: ConflictDetection[]
+  summary: string
+  convergenceScore: number
   duration: number
-  timestamp: string
 }
 
 /**
  * Message in party session
  */
 export interface PartyMessage {
-  id: string
-  agentId: string
+  from: string
+  to: string | 'all'
   content: string
-  type: 'statement' | 'question' | 'proposal' | 'vote' | 'agreement' | 'conflict'
-  replyTo?: string
-  timestamp: string
+  type: 'statement' | 'question' | 'proposal' | 'vote' | 'response' | 'agreement' | 'conflict'
+  timestamp: Date
 }
 
 /**
@@ -416,24 +456,23 @@ export interface PartyMessage {
  */
 export interface Proposal {
   id: string
-  agentId: string
-  content: string
-  rationale: string
+  proposer: string
+  title: string
+  description: string
   votes: Vote[]
   status: 'pending' | 'accepted' | 'rejected' | 'modified'
-  timestamp: string
+  createdAt: Date
 }
 
 /**
  * Vote on proposal
  */
 export interface Vote {
-  agentId: string
-  proposalId: string
-  decision: 'approve' | 'reject' | 'abstain'
-  weight: number
-  rationale: string
-  timestamp: string
+  voter: string
+  choice: 'approve' | 'reject' | 'abstain' | string
+  confidence: number
+  reasoning?: string
+  timestamp: Date
 }
 
 /**
@@ -444,10 +483,10 @@ export interface ConflictDetection {
   type: 'opinion' | 'requirement' | 'priority' | 'technical'
   description: string
   involvedAgents: string[]
-  severity: 'low' | 'medium' | 'high' | 'critical'
-  resolved: boolean
+  severity: 'Low' | 'Medium' | 'High' | 'Critical'
+  resolvable: boolean
   resolution?: string
-  timestamp: string
+  timestamp: Date
 }
 
 // ============================================================================

@@ -12,10 +12,9 @@
  * This enables high-quality collaborative decisions with full audit trail.
  */
 
-import { PartySession } from './party-session.js'
+import { PartySession } from './party-session'
 import type {
   AgentWithRoleSkills,
-  BrainstormingPhase,
   BrainstormingRound,
   BrainstormingProposal,
   Critique,
@@ -23,10 +22,9 @@ import type {
   BrainstormingVote,
   BrainstormingConfig,
   BrainstormingResult,
-  Agreement,
-  PartyRound
-} from './types.js'
-import { MergeAgent } from '../agents/roles/merge-coordinator.agent.js'
+  Agreement
+} from './types'
+import { MergeAgent } from '../agents/roles/merge-coordinator.agent'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 
@@ -68,14 +66,14 @@ export class BrainstormingSession extends PartySession {
     super(id, name, description, agents, facilitator, mergeAgent)
 
     this.sessionId = id
-    this.participants = agents.map(a => a.role.role_id)
+    this.participants = agents.map(a => a.role.id)
     this.config = { ...DEFAULT_CONFIG, ...config }
     this.startTime = new Date()
 
     // Initialize proposals map for each agent
     for (const agent of agents) {
-      this.proposals.set(agent.role.role_id, [])
-      this.critiques.set(agent.role.role_id, [])
+      this.proposals.set(agent.role.id, [])
+      this.critiques.set(agent.role.id, [])
     }
   }
 
