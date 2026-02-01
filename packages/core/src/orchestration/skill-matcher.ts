@@ -1,6 +1,6 @@
 import type { Skill, AgentWithRoleSkills, SkillMatch } from '../agents/types'
 import type { AgentRegistry } from './agent-registry'
-import type { ConfigLoader, SkillMetadata } from './config-loader'
+import type { ConfigLoader } from './config-loader'
 import { ChatAnthropic } from '@langchain/anthropic'
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 
@@ -14,7 +14,7 @@ export class SkillMatcher {
   private configLoader: ConfigLoader
   private agentRegistry: AgentRegistry
   private llm: BaseChatModel
-  private skillDependencies: Map<string, SkillDependency>
+  private _skillDependencies: Map<string, SkillDependency>
 
   // Legacy: support for direct skill catalog (backward compatibility)
   private skillCatalog?: Map<string, Skill>
@@ -43,8 +43,8 @@ export class SkillMatcher {
       maxTokens: 1024
     })
 
-    // Load skill dependencies
-    this.skillDependencies = this.loadSkillDependencies()
+    // Load skill dependencies (reserved for future use)
+    this._skillDependencies = this.loadSkillDependencies()
   }
 
   /**
@@ -365,6 +365,10 @@ OUTPUT FORMAT (JSON only):
    * @returns Array of prerequisite skill IDs
    */
   checkSkillDependencies(skillId: string): string[] {
+    if (!this.skillCatalog) {
+      // In ConfigLoader mode, dependencies are handled via loadSkill
+      return []
+    }
     const skill = this.skillCatalog.get(skillId)
     if (!skill) return []
 
@@ -373,8 +377,12 @@ OUTPUT FORMAT (JSON only):
 
   /**
    * Get all skills in the catalog
+   * @deprecated Use ConfigLoader.getAllSkillIds() in new code
    */
   getAllSkills(): Skill[] {
+    if (!this.skillCatalog) {
+      throw new Error('getAllSkills() is only available in legacy mode. Use ConfigLoader.getAllSkillIds() instead.')
+    }
     return Array.from(this.skillCatalog.values())
   }
 
@@ -387,11 +395,16 @@ OUTPUT FORMAT (JSON only):
 
   /**
    * Add prerequisite skills based on dependencies
+   * Only works in legacy mode with skillCatalog
    *
    * @param skillIds - Initial skill IDs
    * @returns Skill IDs with dependencies added
    */
   private addDependencySkills(skillIds: string[]): string[] {
+    if (!this.skillCatalog) {
+      return skillIds
+    }
+
     const result = new Set<string>(skillIds)
     const toProcess = [...skillIds]
 
@@ -520,6 +533,14 @@ OUTPUT FORMAT (JSON only):
     } else {
       return `${agent.role.name} may assist with ${skill.name} (${confidencePercent}% confidence)`
     }
+  }
+
+  /**
+   * Get skill dependencies map (for external use)
+   * Reserved for future skill dependency graph features
+   */
+  getSkillDependencies(): Map<string, SkillDependency> {
+    return this._skillDependencies
   }
 
   /**
