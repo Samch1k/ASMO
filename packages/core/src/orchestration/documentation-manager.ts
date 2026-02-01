@@ -14,9 +14,9 @@
 
 import fs from 'fs/promises'
 import path from 'path'
-import type { AgentState, AgentResult, Artifact } from '../../agents/types.js'
-import type { Workflow, WorkflowStep, StepResult } from './types.js'
-import { WorkflowPhase } from './phase-manager.js'
+import type { AgentState, Artifact } from '../agents/types'
+import type { Workflow, WorkflowStep, StepResult } from './types'
+import { WorkflowPhase } from './phase-manager'
 
 /**
  * Decision captured during workflow execution
@@ -239,7 +239,7 @@ export class DocumentationManager {
     workflow: Workflow,
     step: WorkflowStep,
     stepResult: StepResult,
-    state: AgentState
+    _state: AgentState
   ): Promise<void> {
     // Extract decision from step artifacts
     const artifacts = stepResult.output?.artifacts || []
@@ -380,7 +380,7 @@ export class DocumentationManager {
    */
   private generateMarkdown(
     workflow: Workflow,
-    initialState: AgentState,
+    _initialState: AgentState,
     finalState: AgentState,
     decisions: Decision[],
     duration: number
@@ -513,7 +513,7 @@ export class DocumentationManager {
   /**
    * Extract deliverables from workflow and state
    */
-  private extractDeliverables(workflow: Workflow, state: AgentState): string[] {
+  private extractDeliverables(workflow: Workflow, _state: AgentState): string[] {
     const deliverables = new Set<string>()
 
     // From workflow steps
@@ -531,7 +531,7 @@ export class DocumentationManager {
    */
   private generateJSONData(
     workflow: Workflow,
-    initialState: AgentState,
+    _initialState: AgentState,
     finalState: AgentState,
     decisions: Decision[],
     duration: number
