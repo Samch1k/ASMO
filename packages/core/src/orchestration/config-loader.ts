@@ -176,9 +176,20 @@ export class ConfigLoader {
    * @private
    */
   private convertSkillMDToSkill(skillMD: SkillMD, metadata?: SkillMDMetadata): Skill {
+    // Valid skill categories
+    type SkillCategory = 'development' | 'testing' | 'devops' | 'architecture' | 'debugging' |
+                         'performance' | 'ui_design' | 'ux_design' | 'business' | 'product' |
+                         'project_management' | 'project_specific'
+
+    const validCategories: SkillCategory[] = [
+      'development', 'testing', 'devops', 'architecture', 'debugging',
+      'performance', 'ui_design', 'ux_design', 'business', 'product',
+      'project_management', 'project_specific'
+    ]
+
     // Extract metadata from body if available
     const metadataMatch = skillMD.body.match(/\*\*Metadata:\*\*\s*([\s\S]*?)(?:\n\n|$)/)
-    let category = 'general'
+    let category: SkillCategory = 'development' // Default category
     let complexity = 'intermediate'
     let estimatedTime = '1-2h'
     let confidenceThreshold = 0.75
@@ -190,7 +201,12 @@ export class ConfigLoader {
       const timeMatch = metadataText.match(/- Estimated Time:\s*(.+)/)
       const confidenceMatch = metadataText.match(/- Confidence Threshold:\s*(.+)/)
 
-      if (categoryMatch) category = categoryMatch[1].trim()
+      if (categoryMatch) {
+        const parsedCategory = categoryMatch[1].trim() as SkillCategory
+        if (validCategories.includes(parsedCategory)) {
+          category = parsedCategory
+        }
+      }
       if (complexityMatch) complexity = complexityMatch[1].trim()
       if (timeMatch) estimatedTime = timeMatch[1].trim()
       if (confidenceMatch) confidenceThreshold = parseFloat(confidenceMatch[1].trim())
@@ -309,7 +325,7 @@ export class ConfigLoader {
       const index = yaml.parse(content) as SkillIndex
 
       // Cache metadata for fast lookup
-      for (const [category, data] of Object.entries(index.categories)) {
+      for (const [_category, data] of Object.entries(index.categories)) {
         for (const meta of data.skills) {
           this.skillMetadataCache.set(meta.id, {
             ...meta,
@@ -509,7 +525,7 @@ export class ConfigLoader {
             id: `superpowers_${frontmatter.name?.replace(/-/g, '_')}`,
             name: frontmatter.name || dir.name,
             description: frontmatter.description || 'Superpowers workflow',
-            category: 'superpowers_workflows',
+            category: 'development', // Superpowers skills are development workflows
             complexity: 'intermediate',
             requires_skills: [],
             required_mcps: ['filesystem'],
