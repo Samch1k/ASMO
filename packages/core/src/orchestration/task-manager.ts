@@ -22,12 +22,10 @@ import {
   type TaskComment,
   type TaskStatus,
   type TaskPriority,
-  type ComplexityLevel,
   type CreateTaskInput,
-  type UpdateTaskInput,
   type TaskQueryOptions
-} from './task-persister.js'
-import type { ComplexityScore } from './types.js'
+} from './task-persister'
+import type { ComplexityScore } from './types'
 
 // =============================================================================
 // TYPES
@@ -182,11 +180,18 @@ export class TaskManager {
 
   /**
    * Start working on a task
+   * @param taskId - Task ID to start
+   * @param agentId - Optional agent to assign before starting (if not already assigned)
    */
-  async startTask(taskId: string): Promise<{ task: Task; execution: TaskExecution }> {
-    const task = await this.persister.getTask(taskId)
+  async startTask(taskId: string, agentId?: string): Promise<{ task: Task; execution: TaskExecution }> {
+    let task = await this.persister.getTask(taskId)
     if (!task) {
       throw new Error(`Task not found: ${taskId}`)
+    }
+
+    // If agentId provided and task not assigned, assign it first
+    if (agentId && !task.assignedAgent) {
+      task = await this.assignTask(taskId, agentId)
     }
 
     if (!task.assignedAgent) {
