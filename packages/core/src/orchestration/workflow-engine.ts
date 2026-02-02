@@ -1587,32 +1587,18 @@ export class WorkflowEngine {
 
       console.log(`📊 [BMad] Collected ${stepMetrics.length} step metrics`)
 
-      // 3. Check if database is connected
-      const isConnected = await this.metricsPersister.isConnected()
-
-      if (!isConnected) {
-        console.warn('⚠️  [BMad] Database not connected, metrics will not be persisted')
-        console.log(`📊 [BMad] Metrics summary:`)
-        console.log(`   Workflow: ${workflowMetrics.workflowName}`)
-        console.log(`   Duration: ${(workflowMetrics.totalDurationMs / 1000).toFixed(1)}s`)
-        console.log(`   Success: ${workflowMetrics.success}`)
-        console.log(`   Steps: ${workflowMetrics.stepCount}`)
-        console.log(`   Parallel Steps: ${workflowMetrics.parallelStepsExecuted}`)
-
-        // Reset collector for next workflow
-        this.metricsCollector.reset()
-        return
-      }
-
-      // 4. Persist workflow metrics
+      // 3. Persist metrics (SQLite auto-initializes in .asmo/metrics.db)
       await this.metricsPersister.persistWorkflowMetrics(workflowMetrics)
 
-      // 5. Persist step metrics
+      // 4. Persist step metrics
       if (stepMetrics.length > 0) {
         await this.metricsPersister.persistStepMetrics(stepMetrics)
       }
 
-      console.log(`✅ [BMad] Metrics persisted successfully`)
+      // Log only if persistence is enabled
+      if (this.metricsPersister.isEnabled()) {
+        console.log(`✅ [BMad] Metrics persisted to ${this.metricsPersister.getDatabasePath()}`)
+      }
 
       // 6. Run learning loop analysis (async, non-blocking)
       console.log(`🔄 [BMad] Starting learning loop analysis...`)

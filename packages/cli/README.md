@@ -28,7 +28,10 @@ pnpm add -g @asmo/cli
 # Analyze and execute any task
 asmo run "Fix the login bug"
 
-# Get workflow recommendation
+# Fast analysis for hooks (returns JSON)
+asmo suggest "Add user authentication"
+
+# Get detailed complexity analysis
 asmo analyze "Add user authentication"
 
 # Execute specific workflow
@@ -72,6 +75,46 @@ asmo run "Refactor authentication system to use JWT" --verbose
 
 # Dry run to see execution plan
 asmo run "Add user profile page" --dry-run
+```
+
+### `asmo suggest <task>`
+
+Fast analysis for Claude Code integration - returns JSON recommendation for whether to use ASMO.
+
+Designed for use in Claude Code hooks and automation scripts. Performs lightweight complexity analysis without loading full configuration.
+
+**Options:**
+```bash
+-t, --threshold <score>    Complexity threshold for ASMO recommendation (default: 40)
+--no-json                  Human-readable output instead of JSON
+```
+
+**Output Format:**
+```json
+{
+  "useAsmo": true,
+  "confidence": 0.85,
+  "workflow": "feature_implementation_full",
+  "agents": ["architect", "developer", "tester"],
+  "skills": ["feature-dev", "testing"],
+  "complexity": {
+    "score": 65,
+    "level": "complex"
+  },
+  "reasoning": "Complex feature requiring multiple agents"
+}
+```
+
+**Examples:**
+```bash
+# Quick analysis (JSON output)
+asmo suggest "Add OAuth authentication"
+
+# Human-readable output
+asmo suggest "Fix typo in README" --no-json
+
+# Custom threshold for ASMO recommendation
+asmo suggest "Refactor user service" --threshold 50
 ```
 
 ### `asmo analyze <task>`

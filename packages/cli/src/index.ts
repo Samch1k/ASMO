@@ -5,7 +5,8 @@
  * Command-line interface for ASMO - AI System for Multiagent Orchestration.
  *
  * Commands:
- * - run <task>: Hybrid analysis and execution (BMAD + ClaudeCodeAdapter)
+ * - run <task>: Adaptive analysis and execution (uses WorkflowEngine)
+ * - suggest <task>: Fast analysis for hooks (returns JSON)
  * - analyze <task>: Analyze task complexity
  * - workflow <name>: Run a workflow
  * - task: Task management commands

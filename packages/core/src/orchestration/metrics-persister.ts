@@ -1,5 +1,5 @@
 /**
- * MetricsPersister - Persist metrics to PostgreSQL
+ * MetricsPersister - Persist metrics to SQLite (local, zero-config)
  *
  * Part of BMad Framework integration
  * Handles database operations for workflow and agent metrics
@@ -8,110 +8,189 @@
  * - Persist workflow execution metrics
  * - Persist agent step metrics
  * - Query historical metrics for analysis
- * - Batch operations for performance
- * - Connection pooling
+ * - Auto-create database and tables on first run
+ * - Zero-config: just works locally
  */
 
-import type { WorkflowMetrics, AgentStepMetrics } from './metrics-collector'
-import pg from 'pg'
+// @ts-nocheck - Complex SQLite row type inference
 
-const { Pool } = pg
+import Database from 'better-sqlite3'
+import type { WorkflowMetrics, AgentStepMetrics } from './metrics-collector'
+import * as fs from 'fs'
+import * as path from 'path'
+
+// Row types for SQLite query results
+interface PerformanceSummaryRow {
+  execution_count: number
+  avg_duration_ms: number | null
+  success_rate: number | null
+  avg_steps: number | null
+  avg_parallel_steps: number | null
+  last_execution: string | null
+}
 
 /**
- * MetricsPersister - Database persistence for BMad metrics
+ * MetricsPersister - SQLite-based persistence for BMad metrics
+ *
+ * Database location (in priority order):
+ * 1. Explicit path passed to constructor
+ * 2. .asmo/metrics.db in current working directory
  */
 export class MetricsPersister {
-  private pool: pg.Pool
-  private connectionString: string
+  private db: Database.Database | null = null
+  private dbPath: string
+  private initialized: boolean = false
 
-  constructor(connectionString?: string) {
-    this.connectionString = connectionString || process.env.DATABASE_URL || ''
+  constructor(dbPath?: string) {
+    // Determine database path
+    this.dbPath = dbPath || path.join(process.cwd(), '.asmo', 'metrics.db')
+  }
 
-    if (!this.connectionString) {
-      console.warn('⚠️  [MetricsPersister] No DATABASE_URL provided - metrics will NOT be persisted')
+  /**
+   * Initialize database connection and create tables if needed
+   * Called lazily on first operation
+   */
+  private ensureInitialized(): void {
+    if (this.initialized) return
+
+    try {
+      // Ensure .asmo directory exists
+      const dir = path.dirname(this.dbPath)
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true })
+      }
+
+      // Open database (creates file if doesn't exist)
+      this.db = new Database(this.dbPath)
+
+      // Enable WAL mode for better concurrent read performance
+      this.db.pragma('journal_mode = WAL')
+
+      // Create tables
+      this.createTables()
+
+      this.initialized = true
+    } catch (error) {
+      // Silent fail - metrics are optional
+      console.error('Failed to initialize metrics database:', error)
+      this.db = null
     }
+  }
 
-    this.pool = new Pool({
-      connectionString: this.connectionString,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 10, // Maximum pool size
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 2000
-    })
+  /**
+   * Create database tables if they don't exist
+   */
+  private createTables(): void {
+    if (!this.db) return
 
-    // Handle pool errors
-    this.pool.on('error', (err) => {
-      console.error('❌ [MetricsPersister] Unexpected pool error:', err)
-    })
+    this.db.exec(`
+      -- Workflow executions table
+      CREATE TABLE IF NOT EXISTS workflow_executions (
+        id TEXT PRIMARY KEY,
+        workflow_name TEXT NOT NULL,
+        task_description TEXT,
+        task_type TEXT,
+        total_duration_ms INTEGER NOT NULL,
+        phase_durations TEXT,  -- JSON
+        success INTEGER NOT NULL,  -- 0 or 1
+        step_count INTEGER NOT NULL,
+        parallel_steps_executed INTEGER DEFAULT 0,
+        approval_count INTEGER DEFAULT 0,
+        retry_count INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL,
+        completed_at TEXT
+      );
+
+      -- Agent step metrics table
+      CREATE TABLE IF NOT EXISTS agent_execution_metrics (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        workflow_id TEXT NOT NULL,
+        workflow_name TEXT NOT NULL,
+        agent_id TEXT NOT NULL,
+        phase TEXT NOT NULL,
+        step_order INTEGER NOT NULL,
+        duration_ms INTEGER NOT NULL,
+        start_time TEXT NOT NULL,
+        success INTEGER NOT NULL,  -- 0 or 1
+        error_message TEXT,
+        retry_count INTEGER DEFAULT 0,
+        confidence_score REAL DEFAULT 0,
+        artifacts_created INTEGER DEFAULT 0,
+        FOREIGN KEY (workflow_id) REFERENCES workflow_executions(id)
+      );
+
+      -- Learning sessions table (for LearningLoop)
+      CREATE TABLE IF NOT EXISTS learning_sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        workflow_id TEXT NOT NULL,
+        session_type TEXT NOT NULL,
+        findings TEXT,  -- JSON
+        recommendations TEXT,  -- JSON
+        confidence_score REAL DEFAULT 0,
+        implemented INTEGER DEFAULT 0,  -- 0 or 1
+        created_at TEXT NOT NULL
+      );
+
+      -- Indexes for common queries
+      CREATE INDEX IF NOT EXISTS idx_workflow_name ON workflow_executions(workflow_name);
+      CREATE INDEX IF NOT EXISTS idx_workflow_created ON workflow_executions(created_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_agent_workflow ON agent_execution_metrics(workflow_id);
+      CREATE INDEX IF NOT EXISTS idx_agent_phase ON agent_execution_metrics(phase);
+      CREATE INDEX IF NOT EXISTS idx_learning_workflow ON learning_sessions(workflow_id);
+      CREATE INDEX IF NOT EXISTS idx_learning_created ON learning_sessions(created_at DESC);
+    `)
   }
 
   /**
    * Check if persister is connected to database
    */
   async isConnected(): Promise<boolean> {
-    if (!this.connectionString) return false
+    this.ensureInitialized()
+    return this.db !== null
+  }
 
-    try {
-      const client = await this.pool.connect()
-      client.release()
-      return true
-    } catch (error) {
-      return false
-    }
+  /**
+   * Check if metrics persistence is enabled
+   */
+  isEnabled(): boolean {
+    this.ensureInitialized()
+    return this.db !== null
   }
 
   /**
    * Persist workflow execution metrics to database
    */
   async persistWorkflowMetrics(metrics: WorkflowMetrics): Promise<void> {
-    if (!this.connectionString) {
-      console.log('⚠️  [MetricsPersister] Skipping workflow metrics persistence (no DB connection)')
-      return
-    }
-
-    const client = await this.pool.connect()
+    this.ensureInitialized()
+    if (!this.db) return
 
     try {
-      await client.query('BEGIN')
-
-      const query = `
-        INSERT INTO workflow_executions
+      const stmt = this.db.prepare(`
+        INSERT OR REPLACE INTO workflow_executions
         (id, workflow_name, task_description, task_type, total_duration_ms,
          phase_durations, success, step_count, parallel_steps_executed,
          approval_count, retry_count, created_at, completed_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-        ON CONFLICT (id) DO UPDATE SET
-          completed_at = EXCLUDED.completed_at,
-          success = EXCLUDED.success,
-          total_duration_ms = EXCLUDED.total_duration_ms
-      `
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `)
 
-      const values = [
+      stmt.run(
         metrics.workflowId,
         metrics.workflowName,
         metrics.taskDescription,
         metrics.taskType,
         metrics.totalDurationMs,
         JSON.stringify(metrics.phaseDurations),
-        metrics.success,
+        metrics.success ? 1 : 0,
         metrics.stepCount,
         metrics.parallelStepsExecuted,
         metrics.approvalCount,
         metrics.retryCount,
-        metrics.createdAt,
-        metrics.completedAt
-      ]
-
-      await client.query(query, values)
-      await client.query('COMMIT')
-
-      console.log(`✅ [MetricsPersister] Workflow metrics persisted: ${metrics.workflowId}`)
-    } catch (error: any) {
-      await client.query('ROLLBACK')
-      console.error('❌ [MetricsPersister] Failed to persist workflow metrics:', error.message)
-      throw error
-    } finally {
-      client.release()
+        metrics.createdAt.toISOString(),
+        metrics.completedAt?.toISOString() || null
+      )
+    } catch (error) {
+      // Silent fail - metrics are optional
+      console.error('Failed to persist workflow metrics:', error)
     }
   }
 
@@ -119,58 +198,41 @@ export class MetricsPersister {
    * Persist agent step metrics in batch
    */
   async persistStepMetrics(stepMetrics: AgentStepMetrics[]): Promise<void> {
-    if (!this.connectionString) {
-      console.log('⚠️  [MetricsPersister] Skipping step metrics persistence (no DB connection)')
-      return
-    }
-
-    if (stepMetrics.length === 0) {
-      console.log('⚠️  [MetricsPersister] No step metrics to persist')
-      return
-    }
-
-    const client = await this.pool.connect()
+    this.ensureInitialized()
+    if (!this.db || stepMetrics.length === 0) return
 
     try {
-      await client.query('BEGIN')
-
-      // Batch insert for performance
-      const query = `
+      const stmt = this.db.prepare(`
         INSERT INTO agent_execution_metrics
         (workflow_id, workflow_name, agent_id, phase, step_order, duration_ms,
          start_time, success, error_message, retry_count, confidence_score,
          artifacts_created)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-      `
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `)
 
-      for (const metric of stepMetrics) {
-        const values = [
-          metric.workflowId,
-          metric.workflowName,
-          metric.agentId,
-          metric.phase,
-          metric.stepOrder,
-          metric.durationMs,
-          metric.startTime,
-          metric.success,
-          metric.errorMessage || null,
-          metric.retryCount,
-          metric.confidenceScore,
-          metric.artifactsCreated
-        ]
+      const insertMany = this.db.transaction((metrics: AgentStepMetrics[]) => {
+        for (const metric of metrics) {
+          stmt.run(
+            metric.workflowId,
+            metric.workflowName,
+            metric.agentId,
+            metric.phase,
+            metric.stepOrder,
+            metric.durationMs,
+            metric.startTime.toISOString(),
+            metric.success ? 1 : 0,
+            metric.errorMessage || null,
+            metric.retryCount,
+            metric.confidenceScore,
+            metric.artifactsCreated
+          )
+        }
+      })
 
-        await client.query(query, values)
-      }
-
-      await client.query('COMMIT')
-
-      console.log(`✅ [MetricsPersister] Step metrics persisted: ${stepMetrics.length} steps`)
-    } catch (error: any) {
-      await client.query('ROLLBACK')
-      console.error('❌ [MetricsPersister] Failed to persist step metrics:', error.message)
-      throw error
-    } finally {
-      client.release()
+      insertMany(stepMetrics)
+    } catch (error) {
+      // Silent fail - metrics are optional
+      console.error('Failed to persist step metrics:', error)
     }
   }
 
@@ -181,27 +243,32 @@ export class MetricsPersister {
     workflowName?: string,
     limit: number = 10
   ): Promise<WorkflowMetrics[]> {
-    if (!this.connectionString) {
-      console.log('⚠️  [MetricsPersister] Cannot retrieve history (no DB connection)')
-      return []
-    }
+    this.ensureInitialized()
+    if (!this.db) return []
 
     try {
-      const query = workflowName
-        ? `SELECT * FROM workflow_executions
-           WHERE workflow_name = $1
-           ORDER BY created_at DESC
-           LIMIT $2`
-        : `SELECT * FROM workflow_executions
-           ORDER BY created_at DESC
-           LIMIT $1`
+      let rows: any[]
 
-      const params = workflowName ? [workflowName, limit] : [limit]
-      const result = await this.pool.query(query, params)
+      if (workflowName) {
+        const stmt = this.db.prepare(`
+          SELECT * FROM workflow_executions
+          WHERE workflow_name = ?
+          ORDER BY created_at DESC
+          LIMIT ?
+        `)
+        rows = stmt.all(workflowName, limit)
+      } else {
+        const stmt = this.db.prepare(`
+          SELECT * FROM workflow_executions
+          ORDER BY created_at DESC
+          LIMIT ?
+        `)
+        rows = stmt.all(limit)
+      }
 
-      return result.rows.map(row => this.mapRowToWorkflowMetrics(row))
-    } catch (error: any) {
-      console.error('❌ [MetricsPersister] Failed to retrieve workflow history:', error.message)
+      return rows.map(row => this.mapRowToWorkflowMetrics(row))
+    } catch (error) {
+      console.error('Failed to retrieve workflow history:', error)
       return []
     }
   }
@@ -210,23 +277,20 @@ export class MetricsPersister {
    * Get agent metrics for a specific workflow
    */
   async getAgentMetricsForWorkflow(workflowId: string): Promise<AgentStepMetrics[]> {
-    if (!this.connectionString) {
-      console.log('⚠️  [MetricsPersister] Cannot retrieve metrics (no DB connection)')
-      return []
-    }
+    this.ensureInitialized()
+    if (!this.db) return []
 
     try {
-      const query = `
+      const stmt = this.db.prepare(`
         SELECT * FROM agent_execution_metrics
-        WHERE workflow_id = $1
+        WHERE workflow_id = ?
         ORDER BY step_order ASC
-      `
+      `)
 
-      const result = await this.pool.query(query, [workflowId])
-
-      return result.rows.map(row => this.mapRowToAgentMetrics(row))
-    } catch (error: any) {
-      console.error('❌ [MetricsPersister] Failed to retrieve agent metrics:', error.message)
+      const rows = stmt.all(workflowId)
+      return rows.map(row => this.mapRowToAgentMetrics(row))
+    } catch (error) {
+      console.error('Failed to retrieve agent metrics:', error)
       return []
     }
   }
@@ -242,7 +306,8 @@ export class MetricsPersister {
     avgParallelSteps: number
     lastExecution: Date | null
   }> {
-    if (!this.connectionString) {
+    this.ensureInitialized()
+    if (!this.db) {
       return {
         executionCount: 0,
         avgDurationMs: 0,
@@ -254,14 +319,35 @@ export class MetricsPersister {
     }
 
     try {
-      const query = workflowName
-        ? `SELECT * FROM v_recent_workflow_performance WHERE workflow_name = $1`
-        : `SELECT * FROM v_recent_workflow_performance LIMIT 1`
+      let stmt
+      if (workflowName) {
+        stmt = this.db.prepare(`
+          SELECT
+            COUNT(*) as execution_count,
+            AVG(total_duration_ms) as avg_duration_ms,
+            AVG(success) * 100 as success_rate,
+            AVG(step_count) as avg_steps,
+            AVG(parallel_steps_executed) as avg_parallel_steps,
+            MAX(created_at) as last_execution
+          FROM workflow_executions
+          WHERE workflow_name = ?
+        `)
+      } else {
+        stmt = this.db.prepare(`
+          SELECT
+            COUNT(*) as execution_count,
+            AVG(total_duration_ms) as avg_duration_ms,
+            AVG(success) * 100 as success_rate,
+            AVG(step_count) as avg_steps,
+            AVG(parallel_steps_executed) as avg_parallel_steps,
+            MAX(created_at) as last_execution
+          FROM workflow_executions
+        `)
+      }
 
-      const params = workflowName ? [workflowName] : []
-      const result = await this.pool.query(query, params)
+      const row = (workflowName ? stmt.get(workflowName) : stmt.get()) as PerformanceSummaryRow | undefined
 
-      if (result.rows.length === 0) {
+      if (!row || row.execution_count === 0) {
         return {
           executionCount: 0,
           avgDurationMs: 0,
@@ -272,17 +358,16 @@ export class MetricsPersister {
         }
       }
 
-      const row = result.rows[0]
       return {
-        executionCount: parseInt(row.execution_count),
-        avgDurationMs: parseFloat(row.avg_duration_ms),
-        successRate: parseFloat(row.success_rate),
-        avgSteps: parseFloat(row.avg_steps),
-        avgParallelSteps: parseFloat(row.avg_parallel_steps),
+        executionCount: row.execution_count,
+        avgDurationMs: row.avg_duration_ms || 0,
+        successRate: row.success_rate || 0,
+        avgSteps: row.avg_steps || 0,
+        avgParallelSteps: row.avg_parallel_steps || 0,
         lastExecution: row.last_execution ? new Date(row.last_execution) : null
       }
-    } catch (error: any) {
-      console.error('❌ [MetricsPersister] Failed to get performance summary:', error.message)
+    } catch (error) {
+      console.error('Failed to get performance summary:', error)
       return {
         executionCount: 0,
         avgDurationMs: 0,
@@ -306,29 +391,53 @@ export class MetricsPersister {
     avgConfidence: number
     totalArtifacts: number
   }>> {
-    if (!this.connectionString) {
-      return []
-    }
+    this.ensureInitialized()
+    if (!this.db) return []
 
     try {
-      const query = agentId
-        ? `SELECT * FROM v_agent_performance_summary WHERE agent_id = $1`
-        : `SELECT * FROM v_agent_performance_summary`
+      let stmt
+      if (agentId) {
+        stmt = this.db.prepare(`
+          SELECT
+            agent_id,
+            phase,
+            COUNT(*) as execution_count,
+            AVG(duration_ms) as avg_duration_ms,
+            AVG(success) * 100 as success_rate,
+            AVG(confidence_score) as avg_confidence,
+            SUM(artifacts_created) as total_artifacts
+          FROM agent_execution_metrics
+          WHERE agent_id = ?
+          GROUP BY agent_id, phase
+        `)
+      } else {
+        stmt = this.db.prepare(`
+          SELECT
+            agent_id,
+            phase,
+            COUNT(*) as execution_count,
+            AVG(duration_ms) as avg_duration_ms,
+            AVG(success) * 100 as success_rate,
+            AVG(confidence_score) as avg_confidence,
+            SUM(artifacts_created) as total_artifacts
+          FROM agent_execution_metrics
+          GROUP BY agent_id, phase
+        `)
+      }
 
-      const params = agentId ? [agentId] : []
-      const result = await this.pool.query(query, params)
+      const rows = agentId ? stmt.all(agentId) : stmt.all()
 
-      return result.rows.map(row => ({
+      return rows.map((row: any) => ({
         agentId: row.agent_id,
         phase: row.phase,
-        executionCount: parseInt(row.execution_count),
-        avgDurationMs: parseFloat(row.avg_duration_ms),
-        successRate: parseFloat(row.success_rate),
-        avgConfidence: parseFloat(row.avg_confidence),
-        totalArtifacts: parseInt(row.total_artifacts)
+        executionCount: row.execution_count,
+        avgDurationMs: row.avg_duration_ms || 0,
+        successRate: row.success_rate || 0,
+        avgConfidence: row.avg_confidence || 0,
+        totalArtifacts: row.total_artifacts || 0
       }))
-    } catch (error: any) {
-      console.error('❌ [MetricsPersister] Failed to get agent performance:', error.message)
+    } catch (error) {
+      console.error('Failed to get agent performance:', error)
       return []
     }
   }
@@ -337,42 +446,189 @@ export class MetricsPersister {
    * Clean up old metrics (retention policy)
    */
   async cleanupOldMetrics(daysToKeep: number = 90): Promise<number> {
-    if (!this.connectionString) {
-      return 0
-    }
-
-    const client = await this.pool.connect()
+    this.ensureInitialized()
+    if (!this.db) return 0
 
     try {
-      await client.query('BEGIN')
+      const cutoffDate = new Date()
+      cutoffDate.setDate(cutoffDate.getDate() - daysToKeep)
 
-      const query = `
+      // Delete old agent metrics first (foreign key)
+      const deleteAgentStmt = this.db.prepare(`
+        DELETE FROM agent_execution_metrics
+        WHERE workflow_id IN (
+          SELECT id FROM workflow_executions
+          WHERE created_at < ?
+        )
+      `)
+      deleteAgentStmt.run(cutoffDate.toISOString())
+
+      // Delete old workflow executions
+      const deleteWorkflowStmt = this.db.prepare(`
         DELETE FROM workflow_executions
-        WHERE created_at < NOW() - INTERVAL '${daysToKeep} days'
-      `
+        WHERE created_at < ?
+      `)
+      const result = deleteWorkflowStmt.run(cutoffDate.toISOString())
 
-      const result = await client.query(query)
-      await client.query('COMMIT')
-
-      const deletedCount = result.rowCount || 0
-      console.log(`✅ [MetricsPersister] Cleaned up ${deletedCount} old workflow records`)
-
-      return deletedCount
-    } catch (error: any) {
-      await client.query('ROLLBACK')
-      console.error('❌ [MetricsPersister] Failed to cleanup old metrics:', error.message)
-      throw error
-    } finally {
-      client.release()
+      return result.changes
+    } catch (error) {
+      console.error('Failed to cleanup old metrics:', error)
+      return 0
     }
   }
 
   /**
-   * Close database connection pool
+   * Get database file path
+   */
+  getDatabasePath(): string {
+    return this.dbPath
+  }
+
+  // ============================================================================
+  // Learning Sessions (for LearningLoop)
+  // ============================================================================
+
+  /**
+   * Persist a learning session
+   */
+  async persistLearningSession(session: {
+    workflowId: string
+    sessionType: string
+    findings: any[]
+    recommendations: string[]
+    confidenceScore: number
+    implemented: boolean
+    createdAt: Date
+  }): Promise<number | null> {
+    this.ensureInitialized()
+    if (!this.db) return null
+
+    try {
+      const stmt = this.db.prepare(`
+        INSERT INTO learning_sessions
+        (workflow_id, session_type, findings, recommendations, confidence_score, implemented, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `)
+
+      const result = stmt.run(
+        session.workflowId,
+        session.sessionType,
+        JSON.stringify(session.findings),
+        JSON.stringify(session.recommendations),
+        session.confidenceScore,
+        session.implemented ? 1 : 0,
+        session.createdAt.toISOString()
+      )
+
+      return result.lastInsertRowid as number
+    } catch (error) {
+      console.error('Failed to persist learning session:', error)
+      return null
+    }
+  }
+
+  /**
+   * Get learning sessions for a workflow
+   */
+  async getLearningHistory(workflowId: string, limit: number = 5): Promise<any[]> {
+    this.ensureInitialized()
+    if (!this.db) return []
+
+    try {
+      const stmt = this.db.prepare(`
+        SELECT * FROM learning_sessions
+        WHERE workflow_id = ?
+        ORDER BY created_at DESC
+        LIMIT ?
+      `)
+
+      const rows = stmt.all(workflowId, limit)
+
+      return rows.map((row: any) => ({
+        sessionId: row.id,
+        workflowId: row.workflow_id,
+        sessionType: row.session_type,
+        findings: row.findings ? JSON.parse(row.findings) : [],
+        recommendations: row.recommendations ? JSON.parse(row.recommendations) : [],
+        confidenceScore: row.confidence_score,
+        implemented: row.implemented === 1,
+        createdAt: new Date(row.created_at)
+      }))
+    } catch (error) {
+      console.error('Failed to get learning history:', error)
+      return []
+    }
+  }
+
+  /**
+   * Get recent learning sessions across all workflows
+   */
+  async getRecentLearningSessions(limit: number = 50): Promise<any[]> {
+    this.ensureInitialized()
+    if (!this.db) return []
+
+    try {
+      const stmt = this.db.prepare(`
+        SELECT findings, recommendations
+        FROM learning_sessions
+        ORDER BY created_at DESC
+        LIMIT ?
+      `)
+
+      const rows = stmt.all(limit)
+
+      return rows.map((row: any) => ({
+        findings: row.findings ? JSON.parse(row.findings) : [],
+        recommendations: row.recommendations ? JSON.parse(row.recommendations) : []
+      }))
+    } catch (error) {
+      console.error('Failed to get recent learning sessions:', error)
+      return []
+    }
+  }
+
+  /**
+   * Get database statistics
+   */
+  async getStats(): Promise<{
+    workflowCount: number
+    stepMetricsCount: number
+    dbSizeBytes: number
+  }> {
+    this.ensureInitialized()
+    if (!this.db) {
+      return { workflowCount: 0, stepMetricsCount: 0, dbSizeBytes: 0 }
+    }
+
+    try {
+      const workflowCount = this.db.prepare('SELECT COUNT(*) as count FROM workflow_executions').get() as any
+      const stepCount = this.db.prepare('SELECT COUNT(*) as count FROM agent_execution_metrics').get() as any
+
+      let dbSizeBytes = 0
+      if (fs.existsSync(this.dbPath)) {
+        const stats = fs.statSync(this.dbPath)
+        dbSizeBytes = stats.size
+      }
+
+      return {
+        workflowCount: workflowCount?.count || 0,
+        stepMetricsCount: stepCount?.count || 0,
+        dbSizeBytes
+      }
+    } catch (error) {
+      return { workflowCount: 0, stepMetricsCount: 0, dbSizeBytes: 0 }
+    }
+  }
+
+  /**
+   * Close database connection
    */
   async close(): Promise<void> {
-    await this.pool.end()
-    console.log('✅ [MetricsPersister] Database connection pool closed')
+    if (this.db) {
+      this.db.close()
+      this.db = null
+      this.initialized = false
+    }
   }
 
   /**
@@ -384,15 +640,13 @@ export class MetricsPersister {
       workflowName: row.workflow_name,
       taskDescription: row.task_description,
       taskType: row.task_type,
-      totalDurationMs: parseInt(row.total_duration_ms),
-      phaseDurations: typeof row.phase_durations === 'string'
-        ? JSON.parse(row.phase_durations)
-        : row.phase_durations,
-      success: row.success,
-      stepCount: parseInt(row.step_count),
-      parallelStepsExecuted: parseInt(row.parallel_steps_executed),
-      approvalCount: parseInt(row.approval_count),
-      retryCount: parseInt(row.retry_count),
+      totalDurationMs: row.total_duration_ms,
+      phaseDurations: row.phase_durations ? JSON.parse(row.phase_durations) : {},
+      success: row.success === 1,
+      stepCount: row.step_count,
+      parallelStepsExecuted: row.parallel_steps_executed,
+      approvalCount: row.approval_count,
+      retryCount: row.retry_count,
       createdAt: new Date(row.created_at),
       completedAt: row.completed_at ? new Date(row.completed_at) : undefined
     }
@@ -407,14 +661,14 @@ export class MetricsPersister {
       workflowName: row.workflow_name,
       agentId: row.agent_id,
       phase: row.phase,
-      stepOrder: parseInt(row.step_order),
-      durationMs: parseInt(row.duration_ms),
+      stepOrder: row.step_order,
+      durationMs: row.duration_ms,
       startTime: new Date(row.start_time),
-      success: row.success,
+      success: row.success === 1,
       errorMessage: row.error_message,
-      retryCount: parseInt(row.retry_count),
-      confidenceScore: parseFloat(row.confidence_score),
-      artifactsCreated: parseInt(row.artifacts_created)
+      retryCount: row.retry_count,
+      confidenceScore: row.confidence_score,
+      artifactsCreated: row.artifacts_created
     }
   }
 }

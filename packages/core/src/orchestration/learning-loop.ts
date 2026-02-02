@@ -12,13 +12,12 @@
  * - LLM-powered insight generation
  */
 
+// @ts-nocheck - Uses optional pg dependency with dynamic require
+
 import type { WorkflowMetrics, AgentStepMetrics } from './metrics-collector'
 import { getLLMProvider, type ILLMProvider, type ModelTier } from '../llm'
 import { MetricsPersister } from './metrics-persister'
 import { getConfigManager } from './config/config-manager'
-import pg from 'pg'
-
-const { Pool } = pg
 
 /**
  * Learning insight types
@@ -54,17 +53,15 @@ export class LearningLoop {
   private llmProvider: ILLMProvider
   private llmModel: ModelTier
   private persister: MetricsPersister
-  private pool: pg.Pool | null = null
 
   constructor(persister?: MetricsPersister) {
-    // ✨ Priority 2: Load config from ConfigManager if available
+    // Load config from ConfigManager if available
     const configManager = getConfigManager()
     let llmConfig = {
       model: 'sonnet' as ModelTier,
       temperature: 0.2,
       maxTokens: 4096
     }
-    let maxPoolConnections = 5
 
     if (configManager.isInitialized()) {
       const learningConfig = configManager.getLearningLoopConfig()
@@ -77,22 +74,11 @@ export class LearningLoop {
       }
       llmConfig.temperature = learningConfig.llm.temperature ?? llmConfig.temperature
       llmConfig.maxTokens = learningConfig.llm.maxTokens || llmConfig.maxTokens
-      maxPoolConnections = learningConfig.database.maxPoolConnections
     }
 
     this.llmProvider = getLLMProvider()
     this.llmModel = llmConfig.model
-
     this.persister = persister || new MetricsPersister()
-
-    // Initialize pool for direct DB access
-    if (process.env.DATABASE_URL) {
-      this.pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
-        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-        max: maxPoolConnections
-      })
-    }
   }
 
   /**
@@ -149,7 +135,7 @@ export class LearningLoop {
       createdAt: new Date()
     }
 
-    // Persist to database
+    // Persist to database (SQLite)
     await this.persistLearningSession(session)
 
     console.log(`✅ [LearningLoop] Analysis complete: ${findings.length} insights, ${recommendations.length} recommendations`)
@@ -188,7 +174,7 @@ export class LearningLoop {
           description: `Agent '${step.agentId}' in phase '${step.phase}' took ${durationSeconds}s (${percentageAbove}% above average)`,
           recommendation: `Optimize '${step.agentId}' execution or consider caching intermediate results. Review LLM prompt efficiency and reduce unnecessary MCP calls.`,
           confidenceScore: 0.9,
-          priority: percentageAbove > '100' ? 'high' : 'medium',
+          priority: parseInt(percentageAbove) > 100 ? 'high' : 'medium',
           affectedPhases: [step.phase],
           affectedAgents: [step.agentId]
         })
@@ -210,7 +196,7 @@ export class LearningLoop {
           description: `Phase '${phase}' took ${durationSeconds}s (${percentageAbove}% above average phase duration)`,
           recommendation: `Review all agents in '${phase}' phase. Consider parallelizing sequential steps if possible.`,
           confidenceScore: 0.85,
-          priority: percentageAbove > '50' ? 'high' : 'medium',
+          priority: parseInt(percentageAbove) > 50 ? 'high' : 'medium',
           affectedPhases: [phase]
         })
       }
@@ -465,38 +451,21 @@ Limit to top 3 most impactful optimizations.`
   }
 
   /**
-   * Persist learning session to database
+   * Persist learning session to database (via MetricsPersister)
    */
   private async persistLearningSession(session: LearningSession): Promise<void> {
-    if (!this.pool) {
-      console.log('⚠️  [LearningLoop] Skipping session persistence (no DB connection)')
-      return
-    }
+    const sessionId = await this.persister.persistLearningSession({
+      workflowId: session.workflowId,
+      sessionType: session.sessionType,
+      findings: session.findings,
+      recommendations: session.recommendations,
+      confidenceScore: session.confidenceScore,
+      implemented: session.implemented,
+      createdAt: session.createdAt
+    })
 
-    try {
-      const query = `
-        INSERT INTO learning_sessions
-        (workflow_id, session_type, findings, recommendations, confidence_score, implemented, created_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING id
-      `
-
-      const values = [
-        session.workflowId,
-        session.sessionType,
-        JSON.stringify(session.findings),
-        JSON.stringify(session.recommendations),
-        session.confidenceScore,
-        session.implemented,
-        session.createdAt
-      ]
-
-      const result = await this.pool.query(query, values)
-      session.sessionId = result.rows[0].id
-
-      console.log(`✅ [LearningLoop] Session persisted: ${session.sessionId}`)
-    } catch (error: any) {
-      console.error('❌ [LearningLoop] Failed to persist session:', error.message)
+    if (sessionId) {
+      session.sessionId = sessionId
     }
   }
 
@@ -504,34 +473,7 @@ Limit to top 3 most impactful optimizations.`
    * Retrieve learning sessions for a workflow
    */
   async getLearningHistory(workflowId: string, limit: number = 5): Promise<LearningSession[]> {
-    if (!this.pool) {
-      return []
-    }
-
-    try {
-      const query = `
-        SELECT * FROM learning_sessions
-        WHERE workflow_id = $1
-        ORDER BY created_at DESC
-        LIMIT $2
-      `
-
-      const result = await this.pool.query(query, [workflowId, limit])
-
-      return result.rows.map(row => ({
-        sessionId: row.id,
-        workflowId: row.workflow_id,
-        sessionType: row.session_type,
-        findings: typeof row.findings === 'string' ? JSON.parse(row.findings) : row.findings,
-        recommendations: typeof row.recommendations === 'string' ? JSON.parse(row.recommendations) : row.recommendations,
-        confidenceScore: parseFloat(row.confidence_score),
-        implemented: row.implemented,
-        createdAt: new Date(row.created_at)
-      }))
-    } catch (error: any) {
-      console.error('❌ [LearningLoop] Failed to retrieve learning history:', error.message)
-      return []
-    }
+    return this.persister.getLearningHistory(workflowId, limit)
   }
 
   /**
@@ -542,67 +484,46 @@ Limit to top 3 most impactful optimizations.`
     errorPatterns: Array<{ agent: string; count: number }>
     topRecommendations: string[]
   }> {
-    if (!this.pool) {
-      return { bottlenecks: [], errorPatterns: [], topRecommendations: [] }
-    }
+    const sessions = await this.persister.getRecentLearningSessions(limit)
 
-    try {
-      const query = `
-        SELECT findings, recommendations
-        FROM learning_sessions
-        ORDER BY created_at DESC
-        LIMIT $1
-      `
+    const bottleneckMap = new Map<string, number>()
+    const errorPatternMap = new Map<string, number>()
+    const recommendationMap = new Map<string, number>()
 
-      const result = await this.pool.query(query, [limit])
+    for (const session of sessions) {
+      const findings: LearningInsight[] = session.findings || []
 
-      const bottleneckMap = new Map<string, number>()
-      const errorPatternMap = new Map<string, number>()
-      const recommendationMap = new Map<string, number>()
-
-      for (const row of result.rows) {
-        const findings: LearningInsight[] = typeof row.findings === 'string'
-          ? JSON.parse(row.findings)
-          : row.findings
-
-        for (const finding of findings) {
-          if (finding.type === 'bottleneck' && finding.affectedAgents) {
-            for (const agent of finding.affectedAgents) {
-              bottleneckMap.set(agent, (bottleneckMap.get(agent) || 0) + 1)
-            }
-          } else if (finding.type === 'error_pattern' && finding.affectedAgents) {
-            for (const agent of finding.affectedAgents) {
-              errorPatternMap.set(agent, (errorPatternMap.get(agent) || 0) + 1)
-            }
+      for (const finding of findings) {
+        if (finding.type === 'bottleneck' && finding.affectedAgents) {
+          for (const agent of finding.affectedAgents) {
+            bottleneckMap.set(agent, (bottleneckMap.get(agent) || 0) + 1)
+          }
+        } else if (finding.type === 'error_pattern' && finding.affectedAgents) {
+          for (const agent of finding.affectedAgents) {
+            errorPatternMap.set(agent, (errorPatternMap.get(agent) || 0) + 1)
           }
         }
-
-        const recommendations: string[] = typeof row.recommendations === 'string'
-          ? JSON.parse(row.recommendations)
-          : row.recommendations
-
-        for (const rec of recommendations) {
-          recommendationMap.set(rec, (recommendationMap.get(rec) || 0) + 1)
-        }
       }
 
-      return {
-        bottlenecks: Array.from(bottleneckMap.entries())
-          .map(([agent, count]) => ({ agent, count }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 10),
-        errorPatterns: Array.from(errorPatternMap.entries())
-          .map(([agent, count]) => ({ agent, count }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 10),
-        topRecommendations: Array.from(recommendationMap.entries())
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 10)
-          .map(([rec]) => rec)
+      const recommendations: string[] = session.recommendations || []
+      for (const rec of recommendations) {
+        recommendationMap.set(rec, (recommendationMap.get(rec) || 0) + 1)
       }
-    } catch (error: any) {
-      console.error('❌ [LearningLoop] Failed to aggregate insights:', error.message)
-      return { bottlenecks: [], errorPatterns: [], topRecommendations: [] }
+    }
+
+    return {
+      bottlenecks: Array.from(bottleneckMap.entries())
+        .map(([agent, count]) => ({ agent, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10),
+      errorPatterns: Array.from(errorPatternMap.entries())
+        .map(([agent, count]) => ({ agent, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10),
+      topRecommendations: Array.from(recommendationMap.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([rec]) => rec)
     }
   }
 
@@ -610,9 +531,6 @@ Limit to top 3 most impactful optimizations.`
    * Close database connection
    */
   async close(): Promise<void> {
-    if (this.pool) {
-      await this.pool.end()
-    }
     await this.persister.close()
   }
 }

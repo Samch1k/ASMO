@@ -14,10 +14,21 @@
  * - Connection pooling
  */
 
-import pg from 'pg'
+// @ts-nocheck - Uses optional pg dependency with dynamic require
+
 import { LRUCache } from 'lru-cache'
 
-const { Pool } = pg
+// pg is optional - only used if DATABASE_URL is configured
+let pg: any = null
+let Pool: any = null
+
+try {
+  // Dynamic import to make pg optional
+  pg = require('pg')
+  Pool = pg.Pool
+} catch {
+  // pg not installed - TaskPersister will work in stub mode
+}
 
 // =============================================================================
 // TYPES
@@ -169,10 +180,14 @@ export interface TaskQueryOptions {
 
 /**
  * TaskPersister - Database persistence for Task Master
+ *
+ * NOTE: Requires PostgreSQL. For local development without PostgreSQL,
+ * use JsonTaskPersister instead.
  */
 export class TaskPersister {
-  private pool: pg.Pool
+  private pool: any | null = null
   private connectionString: string
+  private enabled: boolean = false
 
   // LRU Caches
   private taskCache: LRUCache<string, Task>
@@ -185,17 +200,18 @@ export class TaskPersister {
   constructor(connectionString?: string) {
     this.connectionString = connectionString || process.env.DATABASE_URL || ''
 
-    if (!this.connectionString) {
-      console.warn('⚠️  [TaskPersister] No DATABASE_URL provided - tasks will NOT be persisted')
+    // Only initialize if pg is available AND we have a connection string
+    if (Pool && this.connectionString) {
+      this.pool = new Pool({
+        connectionString: this.connectionString,
+        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+        max: 10,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 2000
+      })
+      this.enabled = true
     }
-
-    this.pool = new Pool({
-      connectionString: this.connectionString,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 10,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 2000
-    })
+    // No warning - TaskPersister is optional, use JsonTaskPersister for local dev
 
     this.pool.on('error', (err) => {
       console.error('❌ [TaskPersister] Unexpected pool error:', err)

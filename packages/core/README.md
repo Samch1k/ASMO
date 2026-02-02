@@ -8,7 +8,7 @@ The core orchestration engine for ASMO autonomous development teams.
 - **Workflow Engine**: Define and execute complex development workflows
 - **Adaptive Workflow Selection**: Automatically choose workflows based on task complexity
 - **Complexity Analysis**: Intelligent task analysis with 5 complexity levels
-- **10 Production-Ready Workflows**: From bug fixes to architecture design (NEW!)
+- **20+ Production-Ready Workflows**: From bug fixes to architecture design
 - **Configuration System**: 3-tier configuration (defaults → file → environment)
 - **Instruction Manager**: Markdown-based agent guidance with priority system
 - **Quality Gates**: Automatic approval checkpoints and validation
@@ -16,7 +16,7 @@ The core orchestration engine for ASMO autonomous development teams.
 - **Parallel Execution**: Run multiple agents simultaneously
 - **Skill-Based Matching**: 85 skills with dependency resolution
 
-### NEW: BMAD Integration (v3.0)
+### BMAD Integration Features
 - **Agent Personalities**: Amelia (TDD), Winston (Boring Tech), Bob (Zero Ambiguity), John (WHY-First)
 - **Menu Commands**: Bilingual shortcuts `[DS]`/`[ИС]`, `[CR]`/`[КО]`, `[CS]`/`[СИ]`
 - **Principle Validators**: Strict enforcement with blocking (test failures, ambiguity, missing business value)
@@ -76,7 +76,7 @@ console.log('Reasoning:', selection.reasoning)
 console.log('Agents:', selection.complexity.recommendedAgents)
 ```
 
-### BMAD Menu Commands (v3.0)
+### BMAD Menu Commands
 
 Execute workflows with short bilingual commands:
 
@@ -357,7 +357,7 @@ export default {
 
 ## Available Workflows
 
-ASMO includes **10 production-ready workflows**:
+ASMO includes **20+ production-ready workflows**, including:
 
 1. **Quick Flow** - Fast bug fixes and simple tasks
 2. **Feature Development** - Complete feature implementation with gates
