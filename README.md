@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@asmo/core.svg)](https://www.npmjs.com/package/@asmo/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg)](https://nodejs.org/)
 
 > Transform AI from "helpful assistant" to "autonomous team"
 
@@ -19,7 +19,7 @@ ASMO is an autonomous AI development orchestration system that coordinates multi
 - **85 Skills Catalog** — Automatic skill matching across 12 categories
 - **Complexity Analysis** — 5-level task analysis with intelligent workflow selection
 
-### NEW: Dynamic Orchestrator (v3.0)
+### Dynamic Orchestrator
 - **Intelligent Model Routing** — Automatic selection of Opus/Sonnet/Haiku based on task complexity
 - **Dual Execution Modes** — Session ($0 with Claude subscription) or API (pay-per-use)
 - **Circuit Breaker** — Fault tolerance with automatic recovery
@@ -32,7 +32,7 @@ ASMO is an autonomous AI development orchestration system that coordinates multi
 - **Adversarial Review** — Critical code review that MUST find issues
 - **Advanced Elicitation** — 5 techniques: First Principles, Red Team/Blue Team, Pre-mortem, Socratic, Devil's Advocate
 
-### NEW: BMAD Personalities & Principles (v3.0)
+### BMAD Personalities & Principles
 - **Agent Personalities** — Amelia (TDD), Winston (Boring Tech), Bob (Zero Ambiguity), John (WHY-First)
 - **Menu Commands** — Bilingual shortcuts: `[DS]`/`[ИС]`, `[CR]`/`[КО]`, `[CS]`/`[СИ]`
 - **Strict Enforcement** — Blocks completion on principle violations (test failures, ambiguity, missing business value)
@@ -46,6 +46,8 @@ ASMO is an autonomous AI development orchestration system that coordinates multi
 
 ## Quick Install
 
+### Library (Programmatic Use)
+
 ```bash
 # Using pnpm (recommended)
 pnpm add @asmo/core
@@ -56,6 +58,25 @@ npm install @asmo/core
 # Using yarn
 yarn add @asmo/core
 ```
+
+**✅ Library-First Architecture** - @asmo/core works standalone without configuration. Bundled templates with workflows, agents, and skills are included and automatically used as fallback.
+
+**Config Fallback Chain:**
+1. `.cursor/config` - Claude Code environment (if present)
+2. `~/.asmo/config` - User home directory
+3. `node_modules/@asmo/core/templates` - Bundled templates (always available)
+
+### CLI Tool (Command Line)
+
+```bash
+# Global installation
+npm install -g @asmo/cli
+
+# Or use with npx
+npx @asmo/cli run "Fix the login bug"
+```
+
+**Note**: CLI requires @asmo/core to be installed. CLI commands use the same fallback chain for configuration.
 
 ## Quick Start
 
@@ -102,7 +123,7 @@ console.log('Agreements:', session.state.agreements)
 console.log('Convergence:', session.state.convergenceScore)
 ```
 
-### Dynamic Orchestrator & Model Routing (NEW in v3.0)
+### Dynamic Orchestrator & Model Routing
 
 ```typescript
 import { getDynamicOrchestrator, type OrchestrationTask } from '@asmo/core'
@@ -150,7 +171,7 @@ if (result.metrics.mode === 'api') {
 
 ## BMAD Personalities & Principles
 
-**ASMO v3.0** integrates **BMAD** (Breakthrough Method of Agile AI Driven Development) methodology with agent personalities, strict principles enforcement, and menu-driven commands.
+**ASMO** integrates **BMAD** (Breakthrough Method of Agile AI Driven Development) methodology with agent personalities, strict principles enforcement, and menu-driven commands.
 
 ### Meet the BMAD Agents
 
@@ -416,8 +437,8 @@ I'm **Amelia**, your TDD evangelist and quality guardian.
 ```
 asmo/
 ├── packages/
-│   ├── core/           # @asmo/core - Main library
-│   ├── cli/            # CLI tool (coming soon)
+│   ├── core/           # @asmo/core - Main library (library-first architecture)
+│   ├── cli/            # @asmo/cli - Command-line interface
 │   └── docs/           # VitePress site (coming soon)
 ├── docs/               # Markdown documentation
 │   ├── en/             # English
