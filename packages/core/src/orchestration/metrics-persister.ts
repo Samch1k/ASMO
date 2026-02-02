@@ -12,12 +12,14 @@
  * - Zero-config: just works locally
  */
 
-// @ts-nocheck - Complex SQLite row type inference
-
 import Database from 'better-sqlite3'
 import type { WorkflowMetrics, AgentStepMetrics } from './metrics-collector'
 import * as fs from 'fs'
 import * as path from 'path'
+import { logger } from '../utils/logger'
+import { PERSISTENCE_DEFAULTS } from './config/defaults'
+
+const log = logger.child('MetricsPersister')
 
 // Row types for SQLite query results
 interface PerformanceSummaryRow {
@@ -27,6 +29,63 @@ interface PerformanceSummaryRow {
   avg_steps: number | null
   avg_parallel_steps: number | null
   last_execution: string | null
+}
+
+interface AgentPerformanceRow {
+  agent_id: string
+  phase: string
+  execution_count: number
+  avg_duration_ms: number | null
+  success_rate: number | null
+  avg_confidence: number | null
+  total_artifacts: number | null
+}
+
+interface WorkflowExecutionRow {
+  id: string
+  workflow_name: string
+  task_description: string | null
+  task_type: string | null
+  total_duration_ms: number
+  phase_durations: string | null
+  success: number
+  step_count: number
+  parallel_steps_executed: number
+  approval_count: number
+  retry_count: number
+  created_at: string
+  completed_at: string | null
+}
+
+interface AgentMetricsRow {
+  id: number
+  workflow_id: string
+  workflow_name: string
+  agent_id: string
+  phase: string
+  step_order: number
+  duration_ms: number
+  start_time: string
+  success: number
+  error_message: string | null
+  retry_count: number
+  confidence_score: number
+  artifacts_created: number
+}
+
+interface LearningSessionRow {
+  id: number
+  workflow_id: string
+  session_type: string
+  findings: string | null
+  recommendations: string | null
+  confidence_score: number
+  implemented: number
+  created_at: string
+}
+
+interface CountRow {
+  count: number
 }
 
 /**
@@ -43,7 +102,7 @@ export class MetricsPersister {
 
   constructor(dbPath?: string) {
     // Determine database path
-    this.dbPath = dbPath || path.join(process.cwd(), '.asmo', 'metrics.db')
+    this.dbPath = dbPath || path.join(process.cwd(), PERSISTENCE_DEFAULTS.paths.metricsDb)
   }
 
   /**
@@ -72,7 +131,7 @@ export class MetricsPersister {
       this.initialized = true
     } catch (error) {
       // Silent fail - metrics are optional
-      console.error('Failed to initialize metrics database:', error)
+      log.error('Failed to initialize metrics database', { error: error instanceof Error ? error.message : String(error) })
       this.db = null
     }
   }
@@ -190,7 +249,7 @@ export class MetricsPersister {
       )
     } catch (error) {
       // Silent fail - metrics are optional
-      console.error('Failed to persist workflow metrics:', error)
+      log.error('Failed to persist workflow metrics', { error: error instanceof Error ? error.message : String(error) })
     }
   }
 
@@ -232,7 +291,7 @@ export class MetricsPersister {
       insertMany(stepMetrics)
     } catch (error) {
       // Silent fail - metrics are optional
-      console.error('Failed to persist step metrics:', error)
+      log.error('Failed to persist step metrics', { error: error instanceof Error ? error.message : String(error) })
     }
   }
 
@@ -247,7 +306,7 @@ export class MetricsPersister {
     if (!this.db) return []
 
     try {
-      let rows: any[]
+      let rows: WorkflowExecutionRow[]
 
       if (workflowName) {
         const stmt = this.db.prepare(`
@@ -256,19 +315,19 @@ export class MetricsPersister {
           ORDER BY created_at DESC
           LIMIT ?
         `)
-        rows = stmt.all(workflowName, limit)
+        rows = stmt.all(workflowName, limit) as WorkflowExecutionRow[]
       } else {
         const stmt = this.db.prepare(`
           SELECT * FROM workflow_executions
           ORDER BY created_at DESC
           LIMIT ?
         `)
-        rows = stmt.all(limit)
+        rows = stmt.all(limit) as WorkflowExecutionRow[]
       }
 
       return rows.map(row => this.mapRowToWorkflowMetrics(row))
     } catch (error) {
-      console.error('Failed to retrieve workflow history:', error)
+      log.error('Failed to retrieve workflow history', { error: error instanceof Error ? error.message : String(error) })
       return []
     }
   }
@@ -287,10 +346,10 @@ export class MetricsPersister {
         ORDER BY step_order ASC
       `)
 
-      const rows = stmt.all(workflowId)
+      const rows = stmt.all(workflowId) as AgentMetricsRow[]
       return rows.map(row => this.mapRowToAgentMetrics(row))
     } catch (error) {
-      console.error('Failed to retrieve agent metrics:', error)
+      log.error('Failed to retrieve agent metrics', { error: error instanceof Error ? error.message : String(error) })
       return []
     }
   }
@@ -367,7 +426,7 @@ export class MetricsPersister {
         lastExecution: row.last_execution ? new Date(row.last_execution) : null
       }
     } catch (error) {
-      console.error('Failed to get performance summary:', error)
+      log.error('Failed to get performance summary', { error: error instanceof Error ? error.message : String(error) })
       return {
         executionCount: 0,
         avgDurationMs: 0,
@@ -425,9 +484,9 @@ export class MetricsPersister {
         `)
       }
 
-      const rows = agentId ? stmt.all(agentId) : stmt.all()
+      const rows = (agentId ? stmt.all(agentId) : stmt.all()) as AgentPerformanceRow[]
 
-      return rows.map((row: any) => ({
+      return rows.map((row) => ({
         agentId: row.agent_id,
         phase: row.phase,
         executionCount: row.execution_count,
@@ -437,7 +496,7 @@ export class MetricsPersister {
         totalArtifacts: row.total_artifacts || 0
       }))
     } catch (error) {
-      console.error('Failed to get agent performance:', error)
+      log.error('Failed to get agent performance', { error: error instanceof Error ? error.message : String(error) })
       return []
     }
   }
@@ -472,7 +531,7 @@ export class MetricsPersister {
 
       return result.changes
     } catch (error) {
-      console.error('Failed to cleanup old metrics:', error)
+      log.error('Failed to cleanup old metrics', { error: error instanceof Error ? error.message : String(error) })
       return 0
     }
   }
@@ -494,7 +553,7 @@ export class MetricsPersister {
   async persistLearningSession(session: {
     workflowId: string
     sessionType: string
-    findings: any[]
+    findings: unknown[]
     recommendations: string[]
     confidenceScore: number
     implemented: boolean
@@ -522,7 +581,7 @@ export class MetricsPersister {
 
       return result.lastInsertRowid as number
     } catch (error) {
-      console.error('Failed to persist learning session:', error)
+      log.error('Failed to persist learning session', { error: error instanceof Error ? error.message : String(error) })
       return null
     }
   }
@@ -530,7 +589,16 @@ export class MetricsPersister {
   /**
    * Get learning sessions for a workflow
    */
-  async getLearningHistory(workflowId: string, limit: number = 5): Promise<any[]> {
+  async getLearningHistory(workflowId: string, limit: number = 5): Promise<Array<{
+    sessionId: number
+    workflowId: string
+    sessionType: string
+    findings: unknown[]
+    recommendations: string[]
+    confidenceScore: number
+    implemented: boolean
+    createdAt: Date
+  }>> {
     this.ensureInitialized()
     if (!this.db) return []
 
@@ -542,9 +610,9 @@ export class MetricsPersister {
         LIMIT ?
       `)
 
-      const rows = stmt.all(workflowId, limit)
+      const rows = stmt.all(workflowId, limit) as LearningSessionRow[]
 
-      return rows.map((row: any) => ({
+      return rows.map((row) => ({
         sessionId: row.id,
         workflowId: row.workflow_id,
         sessionType: row.session_type,
@@ -555,7 +623,7 @@ export class MetricsPersister {
         createdAt: new Date(row.created_at)
       }))
     } catch (error) {
-      console.error('Failed to get learning history:', error)
+      log.error('Failed to get learning history', { error: error instanceof Error ? error.message : String(error) })
       return []
     }
   }
@@ -563,7 +631,10 @@ export class MetricsPersister {
   /**
    * Get recent learning sessions across all workflows
    */
-  async getRecentLearningSessions(limit: number = 50): Promise<any[]> {
+  async getRecentLearningSessions(limit: number = 50): Promise<Array<{
+    findings: unknown[]
+    recommendations: string[]
+  }>> {
     this.ensureInitialized()
     if (!this.db) return []
 
@@ -575,14 +646,14 @@ export class MetricsPersister {
         LIMIT ?
       `)
 
-      const rows = stmt.all(limit)
+      const rows = stmt.all(limit) as Pick<LearningSessionRow, 'findings' | 'recommendations'>[]
 
-      return rows.map((row: any) => ({
+      return rows.map((row) => ({
         findings: row.findings ? JSON.parse(row.findings) : [],
         recommendations: row.recommendations ? JSON.parse(row.recommendations) : []
       }))
     } catch (error) {
-      console.error('Failed to get recent learning sessions:', error)
+      log.error('Failed to get recent learning sessions', { error: error instanceof Error ? error.message : String(error) })
       return []
     }
   }
@@ -601,8 +672,8 @@ export class MetricsPersister {
     }
 
     try {
-      const workflowCount = this.db.prepare('SELECT COUNT(*) as count FROM workflow_executions').get() as any
-      const stepCount = this.db.prepare('SELECT COUNT(*) as count FROM agent_execution_metrics').get() as any
+      const workflowCount = this.db.prepare('SELECT COUNT(*) as count FROM workflow_executions').get() as CountRow | undefined
+      const stepCount = this.db.prepare('SELECT COUNT(*) as count FROM agent_execution_metrics').get() as CountRow | undefined
 
       let dbSizeBytes = 0
       if (fs.existsSync(this.dbPath)) {
@@ -634,12 +705,12 @@ export class MetricsPersister {
   /**
    * Map database row to WorkflowMetrics
    */
-  private mapRowToWorkflowMetrics(row: any): WorkflowMetrics {
+  private mapRowToWorkflowMetrics(row: WorkflowExecutionRow): WorkflowMetrics {
     return {
       workflowId: row.id,
       workflowName: row.workflow_name,
-      taskDescription: row.task_description,
-      taskType: row.task_type,
+      taskDescription: row.task_description || '',
+      taskType: row.task_type || '',
       totalDurationMs: row.total_duration_ms,
       phaseDurations: row.phase_durations ? JSON.parse(row.phase_durations) : {},
       success: row.success === 1,
@@ -655,7 +726,7 @@ export class MetricsPersister {
   /**
    * Map database row to AgentStepMetrics
    */
-  private mapRowToAgentMetrics(row: any): AgentStepMetrics {
+  private mapRowToAgentMetrics(row: AgentMetricsRow): AgentStepMetrics {
     return {
       workflowId: row.workflow_id,
       workflowName: row.workflow_name,
@@ -665,7 +736,7 @@ export class MetricsPersister {
       durationMs: row.duration_ms,
       startTime: new Date(row.start_time),
       success: row.success === 1,
-      errorMessage: row.error_message,
+      errorMessage: row.error_message || undefined,
       retryCount: row.retry_count,
       confidenceScore: row.confidence_score,
       artifactsCreated: row.artifacts_created

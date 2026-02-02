@@ -14,18 +14,41 @@
  * - Connection pooling
  */
 
-// @ts-nocheck - Uses optional pg dependency with dynamic require
-
 import { LRUCache } from 'lru-cache'
+import { logger } from '../utils/logger'
+import { PERSISTENCE_DEFAULTS } from './config/defaults'
+
+const log = logger.child('TaskPersister')
+
+// Type definitions for optional pg dependency
+interface PgPool {
+  query(text: string, values?: unknown[]): Promise<{ rows: PgRow[]; rowCount: number | null }>
+  connect(): Promise<{ release: () => void }>
+  end(): Promise<void>
+  on(event: 'error', listener: (err: Error) => void): void
+}
+
+interface PgRow {
+  [key: string]: unknown
+}
+
+interface PgPoolConstructor {
+  new (config: {
+    connectionString: string
+    ssl?: boolean | { rejectUnauthorized: boolean }
+    max?: number
+    idleTimeoutMillis?: number
+    connectionTimeoutMillis?: number
+  }): PgPool
+}
 
 // pg is optional - only used if DATABASE_URL is configured
-let pg: any = null
-let Pool: any = null
+let Pool: PgPoolConstructor | null = null
 
 try {
   // Dynamic import to make pg optional
-  pg = require('pg')
-  Pool = pg.Pool
+  const pg = require('pg')
+  Pool = pg.Pool as PgPoolConstructor
 } catch {
   // pg not installed - TaskPersister will work in stub mode
 }
@@ -88,7 +111,7 @@ export interface Task {
   updatedAt: Date
   startedAt?: Date
   completedAt?: Date
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
   tags: string[]
 }
 
@@ -105,7 +128,7 @@ export interface CreateTaskInput {
   workflowId?: string
   workflowName?: string
   parentTaskId?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   tags?: string[]
 }
 
@@ -122,7 +145,7 @@ export interface UpdateTaskInput {
   assignedAgent?: string
   workflowId?: string
   workflowName?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   tags?: string[]
 }
 
@@ -137,11 +160,11 @@ export interface TaskExecution {
   startedAt: Date
   completedAt?: Date
   durationMs?: number
-  output?: any
+  output?: unknown
   errorMessage?: string
   errorStack?: string
   retryCount: number
-  metrics: Record<string, any>
+  metrics: Record<string, unknown>
 }
 
 /**
@@ -155,7 +178,7 @@ export interface TaskComment {
   content: string
   createdAt: Date
   executionId?: number
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
 }
 
 /**
@@ -185,7 +208,7 @@ export interface TaskQueryOptions {
  * use JsonTaskPersister instead.
  */
 export class TaskPersister {
-  private pool: any | null = null
+  private pool: PgPool | null = null
   private connectionString: string
   private enabled: boolean = false
 
@@ -200,45 +223,55 @@ export class TaskPersister {
   constructor(connectionString?: string) {
     this.connectionString = connectionString || process.env.DATABASE_URL || ''
 
+    const { database } = PERSISTENCE_DEFAULTS
+
     // Only initialize if pg is available AND we have a connection string
     if (Pool && this.connectionString) {
       this.pool = new Pool({
         connectionString: this.connectionString,
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-        max: 10,
-        idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 2000
+        max: database.poolSize,
+        idleTimeoutMillis: database.idleTimeoutMs,
+        connectionTimeoutMillis: database.connectionTimeoutMs
       })
       this.enabled = true
+
+      // Set up error handler inside the block where pool is initialized
+      this.pool.on('error', (err: Error) => {
+        log.error('Unexpected pool error', { error: err.message })
+      })
     }
     // No warning - TaskPersister is optional, use JsonTaskPersister for local dev
 
-    this.pool.on('error', (err) => {
-      console.error('❌ [TaskPersister] Unexpected pool error:', err)
-    })
-
     // Initialize LRU caches
     this.taskCache = new LRUCache({
-      max: 500,
-      ttl: 5 * 60 * 1000, // 5 minutes
+      max: database.taskCacheMax,
+      ttl: database.cacheTtlMs,
       ttlAutopurge: true
     })
 
     this.taskListCache = new LRUCache({
-      max: 100,
-      ttl: 1 * 60 * 1000, // 1 minute
+      max: database.taskListCacheMax,
+      ttl: database.shortCacheTtlMs,
       ttlAutopurge: true
     })
 
-    console.log('✅ [TaskPersister] Initialized with LRU caches')
+    log.info('Initialized with LRU caches')
   }
 
   // ===========================================================================
   // CONNECTION
   // ===========================================================================
 
+  /**
+   * Check if persister is enabled (has valid pool connection)
+   */
+  isEnabled(): boolean {
+    return this.enabled && this.pool !== null
+  }
+
   async isConnected(): Promise<boolean> {
-    if (!this.connectionString) return false
+    if (!this.pool || !this.connectionString) return false
 
     try {
       const client = await this.pool.connect()
@@ -250,7 +283,9 @@ export class TaskPersister {
   }
 
   async close(): Promise<void> {
-    await this.pool.end()
+    if (this.pool) {
+      await this.pool.end()
+    }
   }
 
   // ===========================================================================
@@ -261,6 +296,10 @@ export class TaskPersister {
    * Create a new task
    */
   async createTask(input: CreateTaskInput): Promise<Task> {
+    if (!this.pool) {
+      throw new Error('[TaskPersister] Cannot create task: database not connected')
+    }
+
     const query = `
       INSERT INTO tasks (
         title, description, priority, complexity_score, complexity_level,
@@ -308,6 +347,10 @@ export class TaskPersister {
     }
     this.cacheMisses++
 
+    if (!this.pool) {
+      return null
+    }
+
     const query = 'SELECT * FROM tasks WHERE id = $1'
     const result = await this.pool.query(query, [id])
 
@@ -325,7 +368,7 @@ export class TaskPersister {
    */
   async updateTask(id: string, input: UpdateTaskInput): Promise<Task | null> {
     const setClauses: string[] = []
-    const values: any[] = []
+    const values: unknown[] = []
     let paramIndex = 1
 
     if (input.title !== undefined) {
@@ -377,6 +420,10 @@ export class TaskPersister {
       return this.getTask(id)
     }
 
+    if (!this.pool) {
+      throw new Error('[TaskPersister] Cannot update task: database not connected')
+    }
+
     values.push(id)
     const query = `
       UPDATE tasks
@@ -411,6 +458,10 @@ export class TaskPersister {
    * Delete a task
    */
   async deleteTask(id: string): Promise<boolean> {
+    if (!this.pool) {
+      return false
+    }
+
     const query = 'DELETE FROM tasks WHERE id = $1'
     const result = await this.pool.query(query, [id])
 
@@ -442,7 +493,7 @@ export class TaskPersister {
     this.cacheMisses++
 
     const conditions: string[] = []
-    const values: any[] = []
+    const values: unknown[] = []
     let paramIndex = 1
 
     if (options.status) {
@@ -497,6 +548,10 @@ export class TaskPersister {
     const orderDir = options.orderDir || 'desc'
     const limit = options.limit || 100
     const offset = options.offset || 0
+
+    if (!this.pool) {
+      return []
+    }
 
     const query = `
       SELECT * FROM tasks
@@ -566,6 +621,10 @@ export class TaskPersister {
    * Start a task execution
    */
   async startExecution(taskId: string, agentId: string): Promise<TaskExecution> {
+    if (!this.pool) {
+      throw new Error('[TaskPersister] Cannot start execution: database not connected')
+    }
+
     const query = `
       INSERT INTO task_executions (task_id, agent_id, status)
       VALUES ($1, $2, 'running')
@@ -581,11 +640,15 @@ export class TaskPersister {
    */
   async completeExecution(
     executionId: number,
-    output: any,
+    output: unknown,
     status: 'completed' | 'failed' | 'timeout' | 'cancelled' = 'completed',
     errorMessage?: string,
     errorStack?: string
   ): Promise<TaskExecution | null> {
+    if (!this.pool) {
+      return null
+    }
+
     const query = `
       UPDATE task_executions
       SET status = $1, output = $2, completed_at = NOW(),
@@ -613,6 +676,10 @@ export class TaskPersister {
    * Get executions for a task
    */
   async getExecutions(taskId: string): Promise<TaskExecution[]> {
+    if (!this.pool) {
+      return []
+    }
+
     const query = `
       SELECT * FROM task_executions
       WHERE task_id = $1
@@ -627,6 +694,10 @@ export class TaskPersister {
    * Get latest execution for a task
    */
   async getLatestExecution(taskId: string): Promise<TaskExecution | null> {
+    if (!this.pool) {
+      return null
+    }
+
     const query = `
       SELECT * FROM task_executions
       WHERE task_id = $1
@@ -655,8 +726,12 @@ export class TaskPersister {
     content: string,
     commentType: CommentType = 'note',
     executionId?: number,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<TaskComment> {
+    if (!this.pool) {
+      throw new Error('[TaskPersister] Cannot add comment: database not connected')
+    }
+
     const query = `
       INSERT INTO task_comments (task_id, author_agent, content, comment_type, execution_id, metadata)
       VALUES ($1, $2, $3, $4, $5, $6)
@@ -679,6 +754,10 @@ export class TaskPersister {
    * Get comments for a task
    */
   async getComments(taskId: string): Promise<TaskComment[]> {
+    if (!this.pool) {
+      return []
+    }
+
     const query = `
       SELECT * FROM task_comments
       WHERE task_id = $1
@@ -741,55 +820,55 @@ export class TaskPersister {
   // HELPERS
   // ===========================================================================
 
-  private rowToTask(row: any): Task {
+  private rowToTask(row: PgRow): Task {
     return {
-      id: row.id,
-      title: row.title,
-      description: row.description,
+      id: row.id as string,
+      title: row.title as string,
+      description: row.description as string | undefined,
       status: row.status as TaskStatus,
       priority: row.priority as TaskPriority,
-      complexityScore: row.complexity_score,
-      complexityLevel: row.complexity_level as ComplexityLevel,
-      assignedAgent: row.assigned_agent,
-      workflowId: row.workflow_id,
-      workflowName: row.workflow_name,
-      parentTaskId: row.parent_task_id,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-      startedAt: row.started_at,
-      completedAt: row.completed_at,
-      metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata,
-      tags: row.tags || []
+      complexityScore: row.complexity_score as number | undefined,
+      complexityLevel: row.complexity_level as ComplexityLevel | undefined,
+      assignedAgent: row.assigned_agent as string | undefined,
+      workflowId: row.workflow_id as string | undefined,
+      workflowName: row.workflow_name as string | undefined,
+      parentTaskId: row.parent_task_id as string | undefined,
+      createdAt: row.created_at as Date,
+      updatedAt: row.updated_at as Date,
+      startedAt: row.started_at as Date | undefined,
+      completedAt: row.completed_at as Date | undefined,
+      metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : (row.metadata as Record<string, unknown>) || {},
+      tags: (row.tags as string[]) || []
     }
   }
 
-  private rowToExecution(row: any): TaskExecution {
+  private rowToExecution(row: PgRow): TaskExecution {
     return {
-      id: row.id,
-      taskId: row.task_id,
-      agentId: row.agent_id,
-      status: row.status,
-      startedAt: row.started_at,
-      completedAt: row.completed_at,
-      durationMs: row.duration_ms,
+      id: row.id as number,
+      taskId: row.task_id as string,
+      agentId: row.agent_id as string,
+      status: row.status as TaskExecution['status'],
+      startedAt: row.started_at as Date,
+      completedAt: row.completed_at as Date | undefined,
+      durationMs: row.duration_ms as number | undefined,
       output: typeof row.output === 'string' ? JSON.parse(row.output) : row.output,
-      errorMessage: row.error_message,
-      errorStack: row.error_stack,
-      retryCount: row.retry_count,
-      metrics: typeof row.metrics === 'string' ? JSON.parse(row.metrics) : row.metrics
+      errorMessage: row.error_message as string | undefined,
+      errorStack: row.error_stack as string | undefined,
+      retryCount: row.retry_count as number,
+      metrics: typeof row.metrics === 'string' ? JSON.parse(row.metrics) : (row.metrics as Record<string, unknown>) || {}
     }
   }
 
-  private rowToComment(row: any): TaskComment {
+  private rowToComment(row: PgRow): TaskComment {
     return {
-      id: row.id,
-      taskId: row.task_id,
-      authorAgent: row.author_agent,
+      id: row.id as number,
+      taskId: row.task_id as string,
+      authorAgent: row.author_agent as string,
       commentType: row.comment_type as CommentType,
-      content: row.content,
-      createdAt: row.created_at,
-      executionId: row.execution_id,
-      metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata
+      content: row.content as string,
+      createdAt: row.created_at as Date,
+      executionId: row.execution_id as number | undefined,
+      metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : (row.metadata as Record<string, unknown>) || {}
     }
   }
 }

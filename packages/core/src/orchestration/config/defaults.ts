@@ -9,6 +9,33 @@
 
 import type { OrchestrationConfig } from './types'
 
+/**
+ * Database and Persistence Defaults
+ * Used by TaskPersister, MetricsPersister, and LearningLoop
+ */
+export const PERSISTENCE_DEFAULTS = {
+  database: {
+    poolSize: 10,
+    idleTimeoutMs: 30000,
+    connectionTimeoutMs: 2000,
+    cacheTtlMs: 5 * 60 * 1000, // 5 minutes
+    shortCacheTtlMs: 60 * 1000, // 1 minute
+    taskCacheMax: 500,
+    taskListCacheMax: 100
+  },
+  learning: {
+    bottleneckMultiplier: 2,
+    phaseBottleneckMultiplier: 1.5,
+    failureRateThreshold: 0.2,
+    successRateThreshold: 0.95,
+    confidenceThreshold: 0.9,
+    minHistoricalRuns: 3
+  },
+  paths: {
+    metricsDb: '.asmo/metrics.db'
+  }
+} as const
+
 export const DEFAULT_ORCHESTRATION_CONFIG: OrchestrationConfig = {
   /**
    * WorkflowEngine Configuration

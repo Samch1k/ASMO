@@ -12,12 +12,14 @@
  * - LLM-powered insight generation
  */
 
-// @ts-nocheck - Uses optional pg dependency with dynamic require
-
 import type { WorkflowMetrics, AgentStepMetrics } from './metrics-collector'
 import { getLLMProvider, type ILLMProvider, type ModelTier } from '../llm'
 import { MetricsPersister } from './metrics-persister'
 import { getConfigManager } from './config/config-manager'
+import { logger } from '../utils/logger'
+import { PERSISTENCE_DEFAULTS } from './config/defaults'
+
+const log = logger.child('LearningLoop')
 
 /**
  * Learning insight types
@@ -89,7 +91,7 @@ export class LearningLoop {
     stepMetrics: AgentStepMetrics[],
     historicalMetrics: WorkflowMetrics[]
   ): Promise<LearningSession> {
-    console.log('🔄 [LearningLoop] Starting analysis...')
+    log.info('Starting analysis...')
 
     const findings: LearningInsight[] = []
 
@@ -109,8 +111,9 @@ export class LearningLoop {
         historicalMetrics
       )
       findings.push(...optimizations)
-    } catch (error: any) {
-      console.warn('⚠️  [LearningLoop] Failed to generate LLM optimizations:', error.message)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      log.warn('Failed to generate LLM optimizations', { error: errorMessage })
     }
 
     // 4. Extract best practices
@@ -138,7 +141,7 @@ export class LearningLoop {
     // Persist to database (SQLite)
     await this.persistLearningSession(session)
 
-    console.log(`✅ [LearningLoop] Analysis complete: ${findings.length} insights, ${recommendations.length} recommendations`)
+    log.info(`Analysis complete: ${findings.length} insights, ${recommendations.length} recommendations`)
 
     return session
   }
@@ -160,8 +163,8 @@ export class LearningLoop {
     // Sort by duration descending
     const sortedByDuration = [...stepMetrics].sort((a, b) => b.durationMs - a.durationMs)
 
-    // Bottleneck threshold: 2x average duration
-    const bottleneckThreshold = avgDuration * 2
+    // Bottleneck threshold: multiplier * average duration
+    const bottleneckThreshold = avgDuration * PERSISTENCE_DEFAULTS.learning.bottleneckMultiplier
 
     // Analyze top 3 slowest steps
     for (const step of sortedByDuration.slice(0, 3)) {
@@ -187,7 +190,7 @@ export class LearningLoop {
 
     for (const [phase, duration] of Object.entries(phaseDurations)) {
       const durationMs = duration as number
-      if (durationMs > avgPhaseDuration * 1.5) {
+      if (durationMs > avgPhaseDuration * PERSISTENCE_DEFAULTS.learning.phaseBottleneckMultiplier) {
         const percentageAbove = ((durationMs / avgPhaseDuration - 1) * 100).toFixed(0)
         const durationSeconds = (durationMs / 1000).toFixed(1)
 
@@ -257,7 +260,7 @@ export class LearningLoop {
       const recentFailures = historicalMetrics.filter(m => !m.success)
       const failureRate = (recentFailures.length / historicalMetrics.length) * 100
 
-      if (failureRate > 20) {
+      if (failureRate / 100 > PERSISTENCE_DEFAULTS.learning.failureRateThreshold) {
         insights.push({
           type: 'error_pattern',
           description: `Workflow '${historicalMetrics[0].workflowName}' has ${failureRate.toFixed(0)}% failure rate over last ${historicalMetrics.length} executions`,
@@ -347,17 +350,23 @@ Limit to top 3 most impactful optimizations.`
       // Extract JSON array from response
       const jsonMatch = content.match(/\[[\s\S]*\]/)
       if (jsonMatch) {
-        const insights = JSON.parse(jsonMatch[0])
-        return insights.map((i: any) => ({
+        const insights = JSON.parse(jsonMatch[0]) as Array<{
+          description?: string
+          recommendation?: string
+          confidenceScore?: number
+          priority?: string
+        }>
+        return insights.map((i) => ({
           type: 'optimization' as const,
-          description: i.description,
-          recommendation: i.recommendation,
+          description: i.description || '',
+          recommendation: i.recommendation || '',
           confidenceScore: i.confidenceScore || 0.7,
-          priority: i.priority || 'medium'
+          priority: (i.priority || 'medium') as 'high' | 'medium' | 'low'
         }))
       }
-    } catch (error: any) {
-      console.error('❌ [LearningLoop] Failed to parse LLM optimization response:', error.message)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      log.error('Failed to parse LLM optimization response', { error: errorMessage })
     }
 
     return []
@@ -373,7 +382,7 @@ Limit to top 3 most impactful optimizations.`
     const insights: LearningInsight[] = []
 
     // High-confidence agents
-    const highConfidenceSteps = stepMetrics.filter(s => s.confidenceScore > 0.9 && s.success)
+    const highConfidenceSteps = stepMetrics.filter(s => s.confidenceScore > PERSISTENCE_DEFAULTS.learning.confidenceThreshold && s.success)
 
     if (highConfidenceSteps.length >= 3) {
       const agentList = highConfidenceSteps.map(s => s.agentId).join(', ')
@@ -413,7 +422,7 @@ Limit to top 3 most impactful optimizations.`
       const recentSuccesses = historicalMetrics.filter(m => m.success).length
       const successRate = (recentSuccesses / historicalMetrics.length) * 100
 
-      if (successRate >= 95) {
+      if (successRate / 100 >= PERSISTENCE_DEFAULTS.learning.successRateThreshold) {
         insights.push({
           type: 'best_practice',
           description: `Workflow maintains ${successRate.toFixed(0)}% success rate over ${historicalMetrics.length} executions`,
@@ -473,7 +482,11 @@ Limit to top 3 most impactful optimizations.`
    * Retrieve learning sessions for a workflow
    */
   async getLearningHistory(workflowId: string, limit: number = 5): Promise<LearningSession[]> {
-    return this.persister.getLearningHistory(workflowId, limit)
+    const sessions = await this.persister.getLearningHistory(workflowId, limit)
+    return sessions.map(session => ({
+      ...session,
+      findings: (session.findings || []) as LearningInsight[]
+    }))
   }
 
   /**
@@ -491,7 +504,7 @@ Limit to top 3 most impactful optimizations.`
     const recommendationMap = new Map<string, number>()
 
     for (const session of sessions) {
-      const findings: LearningInsight[] = session.findings || []
+      const findings = (session.findings || []) as LearningInsight[]
 
       for (const finding of findings) {
         if (finding.type === 'bottleneck' && finding.affectedAgents) {
