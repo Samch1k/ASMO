@@ -22,6 +22,45 @@ export interface WorkflowStep {
   exit_criteria: string
   timeout?: string
   requires_approval?: boolean
+
+  /**
+   * Criteria for joining workflow at this phase (Adaptive Workflow System)
+   * Defines what artifacts/preconditions are required/optional to start from this phase
+   *
+   * Supports two formats for backwards compatibility:
+   * 1. Legacy: { requires: string[], optional: string[] }
+   * 2. Enhanced: { required_artifacts, prerequisites, context_indicators, skip_if }
+   */
+  phase_join_criteria?: {
+    /** Required artifacts/preconditions to join at this phase (legacy) */
+    requires?: string[]
+    /** Optional artifacts that enhance but aren't required (legacy) */
+    optional?: string[]
+
+    /** Artifacts required for entry into this phase (enhanced) */
+    required_artifacts?: string[]
+    /** Prerequisites that must be met (enhanced) */
+    prerequisites?: string[]
+    /** Context indicators for automatic phase selection (enhanced) */
+    context_indicators?: string[]
+    /** Conditions under which this phase should be skipped (enhanced) */
+    skip_if?: string[]
+  }
+}
+
+/**
+ * Workflow phase configuration
+ * Used in workflow JSON files to define phase metadata
+ */
+export interface WorkflowPhaseConfig {
+  /** Phase description */
+  description: string
+  /** Phase description in Russian (optional) */
+  description_ru?: string
+  /** Phase order in workflow */
+  order: number
+  /** Keywords for intent detection (deprecated - use LLM-based detection) */
+  intent_keywords?: string[]
 }
 
 /**
@@ -266,6 +305,95 @@ export interface EnhancedWorkflowSelection extends WorkflowSelection {
     agentsSource: 'adapter' | 'bmad'
     reasoning: string
   }
+}
+
+// ============================================================================
+// PHASE DETECTION TYPES (NEW - Adaptive Workflow System)
+// ============================================================================
+
+/**
+ * Criteria for joining a workflow at a specific phase
+ */
+export interface PhaseJoinCriteria {
+  /** Required artifacts/preconditions to join at this phase */
+  requires: string[]
+  /** Optional artifacts that enhance but aren't required */
+  optional: string[]
+}
+
+/**
+ * Information about a workflow phase for LLM analysis
+ */
+export interface PhaseInfo {
+  /** Phase identifier (e.g., 'review', 'refactoring') */
+  phase: string
+  /** Human-readable description of the phase */
+  description: string
+  /** Required prerequisites to join at this phase */
+  requires: string[]
+}
+
+/**
+ * Analysis of existing project artifacts
+ */
+export interface ArtifactAnalysis {
+  /** Whether implementation code exists */
+  hasImplementation: boolean
+  /** Whether tests exist */
+  hasTests: boolean
+  /** Whether documentation exists */
+  hasDocs: boolean
+  /** List of discovered files with their types */
+  files: Array<{ path: string; type: 'implementation' | 'test' | 'documentation' | 'config' | 'other' }>
+  /** Recent git changes (optional) */
+  recentChanges?: string
+  /** Human-readable summary of the context */
+  summary: string
+}
+
+/**
+ * Result of phase detection analysis
+ */
+export interface PhaseDetectionResult {
+  /** Detected phase to join at */
+  phase: string
+  /** Confidence score (0.0-1.0) */
+  confidence: number
+  /** Human-readable reasoning for the phase selection */
+  reasoning: string
+  /** Detected user intent (review, implement, refactor, test, etc.) */
+  llmIntent: string
+  /** Factors that influenced the decision */
+  contextFactors: string[]
+  /** Alternative phases that could also work */
+  alternativePhases: string[]
+  /** Phases that will be skipped */
+  skipPhases: string[]
+  /** Index of the step in the workflow */
+  stepIndex: number
+  /** Prerequisites that are met */
+  prerequisites: string[]
+  /** Prerequisites that are missing */
+  missingPrerequisites: string[]
+  /** Summary of project context analyzed */
+  contextSummary: string
+}
+
+/**
+ * Workflow selection with phase detection info
+ * Works with both standard WorkflowSelection and EnhancedWorkflowSelection
+ */
+export interface WorkflowSelectionWithPhase extends WorkflowSelection {
+  /** Detected starting phase */
+  phase?: string
+  /** Confidence in phase detection */
+  phaseConfidence?: number
+  /** Reasoning for phase selection */
+  phaseReasoning?: string
+  /** Phases that will be skipped */
+  skipPhases?: string[]
+  /** Index of the step to start from */
+  joinPoint?: number
 }
 
 // ============================================================================

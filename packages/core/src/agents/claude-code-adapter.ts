@@ -24,6 +24,70 @@ export interface AnalysisResult {
 }
 
 /**
+ * User intent types for phase detection
+ */
+export type PhaseIntent = 'review' | 'implement' | 'refactor' | 'test' | 'design' | 'fix' | 'deploy' | 'unknown'
+
+/**
+ * Result from LLM-based phase analysis
+ *
+ * Used by PhaseDetector to determine optimal workflow starting phase
+ */
+export interface PhaseAnalysisResult {
+  /** Recommended phase to start from */
+  recommendedPhase: string
+
+  /** Alternative phases that could also work */
+  alternativePhases: string[]
+
+  /** Detected user intent */
+  intent: PhaseIntent
+
+  /** Confidence score (0-1) */
+  confidence: number
+
+  /** Reasoning from LLM explaining the choice */
+  reasoning: string
+
+  /** Phases that should be skipped */
+  skipPhases: string[]
+
+  /** Prerequisites that are missing (warning) */
+  missingPrerequisites: string[]
+}
+
+/**
+ * Phase information for LLM analysis
+ */
+export interface PhaseForAnalysis {
+  name: string
+  description: string
+  order: number
+  prerequisites?: string[]
+  skipIf?: string[]
+}
+
+/**
+ * Context for phase analysis
+ */
+export interface PhaseAnalysisContext {
+  hasImplementation: boolean
+  hasTests: boolean
+  hasDocs: boolean
+  files: string[]
+  recentChanges?: string
+}
+
+/**
+ * Workflow info for phase analysis
+ */
+export interface WorkflowForPhaseAnalysis {
+  name: string
+  description: string
+  phases: PhaseForAnalysis[]
+}
+
+/**
  * ClaudeCodeAdapter - Analyzes user prompts to determine roles and skills
  *
  * This adapter enables AI assistants (Claude Code, Cursor) to automatically
@@ -173,6 +237,390 @@ export class ClaudeCodeAdapter {
       confidence,
       reasoning
     }
+  }
+
+  /**
+   * Analyze task and workflow to determine optimal starting phase
+   *
+   * LLM-based phase detection: analyzes the task, workflow phases, and project context
+   * to recommend the optimal phase to start from.
+   *
+   * @param task - User's task description
+   * @param workflow - Workflow with phases to analyze
+   * @param context - Project context (existing files, tests, docs)
+   * @returns PhaseAnalysisResult with recommended phase and reasoning
+   */
+  async analyzePhase(
+    task: string,
+    workflow: WorkflowForPhaseAnalysis,
+    context: PhaseAnalysisContext
+  ): Promise<PhaseAnalysisResult> {
+    this.checkInitialized()
+
+    // Build comprehensive prompt for phase detection
+    const prompt = this.buildPhaseAnalysisPrompt(task, workflow, context)
+
+    // Use existing analyzePrompt to get LLM analysis
+    const response = await this.analyzePrompt(prompt)
+
+    // Parse and enhance the response for phase detection
+    return this.parsePhaseAnalysisResponse(response, workflow, context, task)
+  }
+
+  /**
+   * Build prompt for LLM-based phase analysis
+   */
+  private buildPhaseAnalysisPrompt(
+    task: string,
+    workflow: WorkflowForPhaseAnalysis,
+    context: PhaseAnalysisContext
+  ): string {
+    const phasesStr = workflow.phases.map((p, i) => `
+${i + 1}. **${p.name}**
+   Description: ${p.description}
+   Prerequisites: ${p.prerequisites?.join(', ') || 'none'}
+   Skip if: ${p.skipIf?.join(', ') || 'never'}
+`).join('\n')
+
+    const filesStr = context.files.length > 0
+      ? context.files.slice(0, 10).join(', ')
+      : '(no files found)'
+
+    return `
+You are a workflow phase analyzer. Analyze the task and determine the optimal starting phase.
+
+## Task
+"${task}"
+
+## Workflow: ${workflow.name}
+${workflow.description}
+
+## Available Phases (in execution order):
+${phasesStr}
+
+## Current Project State
+- Has implementation code: ${context.hasImplementation}
+- Has tests: ${context.hasTests}
+- Has documentation: ${context.hasDocs}
+- Files: ${filesStr}
+
+## Instructions
+1. Determine user's PRIMARY INTENT from the task
+2. Check which phase prerequisites are already met
+3. Identify phases that should be skipped (based on skipIf conditions)
+4. Recommend the optimal starting phase
+
+IMPORTANT RULES:
+- If intent is "review" but NO code exists → recommend implementation phase
+- If intent is "test" but NO code exists → recommend implementation phase
+- If code already exists and intent is "implement" → start from implementation (not design)
+- When in doubt, prefer earlier phases (safer)
+
+Based on your analysis, provide your recommendations.
+`.trim()
+  }
+
+  /**
+   * Parse LLM response into PhaseAnalysisResult
+   */
+  private parsePhaseAnalysisResponse(
+    response: AnalysisResult,
+    workflow: WorkflowForPhaseAnalysis,
+    context: PhaseAnalysisContext,
+    task: string
+  ): PhaseAnalysisResult {
+    const reasoning = response.reasoning.toLowerCase()
+    const taskLower = task.toLowerCase()
+
+    // Detect intent from task and reasoning
+    const intent = this.detectPhaseIntent(taskLower, reasoning)
+
+    // Determine recommended phase based on intent and context
+    const { recommendedPhase, alternatives, skipPhases, missingPrerequisites } =
+      this.determinePhaseFromIntent(intent, workflow, context, reasoning)
+
+    // Calculate confidence based on various factors
+    const confidence = this.calculatePhaseConfidence(
+      response.confidence,
+      intent,
+      context,
+      alternatives.length
+    )
+
+    // Generate enhanced reasoning
+    const enhancedReasoning = this.generatePhaseReasoning(
+      intent,
+      recommendedPhase,
+      context,
+      response.reasoning
+    )
+
+    return {
+      recommendedPhase,
+      alternativePhases: alternatives,
+      intent,
+      confidence,
+      reasoning: enhancedReasoning,
+      skipPhases,
+      missingPrerequisites
+    }
+  }
+
+  /**
+   * Detect primary intent from task and reasoning
+   */
+  private detectPhaseIntent(task: string, reasoning: string): PhaseIntent {
+    const combined = `${task} ${reasoning}`
+
+    // Review keywords (EN + RU)
+    if (/\b(review|ревью|проверь|check|audit|inspect|security|безопасност)\b/i.test(combined)) {
+      return 'review'
+    }
+
+    // Test keywords (EN + RU)
+    if (/\b(test|тест|coverage|e2e|unit|qa|качеств)\b/i.test(combined)) {
+      return 'test'
+    }
+
+    // Refactor keywords (EN + RU)
+    if (/\b(refactor|рефактор|optimize|оптимиз|clean|improve|улучш|медленн|slow|performance)\b/i.test(combined)) {
+      return 'refactor'
+    }
+
+    // Fix/Debug keywords (EN + RU)
+    if (/\b(fix|исправ|bug|баг|debug|отлад|error|ошибк|crash)\b/i.test(combined)) {
+      return 'fix'
+    }
+
+    // Design keywords (EN + RU)
+    if (/\b(design|дизайн|brainstorm|мозговой|архитект|architect|plan|подумаем|think)\b/i.test(combined)) {
+      return 'design'
+    }
+
+    // Deploy keywords (EN + RU)
+    if (/\b(deploy|деплой|release|релиз|publish|опубликов|production|прод)\b/i.test(combined)) {
+      return 'deploy'
+    }
+
+    // Implement keywords (EN + RU)
+    if (/\b(implement|реализ|создай|create|build|add|добав|напис|write|develop|разработ)\b/i.test(combined)) {
+      return 'implement'
+    }
+
+    return 'unknown'
+  }
+
+  /**
+   * Determine recommended phase based on intent and context
+   */
+  private determinePhaseFromIntent(
+    intent: PhaseIntent,
+    workflow: WorkflowForPhaseAnalysis,
+    context: PhaseAnalysisContext,
+    _reasoning: string
+  ): {
+    recommendedPhase: string
+    alternatives: string[]
+    skipPhases: string[]
+    missingPrerequisites: string[]
+  } {
+    const phases = workflow.phases
+    const firstPhase = phases[0]?.name || 'unknown'
+    const alternatives: string[] = []
+    const skipPhases: string[] = []
+    const missingPrerequisites: string[] = []
+
+    // Helper to find phase by keywords
+    const findPhase = (keywords: string[]): string | undefined => {
+      return phases.find(p =>
+        keywords.some(kw => p.name.toLowerCase().includes(kw))
+      )?.name
+    }
+
+    let recommendedPhase = firstPhase
+
+    switch (intent) {
+      case 'review': {
+        // Review requires existing code
+        if (!context.hasImplementation) {
+          missingPrerequisites.push('implementation code')
+          // Fall back to implementation/test_first phase
+          recommendedPhase = findPhase(['test_first', 'implement', 'development']) || firstPhase
+        } else {
+          recommendedPhase = findPhase(['review', 'audit']) || firstPhase
+          // Can skip earlier implementation phases
+          const reviewIndex = phases.findIndex(p => p.name === recommendedPhase)
+          if (reviewIndex > 0) {
+            skipPhases.push(...phases.slice(0, reviewIndex).map(p => p.name))
+          }
+          // Test phase could be alternative
+          const testPhase = findPhase(['test'])
+          if (testPhase && testPhase !== recommendedPhase) {
+            alternatives.push(testPhase)
+          }
+        }
+        break
+      }
+
+      case 'test': {
+        // Testing requires implementation
+        if (!context.hasImplementation) {
+          missingPrerequisites.push('implementation code')
+          recommendedPhase = findPhase(['test_first', 'implement', 'development']) || firstPhase
+        } else {
+          recommendedPhase = findPhase(['test', 'qa', 'verification']) || firstPhase
+        }
+        break
+      }
+
+      case 'refactor': {
+        // Refactoring requires existing code
+        if (!context.hasImplementation) {
+          missingPrerequisites.push('implementation code')
+          recommendedPhase = findPhase(['test_first', 'implement']) || firstPhase
+        } else {
+          recommendedPhase = findPhase(['refactor', 'optim', 'clean']) || firstPhase
+          // Review could be a prerequisite
+          const reviewPhase = findPhase(['review'])
+          if (reviewPhase) {
+            alternatives.push(reviewPhase)
+          }
+        }
+        break
+      }
+
+      case 'fix': {
+        // Bug fixing - start from analysis/debug if available, otherwise implementation
+        const debugPhase = findPhase(['debug', 'analysis', 'investigation', 'diagnos'])
+        if (debugPhase) {
+          recommendedPhase = debugPhase
+        } else {
+          recommendedPhase = findPhase(['implement', 'development', 'fix']) || firstPhase
+        }
+        break
+      }
+
+      case 'design': {
+        // Design/brainstorming - start from earliest design phase
+        recommendedPhase = findPhase(['design', 'brainstorm', 'research', 'analysis', 'planning']) || firstPhase
+        break
+      }
+
+      case 'deploy': {
+        // Deployment requires code and ideally tests
+        if (!context.hasImplementation) {
+          missingPrerequisites.push('implementation code')
+          recommendedPhase = firstPhase
+        } else if (!context.hasTests) {
+          missingPrerequisites.push('tests (recommended)')
+          recommendedPhase = findPhase(['deploy', 'release', 'publish']) || firstPhase
+        } else {
+          recommendedPhase = findPhase(['deploy', 'release', 'publish']) || firstPhase
+        }
+        break
+      }
+
+      case 'implement': {
+        // Implementation - start from test_first or implementation phase
+        if (context.hasImplementation) {
+          // Code exists, start from implementation (skip design)
+          recommendedPhase = findPhase(['implement', 'development', 'coding']) || firstPhase
+          const implIndex = phases.findIndex(p => p.name === recommendedPhase)
+          if (implIndex > 0) {
+            // Can skip design phases
+            const designPhases = phases.slice(0, implIndex).filter(p =>
+              /design|research|analysis|planning/i.test(p.name)
+            )
+            skipPhases.push(...designPhases.map(p => p.name))
+          }
+        } else {
+          // No code - start from beginning (test_first for TDD or first phase)
+          recommendedPhase = findPhase(['test_first']) || firstPhase
+        }
+        break
+      }
+
+      default: {
+        // Unknown intent - use first phase (safest)
+        recommendedPhase = firstPhase
+      }
+    }
+
+    return { recommendedPhase, alternatives, skipPhases, missingPrerequisites }
+  }
+
+  /**
+   * Calculate confidence for phase recommendation
+   */
+  private calculatePhaseConfidence(
+    baseConfidence: number,
+    intent: PhaseIntent,
+    context: PhaseAnalysisContext,
+    alternativesCount: number
+  ): number {
+    let confidence = baseConfidence
+
+    // Unknown intent reduces confidence
+    if (intent === 'unknown') {
+      confidence *= 0.6
+    }
+
+    // Many alternatives reduce confidence
+    if (alternativesCount > 2) {
+      confidence *= 0.9
+    }
+
+    // Context availability boosts confidence
+    if (context.hasImplementation || context.hasTests || context.hasDocs) {
+      confidence = Math.min(confidence * 1.1, 1.0)
+    }
+
+    // No context reduces confidence
+    if (!context.hasImplementation && !context.hasTests && context.files.length === 0) {
+      confidence *= 0.8
+    }
+
+    return Math.min(Math.max(confidence, 0), 1)
+  }
+
+  /**
+   * Generate enhanced reasoning for phase selection
+   */
+  private generatePhaseReasoning(
+    intent: PhaseIntent,
+    recommendedPhase: string,
+    context: PhaseAnalysisContext,
+    baseReasoning: string
+  ): string {
+    const parts: string[] = []
+
+    // Intent
+    parts.push(`Detected intent: "${intent}"`)
+
+    // Context summary
+    const contextParts: string[] = []
+    if (context.hasImplementation) contextParts.push('existing code')
+    if (context.hasTests) contextParts.push('tests')
+    if (context.hasDocs) contextParts.push('docs')
+
+    if (contextParts.length > 0) {
+      parts.push(`Found: ${contextParts.join(', ')}`)
+    } else {
+      parts.push('No existing artifacts found')
+    }
+
+    // Phase selection
+    parts.push(`Selected phase: "${recommendedPhase}"`)
+
+    // Original reasoning (trimmed)
+    if (baseReasoning && baseReasoning.length > 0) {
+      const trimmed = baseReasoning.length > 100
+        ? baseReasoning.substring(0, 100) + '...'
+        : baseReasoning
+      parts.push(`Analysis: ${trimmed}`)
+    }
+
+    return parts.join('. ')
   }
 
   /**

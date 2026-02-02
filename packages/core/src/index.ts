@@ -65,6 +65,10 @@ export { SkillMDLoader } from './orchestration/skillmd-loader'
 export { ComplexityAnalyzer } from './orchestration/complexity-analyzer'
 export { WorkflowSelector } from './orchestration/workflow-selector'
 
+// Adaptive Workflow System: Phase Detection
+export { ContextAnalyzer } from './orchestration/context-analyzer'
+export { PhaseDetector } from './orchestration/phase-detector'
+
 // BMAD Phase 2: YOLO Mode & Brainstorming
 export { YoloModeManager } from './orchestration/yolo-mode-manager'
 export { BrainstormingSession } from './orchestration/brainstorming-session'
@@ -239,7 +243,7 @@ export {
   type OrchestratorConfig,
   type OrchestrationTask,
   type OrchestrationResult,
-  type AgentRegistry as DynamicAgentRegistry
+  type AgentRegistryLike as DynamicAgentRegistry
 } from './orchestration/dynamic-orchestrator'
 
 export {
@@ -302,7 +306,15 @@ export function getOrchestratorStats() {
 }
 
 // Claude Code Integration
-export { ClaudeCodeAdapter, type AnalysisResult } from './agents/claude-code-adapter'
+export {
+  ClaudeCodeAdapter,
+  type AnalysisResult,
+  type PhaseAnalysisResult,
+  type PhaseIntent,
+  type PhaseForAnalysis,
+  type PhaseAnalysisContext,
+  type WorkflowForPhaseAnalysis
+} from './agents/claude-code-adapter'
 
 // ===================================
 // MCP INTEGRATION

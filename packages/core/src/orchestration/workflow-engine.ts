@@ -584,6 +584,130 @@ export class WorkflowEngine {
   }
 
   /**
+   * Execute workflow from a specific phase
+   *
+   * NEW: Adaptive Workflow System - Phase Joining
+   *
+   * This method allows starting a workflow from any phase,
+   * skipping earlier phases when context indicates they're already complete.
+   *
+   * Handles parallel steps: if multiple steps share the same phase,
+   * uses the minimum index for skip calculation.
+   *
+   * @param workflow - Workflow to execute
+   * @param startPhase - Phase to start from (e.g., 'review', 'refactoring')
+   * @param initialState - Initial agent state
+   * @param context - Project context (optional)
+   * @returns Workflow execution result
+   */
+  async executeFromPhase(
+    workflow: Workflow,
+    startPhase: string,
+    initialState?: Partial<AgentState>,
+    context?: ProjectContext
+  ): Promise<WorkflowExecutionResult> {
+    if (!this.initialized) {
+      throw new Error('WorkflowEngine not initialized. Call initialize() first.')
+    }
+
+    // Find ALL steps with target phase (for parallel execution support)
+    const phaseSteps = workflow.steps
+      .map((step, index) => ({ step, index }))
+      .filter(({ step }) => step.phase === startPhase)
+
+    if (phaseSteps.length === 0) {
+      throw new Error(
+        `Phase "${startPhase}" not found in workflow "${workflow.name}". ` +
+        `Available phases: ${[...new Set(workflow.steps.map(s => s.phase))].join(', ')}`
+      )
+    }
+
+    // Use minimum index for skip calculation (handles parallel steps)
+    const startStepIndex = Math.min(...phaseSteps.map(p => p.index))
+
+    // Log parallel steps info
+    if (phaseSteps.length > 1) {
+      console.log(`🎯 Phase "${startPhase}" has ${phaseSteps.length} parallel steps:`)
+      phaseSteps.forEach(({ step }) => {
+        console.log(`   - ${step.role_id} (order: ${step.order})`)
+      })
+    }
+
+    // Soft validation - warn about prerequisites but don't block
+    const targetStep = workflow.steps[startStepIndex]
+    if (targetStep?.phase_join_criteria) {
+      const prerequisites = targetStep.phase_join_criteria.prerequisites ||
+                           targetStep.phase_join_criteria.requires || []
+      if (prerequisites.length > 0) {
+        console.log(`\n⚠️  Phase "${startPhase}" has prerequisites:`)
+        prerequisites.forEach(p => console.log(`   - ${p}`))
+        console.log(`   Assuming prerequisites are met. Proceeding...\n`)
+      }
+    }
+
+    // Calculate skipped phases (unique phases before start index)
+    const skippedPhases = [...new Set(
+      workflow.steps
+        .slice(0, startStepIndex)
+        .map(s => s.phase)
+    )]
+
+    console.log(`\n🎯 ═══════════════════════════════════════════════════`)
+    console.log(`🎯 ADAPTIVE PHASE JOINING`)
+    console.log(`🎯 Workflow: ${workflow.name}`)
+    console.log(`🎯 Starting phase: ${startPhase}`)
+    if (skippedPhases.length > 0) {
+      console.log(`🎯 Skipping phases: ${skippedPhases.join(' → ')}`)
+    }
+    console.log(`🎯 ═══════════════════════════════════════════════════\n`)
+
+    // Create modified workflow with only the remaining steps
+    const modifiedWorkflow: Workflow = {
+      ...workflow,
+      steps: workflow.steps.slice(startStepIndex),
+      metadata: {
+        ...workflow.metadata,
+        originalSteps: workflow.steps.length,
+        skippedPhases,
+        startedFromPhase: startPhase
+      }
+    }
+
+    // Prepare state with phase joining context
+    const state: AgentState = {
+      messages: initialState?.messages || [],
+      task: initialState?.task || '',
+      taskType: initialState?.taskType || 'feature',
+      context: {
+        ...initialState?.context,
+        ...context,
+        skippedPhases,
+        startedFromPhase: startPhase,
+        phaseJoinContext: `Joined workflow at "${startPhase}" phase. Assumed prior phases are complete.`
+      },
+      currentAgent: initialState?.currentAgent || '',
+      agentResults: initialState?.agentResults || [],
+      mcpData: initialState?.mcpData || {},
+      nextAction: initialState?.nextAction || '',
+      requiresApproval: initialState?.requiresApproval ?? false,
+      metadata: {
+        ...initialState?.metadata,
+        phaseJoining: {
+          enabled: true,
+          startPhase,
+          skippedPhases,
+          originalWorkflowSteps: workflow.steps.length,
+          remainingSteps: modifiedWorkflow.steps.length
+        }
+      },
+      ...initialState
+    }
+
+    // Execute the modified workflow
+    return this.executeWorkflow(modifiedWorkflow, state)
+  }
+
+  /**
    * Execute a workflow
    */
   async executeWorkflow(
@@ -1186,27 +1310,48 @@ export class WorkflowEngine {
     agent: AgentWithRoleSkills,
     state: AgentState
   ): Promise<Partial<AgentState>> {
-    // In production, this would create an instance and call execute()
-    // For now, return a mock result showing the agent was selected
-    return {
-      currentAgent: agent.agentId,
-      context: {
-        ...state.context,
-        [`${agent.agentId}_executed`]: true,
-        [`${agent.agentId}_timestamp`]: new Date().toISOString()
-      },
-      agentResults: [
-        ...state.agentResults,
-        {
-          agentId: agent.agentId,
-          status: 'success' as const,
-          output: `Agent ${agent.agentId} executed successfully`,
-          artifacts: [],
-          confidence: 1.0,
-          timestamp: new Date()
-        }
-      ]
+    const registry: any = this.agentRegistry as any
+    const instance = typeof registry.getAgentInstance === 'function'
+      ? registry.getAgentInstance(agent.agentId)
+      : undefined
+
+    if (!instance || typeof instance.execute !== 'function') {
+      // Fallback to mock result when no executable instance is available
+      return {
+        currentAgent: agent.agentId,
+        context: {
+          ...state.context,
+          [`${agent.agentId}_executed`]: true,
+          [`${agent.agentId}_timestamp`]: new Date().toISOString()
+        },
+        agentResults: [
+          ...state.agentResults,
+          {
+            agentId: agent.agentId,
+            status: 'success' as const,
+            output: `Agent ${agent.agentId} executed successfully (mock)`,
+            artifacts: [],
+            confidence: 1.0,
+            timestamp: new Date()
+          }
+        ]
+      }
     }
+
+    const executionState: AgentState = {
+      ...state,
+      currentAgent: agent.agentId
+    }
+
+    // Initialize execution context for personality prompt enrichment
+    if (typeof instance.initializeExecutionContext === 'function') {
+      instance.initializeExecutionContext(executionState)
+    } else if (typeof instance.setExecutionContext === 'function') {
+      // Backward-compat fallback (if method is public in custom agents)
+      instance.setExecutionContext(executionState)
+    }
+
+    return instance.execute(executionState)
   }
 
   /**
