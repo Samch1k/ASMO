@@ -92,7 +92,7 @@ All test layers pass and deployed
 ## Usage
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)

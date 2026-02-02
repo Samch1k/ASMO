@@ -1,6 +1,68 @@
 import type { Role, Skill, AgentWithRoleSkills } from '../agents/types'
-import path from 'path'
-import { fileURLToPath } from 'url'
+
+// Import all agent classes for static registry
+import { ArchitectAgent } from '../agents/roles/architect.agent'
+import { DeveloperAgent } from '../agents/roles/developer.agent'
+import { TesterAgent } from '../agents/roles/tester.agent'
+import { DebuggerAgent } from '../agents/roles/debugger.agent'
+import { DevOpsAgent } from '../agents/roles/devops.agent'
+import { OptimizerAgent } from '../agents/roles/optimizer.agent'
+import { UIDevAgent } from '../agents/roles/ui-developer.agent'
+import { UXDesignerAgent } from '../agents/roles/ux-designer.agent'
+import { CodeReviewerAgent } from '../agents/roles/code-reviewer.agent'
+import { DesignValidatorAgent } from '../agents/roles/design-validator.agent'
+import { MergeAgent } from '../agents/roles/merge-coordinator.agent'
+import { PostDeployMonitorAgent } from '../agents/roles/post-deploy-monitor.agent'
+import { RequirementsValidatorAgent } from '../agents/roles/requirements-validator.agent'
+import { BusinessAnalystAgent } from '../agents/roles/business-analyst.agent'
+import { ProjectManagerAgent } from '../agents/roles/project-manager.agent'
+import { ProductOwnerAgent } from '../agents/roles/product-owner.agent'
+import { APIDesignerAgent } from '../agents/roles/api-designer.agent'
+import { DataArchitectAgent } from '../agents/roles/data-architect.agent'
+import { PerformanceEngineerAgent } from '../agents/roles/performance-engineer.agent'
+import { ScrumMasterAgent } from '../agents/roles/scrum-master.agent'
+import { SecuritySpecialistAgent } from '../agents/roles/security-specialist.agent'
+import { ProductManagerAgent } from '../agents/roles/product-manager.agent'
+import { RFQSpecialistAgent } from '../agents/roles/rfq-specialist.agent'
+import { SupplierOpsAgent } from '../agents/roles/supplier-ops.agent'
+import { AnalystAgent } from '../agents/roles/analyst.agent'
+import { TechWriterAgent } from '../agents/roles/tech-writer.agent'
+import { TestArchitectAgent } from '../agents/roles/test-architect.agent'
+import { AdversarialReviewerAgent } from '../agents/roles/adversarial-reviewer.agent'
+
+// Static registry of agent classes (avoids dynamic imports which don't work with bundled code)
+const AGENT_CLASS_REGISTRY: Record<string, any> = {
+  ArchitectAgent,
+  DeveloperAgent,
+  TesterAgent,
+  DebuggerAgent,
+  DevOpsAgent,
+  OptimizerAgent,
+  UIDeveloperAgent: UIDevAgent,
+  UIDevAgent,
+  UXDesignerAgent,
+  CodeReviewerAgent,
+  DesignValidatorAgent,
+  MergeAgent,
+  MergeCoordinatorAgent: MergeAgent,
+  PostDeployMonitorAgent,
+  RequirementsValidatorAgent,
+  BusinessAnalystAgent,
+  ProjectManagerAgent,
+  ProductOwnerAgent,
+  APIDesignerAgent,
+  DataArchitectAgent,
+  PerformanceEngineerAgent,
+  ScrumMasterAgent,
+  SecuritySpecialistAgent,
+  ProductManagerAgent,
+  RFQSpecialistAgent,
+  SupplierOpsAgent,
+  AnalystAgent,
+  TechWriterAgent,
+  TestArchitectAgent,
+  AdversarialReviewerAgent
+}
 
 /**
  * Agent Registry Statistics
@@ -138,31 +200,20 @@ export class AgentRegistry {
   }
 
   /**
-   * Dynamically load agent class from file system
+   * Load agent class from static registry
    *
    * @param className - Agent class name (e.g., "ArchitectAgent")
    * @returns Agent class constructor
    */
   private async loadAgentClass(className: string): Promise<any> {
-    // Convert ArchitectAgent → architect.agent.ts
-    const filename = className.replace('Agent', '').toLowerCase() + '.agent'
+    // Look up in static registry
+    const AgentClass = AGENT_CLASS_REGISTRY[className]
 
-    try {
-      // Get current directory for relative imports
-      const __filename = fileURLToPath(import.meta.url)
-      const __dirname = path.dirname(__filename)
-
-      // Construct path to agent file
-      const agentPath = path.resolve(__dirname, '../../agents/roles', `${filename}.js`)
-
-      // Dynamic import
-      const module = await import(agentPath)
-
-      // Return class (either named export or default)
-      return module[className] || module.default
-    } catch (error) {
-      throw new Error(`Could not load agent class ${className}: ${error}`)
+    if (!AgentClass) {
+      throw new Error(`Unknown agent class: ${className}. Available: ${Object.keys(AGENT_CLASS_REGISTRY).join(', ')}`)
     }
+
+    return AgentClass
   }
 
   /**

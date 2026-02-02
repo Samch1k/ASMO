@@ -1,6 +1,6 @@
 # Каталог Workflows
 
-AI1st включает **12 production-ready workflows** для типичных задач разработки.
+ASMO включает **12 production-ready workflows** для типичных задач разработки.
 
 ## Обзор
 

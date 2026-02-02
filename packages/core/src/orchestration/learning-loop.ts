@@ -13,7 +13,7 @@
  */
 
 import type { WorkflowMetrics, AgentStepMetrics } from './metrics-collector'
-import { ChatAnthropic } from '@langchain/anthropic'
+import { getLLMProvider, type ILLMProvider, type ModelTier } from '../llm'
 import { MetricsPersister } from './metrics-persister'
 import { getConfigManager } from './config/config-manager'
 import pg from 'pg'
@@ -51,7 +51,8 @@ export interface LearningSession {
  * LearningLoop - Continuous improvement through pattern analysis
  */
 export class LearningLoop {
-  private llm: ChatAnthropic
+  private llmProvider: ILLMProvider
+  private llmModel: ModelTier
   private persister: MetricsPersister
   private pool: pg.Pool | null = null
 
@@ -59,7 +60,7 @@ export class LearningLoop {
     // ✨ Priority 2: Load config from ConfigManager if available
     const configManager = getConfigManager()
     let llmConfig = {
-      modelName: 'claude-sonnet-4-20250514',
+      model: 'sonnet' as ModelTier,
       temperature: 0.2,
       maxTokens: 4096
     }
@@ -67,15 +68,20 @@ export class LearningLoop {
 
     if (configManager.isInitialized()) {
       const learningConfig = configManager.getLearningLoopConfig()
-      llmConfig = {
-        modelName: learningConfig.llm.modelName || llmConfig.modelName,
-        temperature: learningConfig.llm.temperature ?? llmConfig.temperature,
-        maxTokens: learningConfig.llm.maxTokens || llmConfig.maxTokens
+      // Map model name to tier
+      const modelName = learningConfig.llm.modelName || ''
+      if (modelName.includes('opus')) {
+        llmConfig.model = 'opus'
+      } else if (modelName.includes('haiku')) {
+        llmConfig.model = 'haiku'
       }
+      llmConfig.temperature = learningConfig.llm.temperature ?? llmConfig.temperature
+      llmConfig.maxTokens = learningConfig.llm.maxTokens || llmConfig.maxTokens
       maxPoolConnections = learningConfig.database.maxPoolConnections
     }
 
-    this.llm = new ChatAnthropic(llmConfig)
+    this.llmProvider = getLLMProvider()
+    this.llmModel = llmConfig.model
 
     this.persister = persister || new MetricsPersister()
 
@@ -345,8 +351,12 @@ Return ONLY a JSON array (no markdown, no extra text) with this format:
 Limit to top 3 most impactful optimizations.`
 
     try {
-      const response = await this.llm.invoke(prompt)
-      const content = typeof response.content === 'string' ? response.content : ''
+      const response = await this.llmProvider.generate(prompt, {
+        model: this.llmModel,
+        temperature: 0.2,
+        maxTokens: 4096
+      })
+      const content = response.content
 
       // Extract JSON array from response
       const jsonMatch = content.match(/\[[\s\S]*\]/)

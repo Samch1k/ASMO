@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState, Artifact } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Adversarial Reviewer Agent - Critical Code Review Specialist
@@ -23,8 +22,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - GitHub MCP: Access PR details and history
  */
 export class AdversarialReviewerAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('adversarial-reviewer', [
       'adversarial_review',
@@ -35,12 +32,6 @@ export class AdversarialReviewerAgent extends BaseAgent {
       'issue_detection',
       'critical_analysis'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.1, // Low temperature for consistent critical analysis
-      maxTokens: 6144
-    })
   }
 
   /**
@@ -238,7 +229,11 @@ Return issues as JSON:
   ]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 6144
+    })
     return this.parseIssues(response.content)
   }
 
@@ -282,7 +277,11 @@ Return as JSON:
   ]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 6144
+    })
     return this.parseIssues(response.content)
   }
 

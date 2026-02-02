@@ -1,6 +1,6 @@
 # Development Setup
 
-Set up your development environment for AI1st.
+Set up your development environment for ASMO.
 
 ## Prerequisites
 
@@ -13,8 +13,8 @@ Set up your development environment for AI1st.
 
 ```bash
 # Clone the repository
-git clone https://github.com/Samch1k/ai1st-orchestration.git
-cd ai1st-orchestration
+git clone https://github.com/Samch1k/ASMO.git
+cd ASMO
 
 # Install pnpm if needed
 npm install -g pnpm
@@ -26,16 +26,16 @@ pnpm install
 ## Project Structure
 
 ```
-ai1st-orchestration/
+ASMO/
 ├── packages/
-│   ├── core/                # @ai1st/core - Main library
+│   ├── core/                # @asmo/core - Main library
 │   │   ├── src/
 │   │   │   ├── orchestration/  # Workflow engine, analyzers
 │   │   │   ├── agents/         # Agent implementations
 │   │   │   └── templates/      # Template engine
 │   │   ├── templates/          # JSON configurations
 │   │   └── tests/              # Unit tests
-│   ├── cli/                 # @ai1st/cli - CLI tool
+│   ├── cli/                 # @asmo/cli - CLI tool
 │   └── docs/                # VitePress documentation
 ├── scripts/                 # Build and generation scripts
 ├── docs/                    # Documentation source
@@ -49,10 +49,10 @@ ai1st-orchestration/
 pnpm build
 
 # Build specific package
-pnpm --filter @ai1st/core build
+pnpm --filter @asmo/core build
 
 # Watch mode for development
-pnpm --filter @ai1st/core dev
+pnpm --filter @asmo/core dev
 ```
 
 ## Environment Setup
@@ -61,14 +61,14 @@ Create a `.env` file:
 
 ```bash
 # Database (optional)
-DATABASE_URL=postgresql://localhost:5432/ai1st
+DATABASE_URL=postgresql://localhost:5432/asmo
 
 # LLM API key (optional for development)
 ANTHROPIC_API_KEY=your-key
 
 # Development settings
-AI1ST_LOG_LEVEL=debug
-AI1ST_YOLO_ENABLED=false
+ASMO_LOG_LEVEL=debug
+ASMO_YOLO_ENABLED=false
 ```
 
 ## Database Setup (Optional)
@@ -77,10 +77,10 @@ For testing task persistence:
 
 ```bash
 # Create database
-createdb ai1st
+createdb asmo
 
 # Run migrations
-psql ai1st < packages/core/migrations/095_add_task_master_tables.sql
+psql asmo < packages/core/migrations/095_add_task_master_tables.sql
 ```
 
 ## IDE Setup
@@ -121,7 +121,7 @@ pnpm test
 pnpm test -- --watch
 
 # Run specific test file
-pnpm --filter @ai1st/core test complexity-analyzer.test.ts
+pnpm --filter @asmo/core test complexity-analyzer.test.ts
 
 # Coverage report
 pnpm test -- --coverage

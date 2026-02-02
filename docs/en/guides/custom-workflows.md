@@ -1,6 +1,6 @@
 # Custom Workflows
 
-Learn how to create project-specific workflows for AI1st.
+Learn how to create project-specific workflows for ASMO.
 
 ## Overview
 
@@ -45,7 +45,7 @@ Custom workflows allow you to:
 Create a JSON file:
 
 ```json
-// .ai1st/workflows/deployment-workflow.json
+// .asmo/workflows/deployment-workflow.json
 {
   "id": "safe_deployment",
   "name": "Safe Deployment Workflow",
@@ -163,11 +163,11 @@ For steps that can run simultaneously:
 ### Configuration File
 
 ```typescript
-// .ai1st/config/workflows.config.ts
+// .asmo/config/workflows.config.ts
 export default {
   customWorkflows: [
-    '.ai1st/workflows/deployment-workflow.json',
-    '.ai1st/workflows/review-workflow.json'
+    '.asmo/workflows/deployment-workflow.json',
+    '.asmo/workflows/review-workflow.json'
   ]
 }
 ```
@@ -175,8 +175,8 @@ export default {
 ### Programmatic Registration
 
 ```typescript
-import { WorkflowEngine } from '@ai1st/core'
-import safeDeployment from './.ai1st/workflows/deployment-workflow.json'
+import { WorkflowEngine } from '@asmo/core'
+import safeDeployment from './.asmo/workflows/deployment-workflow.json'
 
 const engine = new WorkflowEngine(registry)
 engine.registerWorkflow(safeDeployment)
@@ -309,8 +309,8 @@ if (step.metadata?.condition === 'hasSecurityChanges') {
 
 ```typescript
 // tests/workflows/deployment.test.ts
-import { WorkflowEngine, MockRegistry } from '@ai1st/core/testing'
-import safeDeployment from '../../.ai1st/workflows/deployment-workflow.json'
+import { WorkflowEngine, MockRegistry } from '@asmo/core/testing'
+import safeDeployment from '../../.asmo/workflows/deployment-workflow.json'
 
 describe('Safe Deployment Workflow', () => {
   it('should execute all steps in order', async () => {

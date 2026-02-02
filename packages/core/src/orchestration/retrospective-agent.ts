@@ -9,28 +9,28 @@
  * This agent is part of the automatic retrospective analysis infrastructure. It runs
  * automatically after workflow completion and provides rule-based recommendations.
  *
- * ### Relationship with ai1st-analyze/ai1st-enhance skills (archived)
+ * ### Relationship with asmo-analyze/asmo-enhance skills (archived)
  *
- * The ai1st skills (`ai1st-analyze` and `ai1st-enhance`) were manual, user-facing skills
+ * The asmo skills (`asmo-analyze` and `asmo-enhance`) were manual, user-facing skills
  * that provided deeper AI-powered analysis of the metrics saved by this agent. As of
  * 2026-01-26, these skills were archived during the skill format consolidation.
  *
  * **Two-tier analysis system:**
  * 1. **RetrospectiveAgent (this file)** - Automatic infrastructure
  *    - Runs after every workflow
- *    - Saves metrics to `.ai1st/` directory
+ *    - Saves metrics to `.asmo/` directory
  *    - Provides rule-based recommendations
  *    - No cost, no user interaction
  *
- * 2. **ai1st skills (archived)** - Optional deep analysis
- *    - Manual invocation: `/ai1st-analyze latest`
+ * 2. **asmo skills (archived)** - Optional deep analysis
+ *    - Manual invocation: `/asmo-analyze latest`
  *    - Reads saved metrics for AI-powered insights
  *    - Provides enhanced recommendations with code examples
  *    - Free (uses Claude Code CLI subscription)
  *
  * **Data Flow:**
  * Workflow completes → RetrospectiveAgent runs → Saves metrics → Basic recommendations
- * (Optional) → User runs ai1st-analyze → Enhanced AI recommendations
+ * (Optional) → User runs asmo-analyze → Enhanced AI recommendations
  *
  * For detailed architecture documentation, see: `.cursor/docs/retrospective-system.md`
  */
@@ -443,16 +443,16 @@ export class RetrospectiveAgent {
     const fs = await import('fs/promises')
     const path = await import('path')
 
-    // Create .ai1st directory if it doesn't exist
-    const ai1stDir = path.join(process.cwd(), '.ai1st')
+    // Create .asmo directory if it doesn't exist
+    const asmoDir = path.join(process.cwd(), '.asmo')
     try {
-      await fs.mkdir(ai1stDir, { recursive: true })
+      await fs.mkdir(asmoDir, { recursive: true })
     } catch (error) {
       // Directory already exists, ignore
     }
 
     // Save full metrics as JSON for programmatic access
-    const metricsPath = path.join(ai1stDir, `metrics-${workflowMetrics.workflowId}.json`)
+    const metricsPath = path.join(asmoDir, `metrics-${workflowMetrics.workflowId}.json`)
     const metricsData = {
       workflowMetrics,
       stepMetrics,
@@ -464,7 +464,7 @@ export class RetrospectiveAgent {
     await fs.writeFile(metricsPath, JSON.stringify(metricsData, null, 2), 'utf-8')
 
     // Save human-readable context for skills
-    const contextPath = path.join(ai1stDir, `analysis-context-${workflowMetrics.workflowId}.md`)
+    const contextPath = path.join(asmoDir, `analysis-context-${workflowMetrics.workflowId}.md`)
     const contextMd = this.formatAnalysisContext(
       workflowMetrics,
       stepMetrics,
@@ -476,8 +476,8 @@ export class RetrospectiveAgent {
     await fs.writeFile(contextPath, contextMd, 'utf-8')
 
     // Save latest symlink for easy access
-    const latestMetricsPath = path.join(ai1stDir, 'metrics-latest.json')
-    const latestContextPath = path.join(ai1stDir, 'analysis-context-latest.md')
+    const latestMetricsPath = path.join(asmoDir, 'metrics-latest.json')
+    const latestContextPath = path.join(asmoDir, 'analysis-context-latest.md')
 
     try {
       await fs.unlink(latestMetricsPath)
@@ -601,7 +601,7 @@ export class RetrospectiveAgent {
     lines.push(``)
     lines.push(`## For AI Analysis`)
     lines.push(``)
-    lines.push(`Use the /ai1st-analyze or /ai1st-enhance skill to generate enhanced recommendations based on this context.`)
+    lines.push(`Use the /asmo-analyze or /asmo-enhance skill to generate enhanced recommendations based on this context.`)
     lines.push(``)
     lines.push(`Focus on:`)
     lines.push(`1. Identifying specific bottlenecks and their root causes`)
@@ -646,7 +646,7 @@ export class RetrospectiveAgent {
       )
 
       console.log(`💡 [BMad] ${basicRecommendations.length} basic recommendations generated`)
-      console.log(`💡 [BMad] For enhanced AI insights, run: /ai1st-analyze latest`)
+      console.log(`💡 [BMad] For enhanced AI insights, run: /asmo-analyze latest`)
 
       return basicRecommendations
     }

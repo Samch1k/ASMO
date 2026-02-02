@@ -7,17 +7,17 @@ Document Registry обеспечивает централизованное хр
 Document Registry:
 - Хранит документы с историей версий
 - Отслеживает метаданные (автор, временные метки, теги)
-- Сохраняет на диск в директорию `_ai1st-output/`
+- Сохраняет на диск в директорию `_asmo-output/`
 - Интегрируется с Context Cascade для автоматической загрузки
 
 ## Базовое использование
 
 ```typescript
-import { DocumentRegistry } from '@ai1st/core'
+import { DocumentRegistry } from '@asmo/core'
 
 // Создание реестра
 const registry = new DocumentRegistry({
-  outputDir: '_ai1st-output'
+  outputDir: '_asmo-output'
 })
 
 // Регистрация документа
@@ -148,7 +148,7 @@ if (!hasArch) {
 Документы сохраняются в файловую систему:
 
 ```
-_ai1st-output/
+_asmo-output/
 ├── document-index.json      # Индекс метаданных
 ├── product-brief/
 │   └── v1.md
@@ -165,7 +165,7 @@ _ai1st-output/
 
 ```typescript
 const registry = new DocumentRegistry({
-  outputDir: '_ai1st-output',  // Директория вывода
+  outputDir: '_asmo-output',  // Директория вывода
   autoSave: true,              // Авто-сохранение при регистрации
   maxVersions: 10              // Макс. версий на документ
 })
@@ -176,7 +176,7 @@ const registry = new DocumentRegistry({
 Document Registry — бэкенд хранения для Context Cascade:
 
 ```typescript
-import { ContextCascade, DocumentRegistry } from '@ai1st/core'
+import { ContextCascade, DocumentRegistry } from '@asmo/core'
 
 const registry = new DocumentRegistry()
 const cascade = new ContextCascade({ documentRegistry: registry })

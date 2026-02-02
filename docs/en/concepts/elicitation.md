@@ -18,7 +18,7 @@ AI-generated content benefits from structured re-examination. Elicitation techni
 Break down content to its fundamental components and rebuild from basic truths.
 
 ```typescript
-import { ElicitationManager, firstPrinciplesTechnique } from '@ai1st/core'
+import { ElicitationManager, firstPrinciplesTechnique } from '@asmo/core'
 
 const manager = new ElicitationManager()
 const result = await manager.applyElicitation(

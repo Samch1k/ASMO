@@ -12,7 +12,7 @@ A skill defines:
 
 ## Skill Categories
 
-AI1st includes **85 skills** across **12 categories**:
+ASMO includes **85 skills** across **12 categories**:
 
 | Category | Count | Examples |
 |----------|-------|----------|
@@ -63,7 +63,7 @@ AI1st includes **85 skills** across **12 categories**:
 
 ## Skill Matching
 
-AI1st automatically matches skills to tasks:
+ASMO automatically matches skills to tasks:
 
 ### By Keywords
 
@@ -156,7 +156,7 @@ Skills may require specific MCP servers:
 ### Programmatic Access
 
 ```typescript
-import { SkillMatcher } from '@ai1st/core'
+import { SkillMatcher } from '@asmo/core'
 
 const matcher = new SkillMatcher()
 const skills = await matcher.matchSkills(

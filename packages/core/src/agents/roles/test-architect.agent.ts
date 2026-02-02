@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Test Architect Agent (TEA) - Testing Strategy and Quality Specialist
@@ -22,8 +21,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - GitHub MCP: Analyze test coverage and CI/CD
  */
 export class TestArchitectAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('test-architect', [
       'test_strategy',
@@ -35,12 +32,6 @@ export class TestArchitectAgent extends BaseAgent {
       'test_maintenance',
       'coverage_analysis'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.2,
-      maxTokens: 6144
-    })
   }
 
   /**
@@ -226,7 +217,11 @@ Return as JSON:
   "document": "Full markdown document"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 6144
+    })
     return this.parseResponse(response.content)
   }
 
@@ -267,7 +262,11 @@ Return as JSON:
   "document": "Full markdown test strategy"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 6144
+    })
     return this.parseResponse(response.content)
   }
 
@@ -308,7 +307,11 @@ Return as JSON:
   "document": "Full markdown test design document"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 6144
+    })
     return this.parseResponse(response.content)
   }
 
@@ -349,7 +352,11 @@ Return as JSON:
   "document": "Full markdown automation plan"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 6144
+    })
     return this.parseResponse(response.content)
   }
 
@@ -402,7 +409,11 @@ Return as JSON:
   "document": "Full markdown quality gates document"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 6144
+    })
     return this.parseResponse(response.content)
   }
 
@@ -459,7 +470,11 @@ Return as JSON:
   "document": "Full markdown readiness report"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 6144
+    })
     return this.parseResponse(response.content)
   }
 
@@ -508,7 +523,11 @@ Return as JSON:
   "document": "Full markdown regression analysis"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 6144
+    })
     return this.parseResponse(response.content)
   }
 
@@ -560,7 +579,11 @@ Return as JSON:
   "document": "Full markdown maintenance plan"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 6144
+    })
     return this.parseResponse(response.content)
   }
 

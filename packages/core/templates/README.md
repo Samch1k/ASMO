@@ -1,6 +1,6 @@
-# AI1st Configuration Templates
+# ASMO Configuration Templates
 
-This directory contains configuration templates for the AI1st orchestration system.
+This directory contains configuration templates for the ASMO orchestration system.
 
 ## Directory Structure
 
@@ -76,10 +76,10 @@ Skills are organized into 12 categories:
 ## Usage in Code
 
 ```typescript
-import { ConfigLoader } from '@ai1st/core'
+import { ConfigLoader } from '@asmo/core'
 
 // Initialize config loader
-const loader = new ConfigLoader('.ai1st/config')
+const loader = new ConfigLoader('.asmo/config')
 await loader.initialize()
 
 // Load roles
@@ -93,7 +93,7 @@ const skills = await loader.loadSkills()
 
 ### For Your Project
 
-1. **Copy templates** to `.ai1st/config/` in your project
+1. **Copy templates** to `.asmo/config/` in your project
 2. **Customize workflows** for your development process
 3. **Add project-specific roles** in `project-roles.json`
 4. **Add domain skills** in `skills-catalog.json` (category: `project_specific`)

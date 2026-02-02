@@ -1,6 +1,7 @@
 import { RoleManager } from '../orchestration/role-manager'
 import { ConfigLoader } from '../orchestration/config-loader'
 import { Role, Skill } from './types'
+import type { ComplexityScore, SessionTypeDecision } from '../orchestration/types'
 
 /**
  * Analysis result from prompt analysis
@@ -183,10 +184,21 @@ export class ClaudeCodeAdapter {
    * - Workflow steps (if applicable)
    * - Permissions and constraints
    *
+   * Phase 3 of hybrid system integration:
+   * - Optionally includes BMAD complexity analysis
+   * - Optionally includes Party/Brainstorming mode configuration
+   * - Maintains backward compatibility (parameters are optional)
+   *
    * @param analysis - The analysis result from analyzePrompt()
+   * @param complexity - Optional complexity analysis from BMAD
+   * @param sessionType - Optional session type decision (sequential/party/brainstorming)
    * @returns Formatted system prompt
    */
-  generateSystemPrompt(analysis: AnalysisResult): string {
+  generateSystemPrompt(
+    analysis: AnalysisResult,
+    complexity?: ComplexityScore,
+    sessionType?: SessionTypeDecision
+  ): string {
     const roles = analysis.recommendedRoles
       .map(id => this.roleManager.getRole(id))
       .filter((r): r is Role => r !== undefined)
@@ -242,6 +254,16 @@ export class ClaudeCodeAdapter {
 
     prompt += '\n## Analysis Reasoning\n\n'
     prompt += analysis.reasoning + '\n'
+
+    // Phase 3: Add BMAD complexity section if provided
+    if (complexity) {
+      prompt += '\n' + this.addComplexitySection(complexity)
+    }
+
+    // Phase 3: Add Party/Brainstorming mode section if provided
+    if (sessionType && sessionType.type !== 'sequential') {
+      prompt += '\n' + this.addPartyModeSection(sessionType)
+    }
 
     return prompt
   }
@@ -505,7 +527,7 @@ export class ClaudeCodeAdapter {
    * Returns workflow ID or null
    */
   private findMatchingWorkflow(
-    prompt: string,
+    _prompt: string,
     taskType: string | null,
     recommendedRoles: string[]
   ): string | null {
@@ -695,6 +717,74 @@ export class ClaudeCodeAdapter {
   getRoleManager(): RoleManager {
     this.checkInitialized()
     return this.roleManager
+  }
+
+  /**
+   * Add complexity analysis section to system prompt (Phase 3)
+   *
+   * @param complexity - Complexity analysis from BMAD
+   * @returns Formatted complexity section
+   */
+  private addComplexitySection(complexity: ComplexityScore): string {
+    let section = '## Complexity Analysis (BMAD)\n\n'
+    section += `**Score**: ${complexity.score}/100 (${complexity.level})\n`
+    section += `**Confidence**: ${(complexity.confidence * 100).toFixed(0)}%\n\n`
+
+    section += '### Complexity Factors\n\n'
+    section += `- **Files Affected**: ${complexity.factors.filesAffected}\n`
+    section += `- **Dependencies**: ${complexity.factors.dependencies}\n`
+    section += `- **Risk Level**: ${complexity.factors.riskLevel}\n`
+    section += `- **Domain Expertise Required**: ${complexity.factors.domainExpertiseRequired ? 'Yes' : 'No'}\n`
+    section += `- **Estimated LOC**: ${complexity.factors.estimatedLOC}\n`
+    section += `- **Data Changes**: ${complexity.factors.dataChanges ? 'Yes' : 'No'}\n`
+    section += `- **Security Impact**: ${complexity.factors.securityImpact ? 'Yes' : 'No'}\n`
+    section += `- **Performance Impact**: ${complexity.factors.performanceImpact ? 'Yes' : 'No'}\n\n`
+
+    section += `**Recommended Agents**: ${complexity.recommendedAgents.join(', ')}\n\n`
+    section += `**Reasoning**: ${complexity.reasoning}\n`
+
+    return section
+  }
+
+  /**
+   * Add party/brainstorming mode section to system prompt (Phase 3)
+   *
+   * @param sessionType - Session type decision from SkillMatcher
+   * @returns Formatted session type section
+   */
+  private addPartyModeSection(sessionType: SessionTypeDecision): string {
+    const modeTitle = sessionType.type === 'brainstorming' ? 'Brainstorming' : 'Party'
+    let section = `## ${modeTitle} Mode Active\n\n`
+
+    section += `**Type**: ${sessionType.type}\n`
+
+    if (sessionType.maxRounds) {
+      section += `**Max Rounds**: ${sessionType.maxRounds}\n`
+    }
+
+    if (sessionType.convergenceThreshold) {
+      section += `**Convergence Threshold**: ${(sessionType.convergenceThreshold * 100).toFixed(0)}%\n`
+    }
+
+    if (sessionType.generateADR) {
+      section += `**ADR Generation**: Yes - Architecture Decision Record will be generated\n`
+    }
+
+    section += '\n'
+    section += `**Reasoning**: ${sessionType.reasoning}\n\n`
+
+    if (sessionType.type === 'brainstorming') {
+      section += '### Brainstorming Process\n\n'
+      section += '1. **Round 1**: Independent Proposals - Each agent proposes solutions\n'
+      section += '2. **Round 2**: Cross Critique - Agents review and critique proposals\n'
+      section += '3. **Round 3**: Synthesis & Voting - Combine best ideas and vote\n'
+      section += '4. **Round 4**: Final Decision + ADR - Document the chosen approach\n'
+    } else if (sessionType.type === 'party') {
+      section += '### Party Mode Process\n\n'
+      section += 'Multiple agents collaborate in parallel, discussing and refining the solution until consensus is reached.\n'
+    }
+
+    return section
   }
 
   /**

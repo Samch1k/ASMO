@@ -1,6 +1,6 @@
 # Кастомные Workflows
 
-Узнайте, как создавать проектные workflows для AI1st.
+Узнайте, как создавать проектные workflows для ASMO.
 
 ## Обзор
 
@@ -43,7 +43,7 @@
 ## Шаг 1: Определите Workflow
 
 ```json
-// .ai1st/workflows/deployment-workflow.json
+// .asmo/workflows/deployment-workflow.json
 {
   "id": "safe_deployment",
   "name": "Safe Deployment Workflow",
@@ -112,10 +112,10 @@
 ## Шаг 3: Зарегистрируйте Workflow
 
 ```typescript
-// .ai1st/config/workflows.config.ts
+// .asmo/config/workflows.config.ts
 export default {
   customWorkflows: [
-    '.ai1st/workflows/deployment-workflow.json'
+    '.asmo/workflows/deployment-workflow.json'
   ]
 }
 ```

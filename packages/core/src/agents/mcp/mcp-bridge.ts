@@ -15,7 +15,7 @@
  * - vercel: Frontend deployment logs
  */
 
-import { MCPRequest, MCPResponse } from "../types"
+import { MCPResponse } from "../types"
 
 /**
  * MCP Server Configuration

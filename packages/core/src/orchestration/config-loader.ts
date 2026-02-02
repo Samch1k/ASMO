@@ -1,5 +1,6 @@
 import fs from 'fs/promises'
 import path from 'path'
+import os from 'os'
 import yaml from 'yaml'
 import Ajv, { type ValidateFunction } from 'ajv'
 import { Role, Skill } from '../agents/types'
@@ -62,6 +63,43 @@ export class ConfigLoader {
   private useSkillMD: boolean
   private skillMDLoader?: SkillMDLoader
 
+  /**
+   * Find the first available config base path from fallback chain
+   *
+   * Fallback chain:
+   * 1. .cursor/config (Claude Code)
+   * 2. ~/.asmo/config (user home)
+   * 3. packages/core/templates (bundled, always available)
+   */
+  private static async findConfigBasePath(): Promise<string> {
+    const fallbackPaths = [
+      path.join(process.cwd(), '.cursor/config'),                       // Claude Code
+      path.join(os.homedir(), '.asmo/config'),                          // User home
+      path.join(process.cwd(), 'packages/core/templates'),              // Monorepo dev
+      path.join(__dirname, '../templates'),                             // Bundled (dist → templates)
+      path.join(__dirname, '../../templates')                           // Source (src/orchestration → templates)
+    ]
+
+    for (const configPath of fallbackPaths) {
+      try {
+        // Check if the path exists and has required structure
+        const rolesPath = path.join(configPath, 'roles')
+        const stat = await fs.stat(rolesPath)
+        if (stat.isDirectory()) {
+          console.log(`✅ Config path found: ${configPath}`)
+          return configPath
+        }
+      } catch {
+        // Continue to next path if this one fails
+        continue
+      }
+    }
+
+    // If no path found, return error message with tried paths
+    const triedPaths = fallbackPaths.join('\n  - ')
+    throw new Error(`No valid config path found. Tried:\n  - ${triedPaths}`)
+  }
+
   constructor(
     private configBasePath: string = '.cursor/config',
     options: { useYamlFormat?: boolean; useSkillMD?: boolean } = {}
@@ -84,8 +122,16 @@ export class ConfigLoader {
     )
 
     // Initialize SkillMDLoader if SKILL.md mode enabled
+    // Skills path is derived from configBasePath parent or uses bundled templates
     if (this.useSkillMD) {
-      this.skillMDLoader = new SkillMDLoader(path.join(process.cwd(), '.cursor/skills'))
+      // If configBasePath is .cursor/config or ~/.asmo/config, look for sibling skills dir
+      // Otherwise use templates/skills from the same location as configBasePath
+      const configParent = path.dirname(this.configBasePath)
+      const skillsPath = this.configBasePath.includes('templates')
+        ? path.join(this.configBasePath, 'skills')  // templates/skills
+        : path.join(configParent, 'skills')          // .cursor/skills or ~/.asmo/skills
+
+      this.skillMDLoader = new SkillMDLoader(skillsPath)
     }
   }
 
@@ -144,11 +190,13 @@ export class ConfigLoader {
         const content = await fs.readFile(filePath, 'utf-8')
         const data = JSON.parse(content)
 
-        // Validate
+        // Validate (non-blocking - warn but continue loading)
         const validation = this.validateRoleConfig(data)
         if (!validation.valid) {
-          console.warn(`⚠️  Validation errors in ${filename}:`, validation.errors)
-          continue
+          console.warn(`⚠️  Validation warnings in ${filename} (loading anyway):`, validation.errors?.slice(0, 5))
+          if (validation.errors && validation.errors.length > 5) {
+            console.warn(`   ... and ${validation.errors.length - 5} more warnings`)
+          }
         }
 
         // Add to cache and result
@@ -750,12 +798,15 @@ let configLoaderInstance: ConfigLoader | null = null
 /**
  * Get or create ConfigLoader singleton
  *
+ * Uses fallback chain: .cursor/config → ~/.asmo/config → bundled templates
+ *
  * @param options - Configuration options
  * @returns ConfigLoader instance
  */
 export async function getConfigLoader(options?: { useYamlFormat?: boolean }): Promise<ConfigLoader> {
   if (!configLoaderInstance) {
-    configLoaderInstance = new ConfigLoader('.cursor/config', options)
+    const configPath = await ConfigLoader['findConfigBasePath']()
+    configLoaderInstance = new ConfigLoader(configPath, options)
     await configLoaderInstance.initialize()
   }
   return configLoaderInstance

@@ -7,17 +7,17 @@ The Document Registry provides centralized storage and versioning for all projec
 Document Registry:
 - Stores documents with version history
 - Provides metadata tracking (author, timestamps, tags)
-- Persists to filesystem in `_ai1st-output/` directory
+- Persists to filesystem in `_asmo-output/` directory
 - Integrates with Context Cascade for automatic loading
 
 ## Basic Usage
 
 ```typescript
-import { DocumentRegistry } from '@ai1st/core'
+import { DocumentRegistry } from '@asmo/core'
 
 // Create registry
 const registry = new DocumentRegistry({
-  outputDir: '_ai1st-output'
+  outputDir: '_asmo-output'
 })
 
 // Register a document
@@ -148,7 +148,7 @@ if (!hasArch) {
 Documents are persisted to the filesystem:
 
 ```
-_ai1st-output/
+_asmo-output/
 ├── document-index.json      # Metadata index
 ├── product-brief/
 │   └── v1.md
@@ -190,7 +190,7 @@ _ai1st-output/
 
 ```typescript
 const registry = new DocumentRegistry({
-  outputDir: '_ai1st-output',  // Output directory
+  outputDir: '_asmo-output',  // Output directory
   autoSave: true,              // Auto-persist on registration
   maxVersions: 10              // Max versions to keep per document
 })
@@ -201,7 +201,7 @@ const registry = new DocumentRegistry({
 Document Registry is the storage backend for Context Cascade:
 
 ```typescript
-import { ContextCascade, DocumentRegistry } from '@ai1st/core'
+import { ContextCascade, DocumentRegistry } from '@asmo/core'
 
 const registry = new DocumentRegistry()
 const cascade = new ContextCascade({ documentRegistry: registry })

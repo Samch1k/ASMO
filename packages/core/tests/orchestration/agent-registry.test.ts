@@ -44,12 +44,38 @@ describe('AgentRegistry', () => {
   })
 
   describe('agent retrieval', () => {
-    it('should return undefined for non-existent agent', () => {
+    it('should throw error if getAgent called before initialization', () => {
+      const newRegistry = new AgentRegistry()
+      expect(() => newRegistry.getAgent('test')).toThrow('AgentRegistry not initialized')
+    })
+
+    it('should throw error if getAllAgents called before initialization', () => {
+      const newRegistry = new AgentRegistry()
+      expect(() => newRegistry.getAllAgents()).toThrow('AgentRegistry not initialized')
+    })
+
+    it('should return undefined for non-existent agent after initialization', async () => {
+      // Provide minimal mock roles and skills for initialization
+      const mockRoles: any[] = [{
+        id: 'test-role',
+        name: 'Test Role',
+        category: 'core',
+        required_skills: ['testing'],
+        allowed_tools: [],
+        seniority: 'mid'
+      }]
+      const mockSkillCatalog = new Map([['testing', { id: 'testing', name: 'Testing', category: 'qa' }]])
+
+      await agentRegistry.autoDiscover(mockRoles, mockSkillCatalog)
       const agent = agentRegistry.getAgent('non-existent-agent')
       expect(agent).toBeUndefined()
     })
 
-    it('should return empty array when listing agents initially', () => {
+    it('should return agents array after initialization', async () => {
+      const mockRoles: any[] = []
+      const mockSkillCatalog = new Map()
+
+      await agentRegistry.autoDiscover(mockRoles, mockSkillCatalog)
       const agents = agentRegistry.getAllAgents()
       expect(Array.isArray(agents)).toBe(true)
     })

@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Code Reviewer Agent - Code quality and security review
@@ -19,8 +18,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Context7 MCP: Research best practices
  */
 export class CodeReviewerAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('code-reviewer', [
       'code_review',
@@ -30,12 +27,6 @@ export class CodeReviewerAgent extends BaseAgent {
       'test_coverage_analysis',
       'architecture_review'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.1, // Low temperature for consistent review
-      maxTokens: 8192
-    })
   }
 
   /**
@@ -262,8 +253,12 @@ Provide response in JSON format:
 
 Score: 0-25 points (25 = excellent, 20-24 = good, 15-19 = acceptable, < 15 = needs work)`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 8192
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -321,8 +316,12 @@ Provide response in JSON format:
 
 Score: 0-25 points (25 = no vulnerabilities, 20-24 = minor issues, 15-19 = important issues, < 15 = critical issues)`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 8192
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -380,8 +379,12 @@ Provide response in JSON format:
 
 Score: 0-25 points (25 = excellent adherence, 20-24 = good, 15-19 = acceptable, < 15 = poor)`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 8192
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -439,8 +442,12 @@ Provide response in JSON format:
 
 Score: 0-25 points based on coverage (25 = 100%, 20 = 80%, 15 = 60%, 10 = 40%, 5 = 20%)`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 8192
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -489,8 +496,12 @@ Provide response in JSON format:
 
 Completeness: 0-100% (how much of plan is implemented)`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 8192
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {

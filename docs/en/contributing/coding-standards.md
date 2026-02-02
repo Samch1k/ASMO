@@ -1,6 +1,6 @@
 # Coding Standards
 
-Coding standards and best practices for AI1st development.
+Coding standards and best practices for ASMO development.
 
 ## TypeScript
 

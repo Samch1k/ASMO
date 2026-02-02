@@ -1,6 +1,6 @@
 # Workflow Catalog
 
-AI1st includes **12 production-ready workflows** for common development tasks.
+ASMO includes **12 production-ready workflows** for common development tasks.
 
 ## Overview
 

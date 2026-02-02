@@ -1,13 +1,13 @@
 # Участие в разработке
 
-Руководство для контрибьюторов AI1st.
+Руководство для контрибьюторов ASMO.
 
 ## Быстрый старт
 
 ```bash
 # 1. Fork репозитория
-git clone https://github.com/YOUR_USERNAME/ai1st-orchestration.git
-cd ai1st-orchestration
+git clone https://github.com/YOUR_USERNAME/ASMO.git
+cd ASMO
 
 # 2. Установка зависимостей
 pnpm install
@@ -37,7 +37,7 @@ git push origin feature/my-feature
 
 ### 🐛 Баг-репорты
 
-1. Проверьте [существующие issues](https://github.com/Samch1k/ai1st-orchestration/issues)
+1. Проверьте [существующие issues](https://github.com/Samch1k/ASMO/issues)
 2. Создайте issue с шаблоном Bug Report
 3. Включите:
    - Шаги воспроизведения
@@ -47,7 +47,7 @@ git push origin feature/my-feature
 
 ### ✨ Новые функции
 
-1. Обсудите в [Discussions](https://github.com/Samch1k/ai1st-orchestration/discussions)
+1. Обсудите в [Discussions](https://github.com/Samch1k/ASMO/discussions)
 2. Создайте issue с шаблоном Feature Request
 3. Дождитесь одобрения перед реализацией
 
@@ -129,9 +129,9 @@ pnpm build       # Сборка
 
 ## Ресурсы
 
-- [GitHub Issues](https://github.com/Samch1k/ai1st-orchestration/issues)
-- [Discussions](https://github.com/Samch1k/ai1st-orchestration/discussions)
-- [Code of Conduct](https://github.com/Samch1k/ai1st-orchestration/blob/main/CODE_OF_CONDUCT.md)
+- [GitHub Issues](https://github.com/Samch1k/ASMO/issues)
+- [Discussions](https://github.com/Samch1k/ASMO/discussions)
+- [Code of Conduct](https://github.com/Samch1k/ASMO/blob/main/CODE_OF_CONDUCT.md)
 
 ## См. также
 

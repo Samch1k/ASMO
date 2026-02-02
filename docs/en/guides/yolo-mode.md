@@ -45,19 +45,19 @@ const result = await engine.execute('Add OAuth2 authentication')
 
 ```bash
 # Enable/disable YOLO mode
-export AI1ST_YOLO_ENABLED=true
+export ASMO_YOLO_ENABLED=true
 
 # Set complexity threshold (default: 30)
-export AI1ST_YOLO_THRESHOLD=30
+export ASMO_YOLO_THRESHOLD=30
 
 # Enable audit trail
-export AI1ST_YOLO_AUDIT=true
+export ASMO_YOLO_AUDIT=true
 ```
 
 ### Configuration File
 
 ```typescript
-// .ai1st/config/workflows.config.ts
+// .asmo/config/workflows.config.ts
 export default {
   yoloMode: {
     enabled: true,
@@ -71,7 +71,7 @@ export default {
 ### Programmatic
 
 ```typescript
-import { ConfigManager } from '@ai1st/core'
+import { ConfigManager } from '@asmo/core'
 
 const config = ConfigManager.getInstance()
 config.set('yoloMode.enabled', true)
@@ -107,7 +107,7 @@ interface YoloAuditRecord {
 ### Accessing Audit History
 
 ```typescript
-import { YoloModeManager } from '@ai1st/core'
+import { YoloModeManager } from '@asmo/core'
 
 const yoloManager = new YoloModeManager()
 const history = yoloManager.getAuditHistory(10)
@@ -218,7 +218,7 @@ for (const failure of failures) {
 ### Globally
 
 ```bash
-export AI1ST_YOLO_ENABLED=false
+export ASMO_YOLO_ENABLED=false
 ```
 
 ### Per Execution

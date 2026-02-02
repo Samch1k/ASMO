@@ -210,7 +210,7 @@ export interface ElicitationConfig {
 export interface ContextCascadeConfig {
   /** Enable context cascade (default: true) */
   enabled?: boolean
-  /** Output directory for documents (default: '_ai1st-output') */
+  /** Output directory for documents (default: '_asmo-output') */
   outputDir?: string
   /** Auto-load context before workflow execution (default: true) */
   autoLoad?: boolean

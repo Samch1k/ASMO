@@ -1,11 +1,10 @@
 /**
  * Task Command
  *
- * Task management commands for the AI1ST Framework.
+ * Task management commands for the ASMO Framework.
  */
 
-import { getTaskManager } from '../../orchestration/task-manager.js'
-import type { TaskStatus, TaskPriority } from '../../orchestration/task-persister.js'
+import { getTaskManager, type TaskStatus, type TaskPriority } from '@asmo/core'
 
 interface CreateOptions {
   description?: string

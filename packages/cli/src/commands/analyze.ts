@@ -4,7 +4,7 @@
  * Analyzes task complexity and provides workflow recommendations.
  */
 
-import { ComplexityAnalyzer } from '../../orchestration/complexity-analyzer.js'
+import { ComplexityAnalyzer } from '@asmo/core'
 
 interface AnalyzeOptions {
   context?: string

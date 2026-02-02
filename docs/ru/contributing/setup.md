@@ -1,6 +1,6 @@
 # Настройка окружения разработки
 
-Полное руководство по настройке локального окружения для разработки AI1st.
+Полное руководство по настройке локального окружения для разработки ASMO.
 
 ## Требования
 
@@ -26,11 +26,11 @@
 
 ```bash
 # Fork через GitHub UI, затем:
-git clone https://github.com/YOUR_USERNAME/ai1st-orchestration.git
-cd ai1st-orchestration
+git clone https://github.com/YOUR_USERNAME/ASMO.git
+cd ASMO
 
 # Добавить upstream
-git remote add upstream https://github.com/Samch1k/ai1st-orchestration.git
+git remote add upstream https://github.com/Samch1k/ASMO.git
 ```
 
 ### 2. Установка зависимостей
@@ -51,9 +51,9 @@ cp .env.example .env
 
 ```bash
 # .env
-DATABASE_URL=postgresql://user:password@localhost:5432/ai1st
-AI1ST_LOG_LEVEL=debug
-AI1ST_YOLO_ENABLED=false
+DATABASE_URL=postgresql://user:password@localhost:5432/asmo
+ASMO_LOG_LEVEL=debug
+ASMO_YOLO_ENABLED=false
 ```
 
 ### 4. База данных
@@ -63,10 +63,10 @@ AI1ST_YOLO_ENABLED=false
 ```bash
 # Запуск PostgreSQL в Docker
 docker run -d \
-  --name ai1st-postgres \
-  -e POSTGRES_USER=ai1st \
-  -e POSTGRES_PASSWORD=ai1st \
-  -e POSTGRES_DB=ai1st \
+  --name asmo-postgres \
+  -e POSTGRES_USER=asmo \
+  -e POSTGRES_PASSWORD=asmo \
+  -e POSTGRES_DB=asmo \
   -p 5432:5432 \
   postgres:14
 ```
@@ -75,7 +75,7 @@ docker run -d \
 
 ```bash
 # Создание базы данных
-createdb ai1st
+createdb asmo
 ```
 
 ### 5. Миграции
@@ -101,7 +101,7 @@ pnpm lint
 ## Структура монорепозитория
 
 ```
-ai1st-orchestration/
+ASMO/
 ├── packages/
 │   ├── core/           # Основная библиотека
 │   ├── cli/            # CLI инструмент

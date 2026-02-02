@@ -1,10 +1,43 @@
 /**
- * @ai1st/core - Autonomous AI Development Teams
+ * @asmo/core - ASMO: AI System for Multiagent Orchestration
  *
- * Main entry point for the AI1st orchestration system.
+ * Main entry point for the ASMO orchestration system.
  */
 
 export const version = '0.1.0'
+
+// ===================================
+// LLM PROVIDERS
+// ===================================
+export {
+  // Types (ModelTier is exported from routing-logger below)
+  type MessageRole,
+  type Message,
+  type UserMessage,
+  type AssistantMessage,
+  type SystemMessage,
+  type LLMGenerateOptions,
+  type LLMResponse,
+  type ILLMProvider,
+  type ProviderPreference,
+  type ProviderInfo,
+  // Factories
+  createUserMessage,
+  createAssistantMessage,
+  createSystemMessage,
+  ANTHROPIC_MODELS,
+  // Providers
+  SessionLLMProvider,
+  type SessionProviderConfig,
+  AnthropicLLMProvider,
+  type AnthropicProviderConfig,
+  // Factory
+  LLMProviderFactory,
+  getLLMProviderFactory,
+  getLLMProvider,
+  resetLLMProviderFactory,
+  printProviderStatus
+} from './llm'
 
 // ===================================
 // ORCHESTRATION
@@ -23,7 +56,7 @@ export { RetrospectiveAgent } from './orchestration/retrospective-agent'
 export { RetrospectiveReportGenerator } from './orchestration/retrospective-report-generator'
 export { ChecklistManager } from './orchestration/checklist-manager'
 export { TeamManager } from './orchestration/team-manager'
-export { ConfigLoader } from './orchestration/config-loader'
+export { ConfigLoader, getConfigLoader } from './orchestration/config-loader'
 export { RoleManager } from './orchestration/role-manager'
 export { InstructionManager } from './orchestration/instruction-manager'
 export { SkillMDLoader } from './orchestration/skillmd-loader'
@@ -37,8 +70,9 @@ export { YoloModeManager } from './orchestration/yolo-mode-manager'
 export { BrainstormingSession } from './orchestration/brainstorming-session'
 
 // BMAD Phase 3: Task Management
-export { TaskManager } from './orchestration/task-manager'
-export { TaskPersister } from './orchestration/task-persister'
+export { TaskManager, getTaskManager } from './orchestration/task-manager'
+export { TaskPersister, type TaskStatus, type TaskPriority } from './orchestration/task-persister'
+export { JsonTaskPersister, getJsonTaskPersister } from './orchestration/json-task-persister'
 
 // BMAD Phase 4: Multi-Agent Collaboration
 export { PartySession } from './orchestration/party-session'
@@ -62,6 +96,81 @@ export { DocumentSharder } from './utils/document-sharding'
 export { ConfigManager } from './orchestration/config/config-manager'
 export * from './orchestration/config/types'
 export * from './orchestration/config/defaults'
+
+// YAML Config (Variant D)
+export {
+  YamlConfigLoader,
+  getYamlConfigLoader,
+  resetYamlConfigLoader,
+  type AgentConfig,
+  type AgentRoleConfig,
+  type AgentSkillConfig,
+  type AgentExecutionConfig,
+  type AgentsYamlConfig,
+  type ModelConfig,
+  type ModelCharacteristics,
+  type RoutingConfig as YamlRoutingConfig,
+  type ModelsYamlConfig,
+  type ReliabilityConfig
+} from './orchestration/config/yaml-config-loader'
+
+// Prompt Templates
+export {
+  PromptLoader,
+  getPromptLoader,
+  resetPromptLoader,
+  type PromptContext,
+  type PromptTemplate,
+  type LoadedPrompt
+} from './orchestration/prompts'
+
+// ===================================
+// RELIABILITY (CircuitBreaker & Validation)
+// ===================================
+export {
+  CircuitBreaker,
+  CircuitBreakerManager,
+  getCircuitBreakerManager,
+  resetCircuitBreakerManager,
+  CircuitOpenError,
+  InputValidator,
+  OutputValidator,
+  getInputValidator,
+  getOutputValidator,
+  resetValidators,
+  withValidation,
+  ValidationError,
+  TaskInputSchema,
+  AgentStateSchema,
+  AgentOutputSchema,
+  type CircuitState,
+  type CircuitBreakerConfig,
+  type CircuitBreakerStats,
+  type ValidationResult,
+  type ValidatedTaskInput,
+  type ValidatedAgentOutput
+} from './orchestration/reliability'
+
+// ===================================
+// EXECUTION MODES (Dual: Session $0 / API pay-per-use)
+// ===================================
+export {
+  SessionExecutor,
+  getSessionExecutor,
+  resetSessionExecutor,
+  APIExecutor,
+  getAPIExecutor,
+  resetAPIExecutor,
+  ExecutorFactory,
+  getExecutorFactory,
+  resetExecutorFactory,
+  type ExecutionMode,
+  type SessionExecutorConfig,
+  type APIExecutorConfig,
+  type ExecutorFactoryConfig,
+  type UnifiedExecutionContext,
+  type UnifiedExecutionResult
+} from './orchestration/execution'
 
 // ===================================
 // TYPES
@@ -118,18 +227,82 @@ export { TechWriterAgent } from './agents/roles/tech-writer.agent'
 export { TestArchitectAgent } from './agents/roles/test-architect.agent'
 export { AdversarialReviewerAgent } from './agents/roles/adversarial-reviewer.agent'
 
-// Main Orchestrator
+// ===================================
+// DYNAMIC ORCHESTRATOR (Native TypeScript - replaces LangGraph)
+// ===================================
 export {
-  orchestratorApp,
-  runMultiAgentTask,
-  runWorkflow,
-  getOrchestratorStats,
-  getAvailableWorkflows,
-  getWorkflowEngine
-} from './agents/orchestrator'
+  DynamicOrchestrator,
+  getDynamicOrchestrator,
+  resetDynamicOrchestrator,
+  orchestrateTask,
+  orchestrateTasks,
+  type OrchestratorConfig,
+  type OrchestrationTask,
+  type OrchestrationResult,
+  type AgentRegistry as DynamicAgentRegistry
+} from './orchestration/dynamic-orchestrator'
+
+export {
+  TaskRouter,
+  getTaskRouter,
+  resetTaskRouter,
+  type RoutingConfig,
+  type TaskContext,
+  type RoutingResult
+} from './orchestration/task-router'
+
+export {
+  AgentExecutor,
+  getAgentExecutor,
+  resetAgentExecutor,
+  type ExecutorConfig,
+  type ExecutionContext,
+  type ExecutionResult,
+  type ErrorCategory
+} from './orchestration/agent-executor'
+
+export {
+  RoutingLogger,
+  getRoutingLogger,
+  resetRoutingLogger,
+  type ModelTier,
+  type RoutingDecision,
+  type RoutingLogEntry
+} from './orchestration/routing-logger'
+
+// Convenience functions for backwards compatibility
+import { getDynamicOrchestrator, type OrchestrationTask } from './orchestration/dynamic-orchestrator'
+import type { BaseAgent } from './agents/base-agent'
+
+export async function runMultiAgentTask(task: string, agent?: BaseAgent): Promise<any> {
+  const orchestrator = getDynamicOrchestrator()
+  const orchestrationTask: OrchestrationTask = {
+    id: `task_${Date.now()}`,
+    description: task
+  }
+  const result = await orchestrator.executeTask(orchestrationTask, agent)
+  return result.result
+}
+
+export async function runWorkflow(workflowId: string, tasks: OrchestrationTask[]): Promise<any> {
+  const orchestrator = getDynamicOrchestrator()
+  return orchestrator.executeWorkflow(workflowId, tasks)
+}
+
+export function getOrchestratorStats() {
+  const orchestrator = getDynamicOrchestrator()
+  const stats = orchestrator.getStats()
+  return {
+    totalAgents: 26,
+    routing: stats.routing,
+    runningTasks: stats.runningTasks,
+    version: '3.0.0',
+    framework: 'ASMO Native (DynamicOrchestrator)'
+  }
+}
 
 // Claude Code Integration
-export { ClaudeCodeAdapter } from './agents/claude-code-adapter'
+export { ClaudeCodeAdapter, type AnalysisResult } from './agents/claude-code-adapter'
 
 // ===================================
 // MCP INTEGRATION

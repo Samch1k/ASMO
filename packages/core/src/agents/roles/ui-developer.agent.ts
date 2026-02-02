@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * UI Developer Agent - Frontend component implementation
@@ -18,8 +17,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Context7 MCP: Research component best practices
  */
 export class UIDevAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('ui-developer', [
       'component_styling',
@@ -29,12 +26,6 @@ export class UIDevAgent extends BaseAgent {
       'react_implementation',
       'frontend_testing'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.3,
-      maxTokens: 4096
-    })
   }
 
   /**
@@ -282,8 +273,12 @@ export function SearchForm({ onSearch, initialQuery = '' }: SearchFormProps) {
 }
 \`\`\``
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 4096
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -385,8 +380,12 @@ describe('SearchForm', () => {
 })
 \`\`\``
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 4096
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {

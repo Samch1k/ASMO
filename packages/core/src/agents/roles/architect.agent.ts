@@ -1,14 +1,7 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 import { getYamlConfigLoader, type AgentConfig } from "../../orchestration/config/yaml-config-loader"
-
-// Model mapping from config tier to actual model
-const MODEL_MAP: Record<string, string> = {
-  opus: "claude-opus-4-20250514",
-  sonnet: "claude-sonnet-4-20250514",
-  haiku: "claude-3-5-haiku-20241022"
-}
+import type { ModelTier } from "../../llm"
 
 /**
  * Architect Agent - Responsible for system design and architecture decisions
@@ -29,8 +22,8 @@ const MODEL_MAP: Record<string, string> = {
  * - GitHub MCP (P2): Create ADR issues
  */
 export class ArchitectAgent extends BaseAgent {
-  private llm: ChatAnthropic
   private _agentConfig: AgentConfig | undefined
+  private _modelTier: ModelTier
 
   constructor() {
     // Load config from YAML
@@ -52,15 +45,7 @@ export class ArchitectAgent extends BaseAgent {
     this._agentConfig = config
 
     // Get model from config or default to sonnet
-    const modelTier = config?.model_preference || 'sonnet'
-    const modelName = MODEL_MAP[modelTier] || MODEL_MAP.sonnet
-
-    // Initialize Claude LLM with config-based settings
-    this.llm = new ChatAnthropic({
-      modelName,
-      temperature: 0.1, // Low temperature for consistent architectural decisions
-      maxTokens: 4096
-    })
+    this._modelTier = (config?.model_preference || 'sonnet') as ModelTier
   }
 
   /**
@@ -269,13 +254,14 @@ PROVIDE:
 
 Format as clear, actionable documentation.`
 
-    const response = await this.llm.invoke([
-      { role: "user", content: systemPrompt }
-    ])
+    const response = await this.callLLM(state.task, {
+      model: this._modelTier,
+      temperature: 0.1, // Low temperature for consistent architectural decisions
+      maxTokens: 4096,
+      systemPrompt
+    })
 
-    return typeof response.content === 'string' 
-      ? response.content 
-      : JSON.stringify(response.content)
+    return response.content
   }
 
   /**
@@ -299,7 +285,7 @@ ${decision}
 
 ---
 
-**Created by**: Architect Agent (LangGraph Multi-Agent System)
+**Created by**: Architect Agent (ASMO Multi-Agent System)
 **Timestamp**: ${new Date().toISOString()}
 `
   }

@@ -25,7 +25,7 @@ Party Mode идеален для:
 ## Базовое использование
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)
@@ -67,7 +67,7 @@ console.log('Конвергенция:', session.state.convergenceScore)
 Для структурированного принятия решений с генерацией ADR:
 
 ```typescript
-import { createBrainstormingSession } from '@ai1st/core'
+import { createBrainstormingSession } from '@asmo/core'
 
 const session = createBrainstormingSession(
   'Стратегия аутентификации API',

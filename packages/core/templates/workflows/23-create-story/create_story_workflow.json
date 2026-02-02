@@ -1,0 +1,91 @@
+{
+  "id": "create_story_workflow",
+  "name": "Create Story Workflow (Zero Ambiguity)",
+  "description": "Transform epic into crystal-clear user story with zero ambiguity (Bob's way). Every requirement must be testable and unambiguous.",
+  "trigger_condition": {
+    "keywords": [
+      "create story",
+      "story creation",
+      "user story",
+      "создать историю",
+      "создание истории",
+      "пользовательская история"
+    ],
+    "task_types": [
+      "planning",
+      "story",
+      "requirements"
+    ],
+    "required_skills": [
+      "requirements",
+      "story_writing",
+      "acceptance_criteria"
+    ]
+  },
+  "context_dependencies": [
+    "epic"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "product-owner",
+      "phase": "story_definition",
+      "description": "Define user story with business value and clear 'why'",
+      "deliverables": [
+        "user_story_draft"
+      ],
+      "exit_criteria": "Story follows 'As a... I want... So that...' format with clear business value",
+      "timeout": "15m"
+    },
+    {
+      "order": 2,
+      "role_id": "scrum-master",
+      "phase": "acceptance_criteria",
+      "description": "Define unambiguous acceptance criteria (Bob's zero ambiguity principle)",
+      "deliverables": [
+        "acceptance_criteria",
+        "testable_requirements"
+      ],
+      "exit_criteria": "All criteria testable with zero ambiguity (no vague terms)",
+      "timeout": "20m",
+      "metadata": {
+        "ambiguity_check": true
+      }
+    },
+    {
+      "order": 3,
+      "role_id": "test-architect",
+      "phase": "testability_check",
+      "description": "Verify all acceptance criteria are testable and automatable",
+      "deliverables": [
+        "testability_assessment",
+        "test_approach"
+      ],
+      "exit_criteria": "Test approach defined for all acceptance criteria",
+      "timeout": "15m"
+    },
+    {
+      "order": 4,
+      "role_id": "architect",
+      "phase": "technical_breakdown",
+      "description": "Add technical notes and implementation guidance",
+      "deliverables": [
+        "technical_notes",
+        "implementation_approach"
+      ],
+      "exit_criteria": "Implementation approach clear with no technical ambiguities",
+      "timeout": "15m"
+    }
+  ],
+  "estimated_time": "1h 5m",
+  "success_criteria": "Implementation-ready story with zero ambiguity and 100% testable acceptance criteria",
+  "metadata": {
+    "bmad": true,
+    "principles": [
+      "zero_ambiguity"
+    ],
+    "inspired_by": "Bob (Scrum Master)",
+    "phase": "23",
+    "phase_name": "create-story"
+  }
+}

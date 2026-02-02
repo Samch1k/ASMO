@@ -130,7 +130,7 @@ Code quality improved, all tests passing, no functionality regression, documenta
 ## Usage
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)

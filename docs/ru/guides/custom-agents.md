@@ -1,6 +1,6 @@
 # Кастомные агенты
 
-Узнайте, как создавать собственные специализированные агенты для AI1st.
+Узнайте, как создавать собственные специализированные агенты для ASMO.
 
 ## Обзор
 
@@ -9,7 +9,7 @@
 - Добавить доменную экспертизу
 - Интегрировать с проприетарными инструментами
 - Настроить поведение агентов
-- Расширить возможности AI1st
+- Расширить возможности ASMO
 
 ## Структура агента
 
@@ -47,7 +47,7 @@
 Создайте JSON файл в вашем проекте:
 
 ```json
-// .ai1st/roles/payment-specialist.json
+// .asmo/roles/payment-specialist.json
 {
   "id": "payment-specialist",
   "name": "Payment Specialist",
@@ -81,8 +81,8 @@
 Реализуйте логику агента:
 
 ```typescript
-// .ai1st/agents/payment-specialist.ts
-import { BaseAgent, AgentState, AgentResult } from '@ai1st/core'
+// .asmo/agents/payment-specialist.ts
+import { BaseAgent, AgentState, AgentResult } from '@asmo/core'
 
 export class PaymentSpecialistAgent extends BaseAgent {
   readonly id = 'payment-specialist'
@@ -120,12 +120,12 @@ export class PaymentSpecialistAgent extends BaseAgent {
 ## Шаг 3: Зарегистрируйте агента
 
 ```typescript
-// .ai1st/config/agents.config.ts
+// .asmo/config/agents.config.ts
 import { PaymentSpecialistAgent } from '../agents/payment-specialist'
 
 export default {
   customAgents: [PaymentSpecialistAgent],
-  customRoles: ['.ai1st/roles/payment-specialist.json']
+  customRoles: ['.asmo/roles/payment-specialist.json']
 }
 ```
 

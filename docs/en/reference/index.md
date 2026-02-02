@@ -1,6 +1,6 @@
 # Reference
 
-Complete reference documentation for AI1st.
+Complete reference documentation for ASMO.
 
 ## Catalogs
 
@@ -31,22 +31,22 @@ import {
   ComplexityAnalyzer,
   TaskManager,
   ConfigManager
-} from '@ai1st/core'
+} from '@asmo/core'
 ```
 
 ## CLI Reference
 
 ```bash
 # Analyze task complexity
-npx ai1st analyze "Task description"
+npx asmo analyze "Task description"
 
 # Task management
-npx ai1st task create "Title" -p high
-npx ai1st task list
-npx ai1st task show <id>
+npx asmo task create "Title" -p high
+npx asmo task list
+npx asmo task show <id>
 
 # Workflow execution
-npx ai1st workflow quick-flow --task "Fix bug"
+npx asmo workflow quick-flow --task "Fix bug"
 ```
 
 ## Configuration Reference

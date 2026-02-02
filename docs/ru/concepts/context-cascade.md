@@ -65,10 +65,10 @@ Context Cascade автоматически:
 ### Базовое использование
 
 ```typescript
-import { ContextCascade, DocumentRegistry } from '@ai1st/core'
+import { ContextCascade, DocumentRegistry } from '@asmo/core'
 
 // Инициализация с реестром документов
-const registry = new DocumentRegistry({ outputDir: '_ai1st-output' })
+const registry = new DocumentRegistry({ outputDir: '_asmo-output' })
 const cascade = new ContextCascade(registry)
 
 // Регистрация документа
@@ -161,7 +161,7 @@ docs.forEach(doc => {
 Документы сохраняются в файловую систему:
 
 ```
-_ai1st-output/
+_asmo-output/
 ├── document-index.json     # Индекс метаданных документов
 ├── product-brief/
 │   ├── v1.md
@@ -178,7 +178,7 @@ _ai1st-output/
 const config = {
   contextCascade: {
     enabled: true,
-    outputDir: '_ai1st-output',
+    outputDir: '_asmo-output',
     autoLoad: true  // Авто-загрузка контекста в workflows
   }
 }

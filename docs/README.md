@@ -1,8 +1,8 @@
-# AI1st Documentation
+# ASMO Documentation
 
 > Transform AI from "helpful assistant" to "autonomous team"
 
-Welcome to the AI1st Framework documentation. AI1st is an autonomous AI development orchestration system that coordinates multiple AI agents to work together as a cohesive team.
+Welcome to the ASMO Framework documentation. ASMO is an autonomous AI development orchestration system that coordinates multiple AI agents to work together as a cohesive team.
 
 ## Quick Links
 
@@ -23,15 +23,15 @@ Welcome to the AI1st Framework documentation. AI1st is an autonomous AI developm
 ## Installation
 
 ```bash
-npm install @ai1st/core
+npm install @asmo/core
 # or
-pnpm add @ai1st/core
+pnpm add @asmo/core
 ```
 
 ## Quick Example
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)
@@ -69,4 +69,4 @@ See [Contributing Guide](./en/contributing/index.md) for information on how to c
 
 ## License
 
-MIT © 2026 AI1st Contributors
+MIT © 2026 ASMO Contributors

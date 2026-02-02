@@ -1,48 +1,66 @@
-# AI1st - Autonomous Development Teams
+# ASMO - AI System for Multiagent Orchestration
 
-[![npm version](https://img.shields.io/npm/v/@ai1st/core.svg)](https://www.npmjs.com/package/@ai1st/core)
+[![npm version](https://img.shields.io/npm/v/@asmo/core.svg)](https://www.npmjs.com/package/@asmo/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 
 > Transform AI from "helpful assistant" to "autonomous team"
 
-AI1st is an autonomous AI development orchestration system that coordinates multiple AI agents to work together as a cohesive team, handling complex software development tasks from design to deployment.
+ASMO is an autonomous AI development orchestration system that coordinates multiple AI agents to work together as a cohesive team, handling complex software development tasks from design to deployment.
 
 **Origin**: Based on BMAD (Breakthrough Method of Agile AI Driven Development) principles, refactored as a standalone, generalizable library for any project.
 
-## ✨ Key Features
+## Key Features
 
-- 🤖 **28 Specialized Agents** — Architect, Developer, Tester, Security, UX, DevOps, Analyst, Tech Writer, and more
-- 🔄 **28 Production Workflows** — From quick fixes to enterprise architecture + TEA testing workflows
-- 🎯 **85 Skills Catalog** — Automatic skill matching across 12 categories
-- 📊 **Complexity Analysis** — 5-level task analysis with intelligent workflow selection
-- ⚡ **YOLO Mode** — Automatic approval bypass for trivial tasks
-- 🎉 **Party Mode** — Multi-agent collaboration with consensus building
-- ⚙️ **3-Tier Configuration** — Defaults → File → Environment
-- 🔴 **Adversarial Review** — Critical code review that MUST find issues
-- 🧠 **Advanced Elicitation** — 5 techniques: First Principles, Red Team/Blue Team, Pre-mortem, Socratic, Devil's Advocate
-- 📄 **Context Cascade** — Automatic context flow between workflow phases
-- 📚 **Document Sharding** — Split large documents into manageable sections
-- 🧪 **TEA Module** — 8 specialized testing workflows (Test Architect)
+### Core Orchestration
+- **28 Specialized Agents** — Architect, Developer, Tester, Security, UX, DevOps, Analyst, Tech Writer, and more
+- **28 Production Workflows** — From quick fixes to enterprise architecture + TEA testing workflows
+- **85 Skills Catalog** — Automatic skill matching across 12 categories
+- **Complexity Analysis** — 5-level task analysis with intelligent workflow selection
 
-## 📦 Quick Install
+### NEW: Dynamic Orchestrator (v3.0)
+- **Intelligent Model Routing** — Automatic selection of Opus/Sonnet/Haiku based on task complexity
+- **Dual Execution Modes** — Session ($0 with Claude subscription) or API (pay-per-use)
+- **Circuit Breaker** — Fault tolerance with automatic recovery
+- **Zod Validation** — Type-safe input/output validation
+- **YAML Config** — Declarative agent and model configuration
+
+### Collaboration & Quality
+- **YOLO Mode** — Automatic approval bypass for trivial tasks
+- **Party Mode** — Multi-agent collaboration with consensus building
+- **Adversarial Review** — Critical code review that MUST find issues
+- **Advanced Elicitation** — 5 techniques: First Principles, Red Team/Blue Team, Pre-mortem, Socratic, Devil's Advocate
+
+### NEW: BMAD Personalities & Principles (v3.0)
+- **Agent Personalities** — Amelia (TDD), Winston (Boring Tech), Bob (Zero Ambiguity), John (WHY-First)
+- **Menu Commands** — Bilingual shortcuts: `[DS]`/`[ИС]`, `[CR]`/`[КО]`, `[CS]`/`[СИ]`
+- **Strict Enforcement** — Blocks completion on principle violations (test failures, ambiguity, missing business value)
+- **Personality Prompts** — Dynamic enrichment with traits, catchphrases, and bilingual signatures
+
+### Architecture
+- **3-Tier Configuration** — Defaults → File → Environment
+- **Context Cascade** — Automatic context flow between workflow phases
+- **Document Sharding** — Split large documents into manageable sections
+- **TEA Module** — 8 specialized testing workflows (Test Architect)
+
+## Quick Install
 
 ```bash
 # Using pnpm (recommended)
-pnpm add @ai1st/core
+pnpm add @asmo/core
 
 # Using npm
-npm install @ai1st/core
+npm install @asmo/core
 
 # Using yarn
-yarn add @ai1st/core
+yarn add @asmo/core
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 // Initialize
 const registry = new AgentRegistry()
@@ -84,12 +102,305 @@ console.log('Agreements:', session.state.agreements)
 console.log('Convergence:', session.state.convergenceScore)
 ```
 
-## 📚 Documentation
+### Dynamic Orchestrator & Model Routing (NEW in v3.0)
+
+```typescript
+import { getDynamicOrchestrator, type OrchestrationTask } from '@asmo/core'
+
+const orchestrator = getDynamicOrchestrator({ verbose: true })
+
+const task: OrchestrationTask = {
+  id: 'task-001',
+  description: 'Implement user authentication',
+  complexity: { score: 55, level: 'medium' }  // → Routes to Sonnet
+}
+
+// Preview routing without executing
+const routing = orchestrator.previewRouting(task)
+console.log('Model:', routing.model)      // 'sonnet'
+console.log('Rationale:', routing.rationale)
+
+// Execute task
+const result = await orchestrator.executeTask(task)
+console.log('Success:', result.success)
+console.log('Duration:', result.metrics.totalDuration)
+```
+
+### Dual Execution Modes
+
+```typescript
+import { getExecutorFactory } from '@asmo/core'
+
+const factory = getExecutorFactory({
+  preferredMode: 'auto'  // 'session' ($0) | 'api' (pay-per-use) | 'auto'
+})
+
+const result = await factory.execute({
+  taskId: 'task-001',
+  prompt: 'Generate authentication code',
+  state: agentState,
+  model: 'sonnet'
+})
+
+console.log('Mode used:', result.metrics.mode)  // 'session' or 'api'
+if (result.metrics.mode === 'api') {
+  console.log('Cost:', result.metrics.estimatedCost)
+}
+```
+
+## BMAD Personalities & Principles
+
+**ASMO v3.0** integrates **BMAD** (Breakthrough Method of Agile AI Driven Development) methodology with agent personalities, strict principles enforcement, and menu-driven commands.
+
+### Meet the BMAD Agents
+
+#### **Amelia** 👩‍💻 - Developer (TDD Evangelist)
+```typescript
+{
+  motto: "I will not mark this complete until 100% of tests pass",
+  traits: ["perfectionist", "test-driven", "quality-focused"],
+  principle: {
+    name: "test_enforcement",
+    strict: true,  // BLOCKS completion if tests fail
+    message: "🚫 Amelia says: 2 test(s) failing - Fix tests first!"
+  }
+}
+```
+
+**What Amelia does:**
+- Enforces TDD workflow: Red → Green → Refactor
+- Blocks completion if ANY tests fail
+- Requires 100% test coverage on new code
+- Validates `test_results` in step output
+
+#### **Winston** 🏗️ - Architect (Boring Tech Advocate)
+```typescript
+{
+  motto: "Let's choose boring technology that works",
+  traits: ["pragmatic", "risk-averse", "experienced"],
+  principle: {
+    name: "boring_technology",
+    strict: true,
+    warnings: [
+      "MongoDB → Consider PostgreSQL with JSONB",
+      "GraphQL → REST is simpler for most cases",
+      "Microservices → Start with modular monolith"
+    ]
+  }
+}
+```
+
+**What Winston does:**
+- Flags risky tech: MongoDB, GraphQL, Microservices, Bun, Deno
+- Suggests battle-tested alternatives
+- Warns about premature optimization
+- Prefers proven solutions over shiny new tools
+
+#### **Bob** 📋 - Scrum Master (Zero Ambiguity Guardian)
+```typescript
+{
+  motto: "If it's ambiguous, it's not ready",
+  traits: ["detail-oriented", "process-driven", "uncompromising"],
+  principle: {
+    name: "zero_ambiguity",
+    strict: true,
+    blocks: ["fast", "many", "user-friendly", "etc", "some", "often"],
+    requires: "Given-When-Then format with specific numbers"
+  }
+}
+```
+
+**What Bob does:**
+- Detects vague terms: "fast", "many", "user-friendly", "etc"
+- Requires measurable criteria with numbers
+- Enforces Given-When-Then format
+- Blocks stories with ambiguous requirements
+
+#### **John** 🎯 - Product Owner (WHY-First Leader)
+```typescript
+{
+  motto: "Let's understand WHY before deciding HOW",
+  traits: ["strategic", "business-focused", "why-driven"],
+  principle: {
+    name: "why_first",
+    strict: true,
+    requires: "Every requirement must explain business value",
+    format: "As a [user], I want [feature], So that [benefit]"
+  }
+}
+```
+
+**What John does:**
+- Blocks requirements without "why" or business value
+- Enforces user story format: "So that [benefit]" is mandatory
+- Connects features to business outcomes
+- Validates measurable success criteria
+
+### Menu Commands (Bilingual)
+
+Execute workflows with short commands in English or Russian:
+
+```bash
+# Dev Story - TDD implementation with Amelia
+asmo run "[DS] implement user login"        # English
+asmo run "[ИС] реализовать вход пользователя"  # Russian
+
+# Create Story - Zero ambiguity with Bob
+asmo run "[CS] add notifications"           # English
+asmo run "[СИ] добавить уведомления"        # Russian
+
+# Code Review - Comprehensive review
+asmo run "[CR] review payment integration"  # English
+asmo run "[КО] проверить интеграцию оплаты"  # Russian
+
+# Implementation Readiness - Check requirements
+asmo run "[IR]"                             # English
+asmo run "[ГР]"                             # Russian
+```
+
+**Available Commands:**
+
+| EN | RU | Workflow | BMAD Agent | Principle |
+|----|----|----------|------------|-----------|
+| `[IR]` | `[ГР]` | Implementation Readiness | Bob | Zero Ambiguity |
+| `[DS]` | `[ИС]` | Dev Story (TDD) | Amelia | Test Enforcement |
+| `[CR]` | `[КО]` | Code Review | Multiple | Quality Gates |
+| `[CS]` | `[СИ]` | Create Story | Bob + John | Zero Ambiguity + WHY First |
+| `[CC]` | `[КК]` | Course Correction | Winston | Risk Management |
+| `[CP]` | `[СБ]` | Create Product Brief | John | WHY First |
+| `[VP]` | `[ВТ]` | Validate PRD | Bob + John | Zero Ambiguity + WHY First |
+| `[CE]` | `[СЭ]` | Create Epics | John | WHY First |
+
+### Principles Enforcement in Action
+
+#### Example 1: Amelia Blocks Failing Tests
+
+```typescript
+// Developer completes implementation
+const result = await engine.execute('[DS] implement registration')
+
+// Step output includes test results
+context: {
+  test_results: {
+    passed: 8,
+    failed: 2,     // ❌ Tests failed
+    total: 10,
+    coverage: 85
+  }
+}
+
+// Amelia blocks completion:
+// 🚫 Amelia says: 2 test(s) failing - I will not mark this complete until 100% of tests pass
+// Fix failing tests before proceeding
+//
+// Workflow BLOCKED ❌
+```
+
+#### Example 2: Bob Detects Ambiguity
+
+```typescript
+// User creates story with vague terms
+const result = await engine.execute('[CS] improve performance')
+
+// Bob scans for ambiguous terms:
+// 🚫 Bob says: Ambiguous term "improve" - be specific with numbers, metrics, or examples
+// 🚫 Bob says: Ambiguous term "performance" - what metric? Response time? Throughput?
+//
+// Suggested fix: "Reduce API response time from 500ms to <200ms (p95)"
+//
+// Workflow BLOCKED ❌
+```
+
+#### Example 3: John Requires Business Value
+
+```typescript
+// User defines requirement without "why"
+const result = await engine.execute('[CS] add dark mode')
+
+// John validates business value:
+// 🚫 John says: Missing "WHY" - explain business value or user impact
+//
+// Example: "So that users can..."
+// Example: "To enable..."
+// Example: "Business impact: ..."
+//
+// Workflow BLOCKED ❌
+
+// Fixed version:
+const result = await engine.execute(
+  '[CS] add dark mode toggle ' +
+  'So that night-shift users can use app without eye strain, ' +
+  'increasing session duration by 25% and improving retention'
+)
+// ✅ John approves - clear business value
+```
+
+#### Example 4: Winston Warns About Risky Tech
+
+```typescript
+const result = await engine.execute(
+  'design notification system with MongoDB and Microservices'
+)
+
+// Winston flags risky choices:
+// ⚠️  Winston says: "MongoDB" is medium risk - Consider PostgreSQL with JSONB
+// ⚠️  Winston says: "Microservices" is high risk - Start with modular monolith
+//
+// Recommended: PostgreSQL + REST API + Modular Monolith
+// Reasoning: Battle-tested, mature ecosystem, team familiarity
+//
+// Workflow continues with warnings (non-blocking)
+```
+
+### Personality-Based Prompts
+
+Agents now use dynamic personality-enriched prompts:
+
+```typescript
+import { PersonalityPromptLoader } from '@asmo/core'
+
+const loader = new PersonalityPromptLoader()
+
+// Automatic language detection (Cyrillic → Russian)
+const prompt = await loader.loadPromptWithPersonality(
+  agentConfig,
+  'реализовать аутентификацию',  // Russian task
+  { language: 'ru' }
+)
+
+// Prompt includes:
+// - Personality traits and communication style
+// - Bilingual catchphrase
+// - Strict principles with enforcement rules
+// - Agent signature (EN + RU)
+```
+
+**Prompt Structure:**
+```markdown
+# About Me / Обо мне
+
+I'm **Amelia**, your TDD evangelist and quality guardian.
+
+**My motto / Мой девиз**: "I will not mark this complete until 100% of tests pass"
+
+## My Principles (Non-Negotiable)
+
+1. 🔒 STRICT: Test Enforcement - 100% passage before completion
+2. 💡 GUIDELINE: TDD Workflow - Red-Green-Refactor cycle
+
+[... base prompt content ...]
+
+---
+*- Amelia, Developer (Tests Must Pass ✅)*
+*- Амелия, Разработчик (Тесты Обязательны ✅)*
+```
+
+## Documentation
 
 | Language | Link |
 |----------|------|
-| 🇬🇧 English | [docs/en/](./docs/en/getting-started/index.md) |
-| 🇷🇺 Русский | [docs/ru/](./docs/ru/getting-started/index.md) |
+| English | [docs/en/](./docs/en/getting-started/index.md) |
+| Russian | [docs/ru/](./docs/ru/getting-started/index.md) |
 
 ### Quick Links
 
@@ -100,12 +411,12 @@ console.log('Convergence:', session.state.convergenceScore)
 - [Workflow Catalog](./docs/en/reference/workflows/index.md)
 - [Skills Catalog](./docs/en/reference/skills/index.md)
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
-ai1st-orchestration/
+asmo/
 ├── packages/
-│   ├── core/           # @ai1st/core - Main library
+│   ├── core/           # @asmo/core - Main library
 │   ├── cli/            # CLI tool (coming soon)
 │   └── docs/           # VitePress site (coming soon)
 ├── docs/               # Markdown documentation
@@ -115,7 +426,7 @@ ai1st-orchestration/
 └── turbo.json          # Turbo build config
 ```
 
-## 🎯 Agents (28)
+## Agents (28)
 
 | Category | Agents | Description |
 |----------|--------|-------------|
@@ -126,7 +437,7 @@ ai1st-orchestration/
 
 [View full catalog →](./docs/en/reference/agents/index.md)
 
-## 📋 Workflows (28)
+## Workflows (28)
 
 | Level | Workflows | Complexity Score |
 |-------|-----------|------------------|
@@ -140,12 +451,12 @@ ai1st-orchestration/
 
 [View full catalog →](./docs/en/reference/workflows/index.md)
 
-## 🛠️ Development
+## Development
 
 ```bash
 # Clone repository
-git clone https://github.com/Samch1k/ai1st-orchestration.git
-cd ai1st-orchestration
+git clone https://github.com/Samch1k/ASMO.git
+cd ASMO
 
 # Install dependencies
 pnpm install
@@ -160,17 +471,17 @@ pnpm test
 pnpm lint
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](./CONTRIBUTING.md) for details.
 
-## 📝 License
+## License
 
-MIT © 2026 AI1st Contributors
+MIT © 2026 ASMO Contributors
 
-## 📮 Links
+## Links
 
-- [GitHub Repository](https://github.com/Samch1k/ai1st-orchestration)
-- [Issues](https://github.com/Samch1k/ai1st-orchestration/issues)
-- [Discussions](https://github.com/Samch1k/ai1st-orchestration/discussions)
+- [GitHub Repository](https://github.com/Samch1k/ASMO)
+- [Issues](https://github.com/Samch1k/ASMO/issues)
+- [Discussions](https://github.com/Samch1k/ASMO/discussions)
 - [Changelog](./CHANGELOG.md)

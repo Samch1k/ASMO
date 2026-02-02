@@ -114,13 +114,38 @@ export class PhaseManager {
   }
 
   /**
-   * Validate if a phase transition is allowed
-   * Only sequential forward transitions are allowed
+   * Check if a phase is a standard (predefined) phase
    */
-  validateTransition(from: WorkflowPhase | null, to: WorkflowPhase): PhaseValidation {
+  isStandardPhase(phase: string): phase is WorkflowPhase {
+    return this.phases.includes(phase as WorkflowPhase)
+  }
+
+  /**
+   * Validate if a phase transition is allowed
+   * - Standard phases: strict sequential validation
+   * - Custom phases: adaptive mode (lenient validation)
+   */
+  validateTransition(from: WorkflowPhase | string | null, to: WorkflowPhase | string): PhaseValidation {
     const issues: string[] = []
     const warnings: string[] = []
 
+    // Check if we're dealing with custom (non-standard) phases
+    const isCustomPhase = !this.isStandardPhase(to as string)
+    const isFromCustom = from !== null && !this.isStandardPhase(from as string)
+
+    // ADAPTIVE MODE: Custom phases bypass strict validation
+    if (isCustomPhase || isFromCustom) {
+      warnings.push(`Adaptive mode: Custom phase '${to}' - using simplified validation`)
+      return {
+        isValid: true,
+        canProceed: true,
+        exitCriteriaMet: true,
+        issues,
+        warnings
+      }
+    }
+
+    // STANDARD MODE: Full validation for predefined phases
     // First phase (null → requirements) is always valid
     if (from === null && to === 'requirements') {
       return {
@@ -132,8 +157,8 @@ export class PhaseManager {
       }
     }
 
-    // Check if target phase exists
-    if (!this.phases.includes(to)) {
+    // Check if target phase exists in standard phases
+    if (!this.phases.includes(to as WorkflowPhase)) {
       issues.push(`Invalid target phase: ${to}`)
       return {
         isValid: false,
@@ -157,8 +182,8 @@ export class PhaseManager {
     }
 
     // Check if transition is sequential (only +1 allowed)
-    const fromIndex = this.getPhaseIndex(from!)
-    const toIndex = this.getPhaseIndex(to)
+    const fromIndex = this.getPhaseIndex(from as WorkflowPhase)
+    const toIndex = this.getPhaseIndex(to as WorkflowPhase)
 
     if (toIndex !== fromIndex + 1) {
       if (toIndex < fromIndex) {
@@ -187,15 +212,22 @@ export class PhaseManager {
   /**
    * Transition to the next phase
    * Validates transition and updates state
+   * Supports both standard and custom phases (adaptive mode)
    */
   async transitionPhase(
     state: AgentState,
-    nextPhase: WorkflowPhase
+    nextPhase: WorkflowPhase | string
   ): Promise<AgentState> {
-    const currentPhase = (state.metadata?.currentPhase as WorkflowPhase) || null
+    const currentPhase = (state.metadata?.currentPhase as WorkflowPhase | string) || null
     const phaseHistory = (state.metadata?.phaseHistory as PhaseTransition[]) || []
 
-    console.log(`\n🔄 Phase Transition: ${currentPhase || 'START'} → ${nextPhase}`)
+    const isCustomPhase = !this.isStandardPhase(nextPhase)
+
+    if (isCustomPhase) {
+      console.log(`\n🔄 Phase Transition (Adaptive): ${currentPhase || 'START'} → ${nextPhase}`)
+    } else {
+      console.log(`\n🔄 Phase Transition: ${currentPhase || 'START'} → ${nextPhase}`)
+    }
 
     // Validate transition
     const validation = this.validateTransition(currentPhase, nextPhase)
@@ -214,8 +246,8 @@ export class PhaseManager {
 
     // Record transition
     const transition: PhaseTransition = {
-      from: currentPhase,
-      to: nextPhase,
+      from: currentPhase as WorkflowPhase,
+      to: nextPhase as WorkflowPhase,
       timestamp: new Date().toISOString(),
       success: true
     }
@@ -227,12 +259,19 @@ export class PhaseManager {
         ...state.metadata,
         currentPhase: nextPhase,
         phaseHistory: [...phaseHistory, transition],
-        phaseStartTime: new Date().toISOString()
+        phaseStartTime: new Date().toISOString(),
+        adaptiveMode: isCustomPhase  // Mark if using adaptive mode
       }
     }
 
-    console.log(`✅ Phase transition successful: ${currentPhase || 'START'} → ${nextPhase}`)
-    console.log(`   Exit Criteria: ${this.phaseExitCriteria[nextPhase]}`)
+    // Log exit criteria (standard phases) or adaptive message (custom phases)
+    if (isCustomPhase) {
+      console.log(`✅ Adaptive phase transition: ${currentPhase || 'START'} → ${nextPhase}`)
+      console.log(`   Mode: Simplified validation (custom workflow phase)`)
+    } else {
+      console.log(`✅ Phase transition successful: ${currentPhase || 'START'} → ${nextPhase}`)
+      console.log(`   Exit Criteria: ${this.phaseExitCriteria[nextPhase as WorkflowPhase]}`)
+    }
 
     return updatedState
   }
@@ -290,12 +329,24 @@ export class PhaseManager {
   /**
    * Check if phase exit criteria are met
    * This should be called before transitioning to the next phase
+   * Custom phases use adaptive mode (always allowed to exit)
    */
-  canExitPhase(state: AgentState, phase: WorkflowPhase): PhaseValidation {
+  canExitPhase(state: AgentState, phase: WorkflowPhase | string): PhaseValidation {
     const issues: string[] = []
     const warnings: string[] = []
 
-    // Check phase-specific exit criteria
+    // ADAPTIVE MODE: Custom phases can always exit
+    if (!this.isStandardPhase(phase)) {
+      return {
+        isValid: true,
+        canProceed: true,
+        exitCriteriaMet: true,
+        issues,
+        warnings: [`Adaptive mode: Custom phase '${phase}' - exit criteria bypassed`]
+      }
+    }
+
+    // STANDARD MODE: Check phase-specific exit criteria
     switch (phase) {
       case 'requirements':
         // Check if requirements are validated
@@ -357,15 +408,18 @@ export class PhaseManager {
 
   /**
    * Get phase progress summary
+   * Handles both standard and custom phases (adaptive mode)
    */
   getPhaseProgress(state: AgentState): {
-    currentPhase: WorkflowPhase | null
-    completedPhases: WorkflowPhase[]
+    currentPhase: WorkflowPhase | string | null
+    completedPhases: (WorkflowPhase | string)[]
     remainingPhases: WorkflowPhase[]
     percentComplete: number
     estimatedPhasesRemaining: number
+    adaptiveMode: boolean
   } {
-    const currentPhase = (state.metadata?.currentPhase as WorkflowPhase) || null
+    const currentPhase = (state.metadata?.currentPhase as WorkflowPhase | string) || null
+    const phaseHistory = (state.metadata?.phaseHistory as PhaseTransition[]) || []
 
     if (!currentPhase) {
       return {
@@ -373,11 +427,34 @@ export class PhaseManager {
         completedPhases: [],
         remainingPhases: this.phases,
         percentComplete: 0,
-        estimatedPhasesRemaining: this.phases.length
+        estimatedPhasesRemaining: this.phases.length,
+        adaptiveMode: false
       }
     }
 
-    const currentIndex = this.getPhaseIndex(currentPhase)
+    // Check if using custom phases (adaptive mode)
+    const isCustomPhase = !this.isStandardPhase(currentPhase)
+
+    if (isCustomPhase) {
+      // Adaptive mode: calculate progress from phase history
+      const completedPhases = phaseHistory
+        .filter(t => t.success)
+        .map(t => t.to)
+      const totalCustomPhases = completedPhases.length + 1  // +1 for current
+      const percentComplete = Math.round((completedPhases.length / Math.max(totalCustomPhases, 1)) * 100)
+
+      return {
+        currentPhase,
+        completedPhases,
+        remainingPhases: [],  // Unknown for custom phases
+        percentComplete,
+        estimatedPhasesRemaining: 0,  // Unknown for custom phases
+        adaptiveMode: true
+      }
+    }
+
+    // Standard mode: use predefined phases
+    const currentIndex = this.getPhaseIndex(currentPhase as WorkflowPhase)
     const completedPhases = this.phases.slice(0, currentIndex)
     const remainingPhases = this.phases.slice(currentIndex + 1)
     const percentComplete = Math.round((currentIndex / this.phases.length) * 100)
@@ -387,7 +464,8 @@ export class PhaseManager {
       completedPhases,
       remainingPhases,
       percentComplete,
-      estimatedPhasesRemaining: remainingPhases.length
+      estimatedPhasesRemaining: remainingPhases.length,
+      adaptiveMode: false
     }
   }
 

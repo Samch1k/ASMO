@@ -1,13 +1,12 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Product Manager Agent - Strategic product planning, vision, and prioritization
  *
  * Capabilities:
  * - Product vision articulation
- * - One-page PRD creation (ai1st approach)
+ * - One-page PRD creation (ASMO approach)
  * - Market fit analysis
  * - Feature prioritization
  * - Success metrics definition
@@ -19,8 +18,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Context7 MCP: Research market trends and competitive landscape
  */
 export class ProductManagerAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('product-manager', [
       'product_vision',
@@ -34,12 +31,6 @@ export class ProductManagerAgent extends BaseAgent {
       'competitive_analysis',
       'stakeholder_management'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.4, // Slightly higher for creative vision
-      maxTokens: 6144
-    })
   }
 
   /**
@@ -139,8 +130,12 @@ Create a comprehensive product brief following this structure:
 
 Format the output as a structured markdown document.`
 
-    const response = await this.llm.invoke(prompt)
-    const productBrief = response.content as string
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    const productBrief = response.content
 
     // Store in Memory MCP
     await this.requestMCP('memory', {
@@ -178,10 +173,10 @@ Format the output as a structured markdown document.`
   }
 
   /**
-   * Create one-page PRD (ai1st approach)
+   * Create one-page PRD (ASMO approach)
    */
   async createOnePagerPRD(state: AgentState, task: string): Promise<Partial<AgentState>> {
-    this.log('Creating one-page PRD (ai1st format)...')
+    this.log('Creating one-page PRD (ASMO format)...')
 
     const prompt = `You are a Product Manager creating a concise, one-page PRD.
 
@@ -232,8 +227,12 @@ IMPORTANT:
 - Focus on "what" and "why", not "how"
 - Make it actionable`
 
-    const response = await this.llm.invoke(prompt)
-    const prd = response.content as string
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    const prd = response.content
 
     // Validate PRD length (should fit on 1-2 pages)
     const lineCount = prd.split('\n').length
@@ -310,8 +309,12 @@ Provide:
 
 Be concise (max 1 page).`
 
-    const response = await this.llm.invoke(prompt)
-    return response.content as string
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    return response.content
   }
 
   /**
@@ -340,8 +343,12 @@ For each feature, provide:
 
 Format as a prioritized list with clear reasoning.`
 
-    const response = await this.llm.invoke(prompt)
-    const prioritization = response.content as string
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    const prioritization = response.content
 
     this.log('✅ Features prioritized')
 
@@ -386,8 +393,12 @@ Follow SMART criteria (Specific, Measurable, Achievable, Relevant, Time-bound).
 
 Format as a clear list.`
 
-    const response = await this.llm.invoke(prompt)
-    return response.content as string
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    return response.content
   }
 
   /**
@@ -409,8 +420,12 @@ Format:
 
 Keep it ultra-concise (max 10 lines total).`
 
-    const response = await this.llm.invoke(prompt)
-    const quickSpec = response.content as string
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    const quickSpec = response.content
 
     this.log('✅ Quick spec created')
 

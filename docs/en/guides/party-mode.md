@@ -25,7 +25,7 @@ Party Mode is ideal for:
 ## Basic Usage
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)
@@ -109,7 +109,7 @@ interface PartyRound {
 For structured decision-making, use brainstorming mode:
 
 ```typescript
-import { createBrainstormingSession } from '@ai1st/core'
+import { createBrainstormingSession } from '@asmo/core'
 
 const session = createBrainstormingSession(
   'API Authentication Strategy',

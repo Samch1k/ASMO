@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Supplier Ops Agent - Supplier onboarding, compliance, relationship management
@@ -20,8 +19,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Filesystem MCP: Read compliance policies and templates
  */
 export class SupplierOpsAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('supplier-ops', [
       'verification',
@@ -31,12 +28,6 @@ export class SupplierOpsAgent extends BaseAgent {
       'relationship_management',
       'risk_assessment'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.2,
-      maxTokens: 8192
-    })
   }
 
   /**
@@ -315,10 +306,13 @@ Provide response in JSON format:
 
 Approval threshold: 75/100 (must have all critical items: USDA cert, business license, insurance)`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192
+    })
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       // Fallback compliance check
       return {
@@ -408,10 +402,13 @@ Provide response in JSON format:
 
 Note: For new suppliers with no history, use industry benchmarks and assign moderate scores (15-18 per category).`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192
+    })
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       // Fallback for new supplier
       return {
@@ -488,10 +485,13 @@ Provide response in JSON format:
   ]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192
+    })
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       // Fallback risk assessment
       return {

@@ -1,17 +1,16 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Debugger Agent - Responsible for bug diagnosis and root cause analysis
- * 
+ *
  * Capabilities:
  * - Bug diagnosis and investigation
  * - Root cause analysis
  * - Error log analysis
  * - Hotfix generation
  * - Performance debugging
- * 
+ *
  * MCP Integrations (Priority Order):
  * - Render MCP (P0): Backend logs analysis
  * - Vercel MCP (P0): Frontend logs and errors
@@ -22,8 +21,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Memory MCP (P2): Check for similar past bugs
  */
 export class DebuggerAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('debugger', [
       'bug_diagnosis',
@@ -34,13 +31,6 @@ export class DebuggerAgent extends BaseAgent {
       'performance_debugging',
       'log_analysis'
     ])
-    
-    // Low temperature for precise debugging
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.1,
-      maxTokens: 8192
-    })
   }
 
   /**
@@ -251,37 +241,23 @@ OUTPUT FORMAT:
 
 Provide ONLY valid JSON.`
 
-    const response = await this.llm.invoke([
-      { role: "user", content: systemPrompt }
-    ])
-
-    const content = typeof response.content === 'string'
-      ? response.content
-      : JSON.stringify(response.content)
-
-    // Try to parse JSON response
     try {
-      // Extract JSON from markdown code blocks if present
-      const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || 
-                       content.match(/\{[\s\S]*\}/)
-      
-      if (jsonMatch) {
-        const jsonStr = jsonMatch[1] || jsonMatch[0]
-        return JSON.parse(jsonStr)
-      }
+      const result = await this.callLLMForJSON<{
+        rootCause: string
+        evidence: string[]
+        proposedFix: string
+        testStrategy: string
+        confidence: number
+      }>(systemPrompt, {
+        model: 'sonnet',
+        temperature: 0.1
+      })
 
-      // Fallback: return structured response
-      return {
-        rootCause: content,
-        evidence: [],
-        proposedFix: 'See root cause analysis',
-        testStrategy: 'Manual testing required',
-        confidence: 0.7
-      }
+      return result
     } catch (parseError) {
       this.log('Failed to parse LLM response as JSON, using fallback', 'warn')
       return {
-        rootCause: content,
+        rootCause: 'See diagnosis above',
         evidence: [],
         proposedFix: 'See root cause analysis',
         testStrategy: 'Manual testing required',
@@ -335,7 +311,7 @@ ${(diagnosis.confidence * 100).toFixed(0)}%
 
 ---
 
-**Diagnosed by**: Debugger Agent (LangGraph Multi-Agent System)
+**Diagnosed by**: Debugger Agent (ASMO Multi-Agent System)
 **Timestamp**: ${timestamp}
 `
   }

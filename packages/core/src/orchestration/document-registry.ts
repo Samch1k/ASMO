@@ -12,7 +12,7 @@
  *
  * @example
  * ```typescript
- * const registry = new DocumentRegistry({ outputDir: '_ai1st-output' })
+ * const registry = new DocumentRegistry({ outputDir: '_asmo-output' })
  * await registry.registerDocument('prd', content, { version: '1.0' })
  * const doc = await registry.getDocument('prd')
  * ```
@@ -112,7 +112,7 @@ interface DocumentIndexEntry {
  * Configuration for DocumentRegistry
  */
 export interface DocumentRegistryConfig {
-  /** Output directory for documents (default: '_ai1st-output') */
+  /** Output directory for documents (default: '_asmo-output') */
   outputDir: string
   /** Whether to auto-create output directory (default: true) */
   autoCreateDir?: boolean
@@ -132,7 +132,7 @@ export class DocumentRegistry {
   private index: DocumentIndex | null = null
 
   constructor(config: Partial<DocumentRegistryConfig> = {}) {
-    this.outputDir = config.outputDir || '_ai1st-output'
+    this.outputDir = config.outputDir || '_asmo-output'
     this.indexFileName = config.indexFileName || 'document-index.json'
     this.autoCreateDir = config.autoCreateDir !== false
   }

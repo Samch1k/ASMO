@@ -69,8 +69,8 @@ adversarialReview:
 ## Usage
 
 ```typescript
-import { AdversarialReviewerAgent } from '@ai1st/core'
-import { AdversarialReviewSession } from '@ai1st/core'
+import { AdversarialReviewerAgent } from '@asmo/core'
+import { AdversarialReviewSession } from '@asmo/core'
 
 const reviewer = new AdversarialReviewerAgent()
 

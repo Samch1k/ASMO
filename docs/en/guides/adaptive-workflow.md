@@ -1,10 +1,10 @@
 # Adaptive Workflow Selection
 
-Learn how AI1st automatically selects the best workflow for your tasks.
+Learn how ASMO automatically selects the best workflow for your tasks.
 
 ## Overview
 
-Instead of manually choosing workflows, describe your task and let AI1st:
+Instead of manually choosing workflows, describe your task and let ASMO:
 
 1. **Analyze** task complexity
 2. **Match** required skills
@@ -14,7 +14,7 @@ Instead of manually choosing workflows, describe your task and let AI1st:
 ## Basic Usage
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)
@@ -25,7 +25,7 @@ const result = await engine.execute(
   'Add user authentication with OAuth2'
 )
 
-// AI1st automatically selects:
+// ASMO automatically selects:
 // - Complexity: 65 (complex)
 // - Workflow: security_audit
 // - Agents: architect, security-specialist, developer, tester
@@ -125,7 +125,7 @@ const result = await engine.execute(
 ### Override Defaults
 
 ```typescript
-// .ai1st/config/workflows.config.ts
+// .asmo/config/workflows.config.ts
 export default {
   defaultWorkflows: {
     trivial: 'bug_fix_workflow',
@@ -206,7 +206,7 @@ console.log('Factors:', JSON.stringify(selection.complexity.factors, null, 2))
 Enable debug logging:
 
 ```bash
-export AI1ST_LOG_LEVEL=debug
+export ASMO_LOG_LEVEL=debug
 ```
 
 ## Best Practices

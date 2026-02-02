@@ -129,7 +129,7 @@ Bug resolved, prevention measures in place, all tests passing, no regressions
 ## Использование
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)

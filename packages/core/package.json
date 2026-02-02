@@ -1,10 +1,19 @@
 {
-  "name": "@ai1st/core",
-  "version": "0.1.0",
-  "description": "AI1st orchestration system - autonomous AI development teams",
+  "name": "@asmo/core",
+  "version": "1.0.0",
+  "description": "ASMO orchestration system - autonomous AI development teams with library-first architecture",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Samch1k/ASMO.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/Samch1k/ASMO#readme",
+  "bugs": {
+    "url": "https://github.com/Samch1k/ASMO/issues"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -14,7 +23,10 @@
   },
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
@@ -37,8 +49,6 @@
   "license": "MIT",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
-    "@langchain/anthropic": "^0.3.7",
-    "@langchain/core": "^0.3.24",
     "js-yaml": "^4.1.1",
     "lru-cache": "^11.2.5",
     "pg": "^8.17.2",

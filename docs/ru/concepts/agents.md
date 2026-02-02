@@ -1,6 +1,6 @@
 # Агенты
 
-Агенты — это специализированные AI-роли, выполняющие конкретные задачи в workflows AI1st.
+Агенты — это специализированные AI-роли, выполняющие конкретные задачи в workflows ASMO.
 
 ## Что такое агент?
 
@@ -12,7 +12,7 @@
 
 ## Категории агентов
 
-AI1st включает **24 агента** в трёх категориях:
+ASMO включает **24 агента** в трёх категориях:
 
 ### Core агенты (6)
 
@@ -100,7 +100,7 @@ const session = await engine.executePartyMode(
 ### Прямой доступ
 
 ```typescript
-import { AgentRegistry } from '@ai1st/core'
+import { AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const architect = await registry.getAgent('architect')

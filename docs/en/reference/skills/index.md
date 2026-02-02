@@ -1,6 +1,6 @@
 # Skills Catalog
 
-AI1st includes **85 skills** across **14 categories** for comprehensive development coverage.
+ASMO includes **85 skills** across **14 categories** for comprehensive development coverage.
 
 ## Statistics
 
@@ -47,7 +47,7 @@ AI1st includes **85 skills** across **14 categories** for comprehensive developm
 
 ## How Skill Matching Works
 
-AI1st automatically selects skills based on:
+ASMO automatically selects skills based on:
 
 1. **Keywords** - Task description analysis
 2. **Aliases** - Alternative skill names

@@ -1,6 +1,6 @@
 # Agents
 
-Agents are specialized AI roles that perform specific tasks within AI1st workflows.
+Agents are specialized AI roles that perform specific tasks within ASMO workflows.
 
 ## What is an Agent?
 
@@ -12,7 +12,7 @@ An agent is an AI entity with:
 
 ## Agent Categories
 
-AI1st includes **24 agents** organized into three categories:
+ASMO includes **24 agents** organized into three categories:
 
 ### Core Agents (6)
 
@@ -184,7 +184,7 @@ const session = await engine.executePartyMode(
 Access agents programmatically:
 
 ```typescript
-import { AgentRegistry } from '@ai1st/core'
+import { AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const architect = await registry.getAgent('architect')

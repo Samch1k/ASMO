@@ -1,10 +1,10 @@
 # Адаптивный выбор Workflow
 
-Узнайте, как AI1st автоматически выбирает лучший workflow для ваших задач.
+Узнайте, как ASMO автоматически выбирает лучший workflow для ваших задач.
 
 ## Обзор
 
-Вместо ручного выбора workflows, опишите задачу и позвольте AI1st:
+Вместо ручного выбора workflows, опишите задачу и позвольте ASMO:
 
 1. **Проанализировать** сложность задачи
 2. **Подобрать** необходимые навыки
@@ -14,7 +14,7 @@
 ## Базовое использование
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)
@@ -25,7 +25,7 @@ const result = await engine.execute(
   'Добавить аутентификацию с OAuth2 и JWT токенами'
 )
 
-// AI1st автоматически выбирает:
+// ASMO автоматически выбирает:
 // - Сложность: 65 (complex)
 // - Workflow: security_audit
 // - Агенты: architect, security-specialist, developer, tester

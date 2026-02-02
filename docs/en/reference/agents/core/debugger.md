@@ -60,7 +60,7 @@
 ## Usage
 
 ```typescript
-import { AgentRegistry } from '@ai1st/core'
+import { AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const agent = await registry.getAgent('debugger')

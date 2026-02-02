@@ -65,7 +65,7 @@ tech-writer:
 ## Usage
 
 ```typescript
-import { TechWriterAgent } from '@ai1st/core'
+import { TechWriterAgent } from '@asmo/core'
 
 const writer = new TechWriterAgent()
 

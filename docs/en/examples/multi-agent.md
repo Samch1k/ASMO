@@ -9,7 +9,7 @@ You need to design a database schema for a new user management system. This requ
 ## Basic Party Mode
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 async function main() {
   const registry = new AgentRegistry()
@@ -142,7 +142,7 @@ Convergence: 87%
 For architectural decisions with ADR generation:
 
 ```typescript
-import { createBrainstormingSession } from '@ai1st/core'
+import { createBrainstormingSession } from '@asmo/core'
 
 async function architecturalDecision() {
   const session = createBrainstormingSession(

@@ -9,7 +9,7 @@
 ## Код: Последовательная работа
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 async function sequentialExample() {
   const registry = new AgentRegistry()
@@ -42,7 +42,7 @@ sequentialExample()
 ## Код: Party Mode
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 async function partyModeExample() {
   const registry = new AgentRegistry()

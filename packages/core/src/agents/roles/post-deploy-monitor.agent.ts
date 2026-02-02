@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Post-Deploy Monitor Agent - Monitors deployment health and performance
@@ -32,8 +31,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Filesystem MCP (P1): Read deployment logs
  */
 export class PostDeployMonitorAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   // Monitoring thresholds
   private readonly THRESHOLDS = {
     errorRate: 0.01, // 1% max error rate
@@ -51,13 +48,6 @@ export class PostDeployMonitorAgent extends BaseAgent {
       'rollback_decision',
       'smoke_testing'
     ])
-
-    // Initialize Claude LLM for intelligent analysis
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.1,
-      maxTokens: 2048
-    })
   }
 
   /**
@@ -437,8 +427,12 @@ Provide a brief analysis (2-3 sentences) focusing on:
 2. Any concerns or risks
 3. Recommended actions`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    return typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 2048
+    })
+    return response.content
   }
 
   /**

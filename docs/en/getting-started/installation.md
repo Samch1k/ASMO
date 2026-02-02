@@ -1,6 +1,6 @@
 # Installation
 
-This guide covers the installation of AI1st Framework in your project.
+This guide covers the installation of ASMO Framework in your project.
 
 ## System Requirements
 
@@ -13,24 +13,24 @@ This guide covers the installation of AI1st Framework in your project.
 ### Using pnpm (Recommended)
 
 ```bash
-pnpm add @ai1st/core
+pnpm add @asmo/core
 ```
 
 ### Using npm
 
 ```bash
-npm install @ai1st/core
+npm install @asmo/core
 ```
 
 ### Using yarn
 
 ```bash
-yarn add @ai1st/core
+yarn add @asmo/core
 ```
 
 ## Optional Dependencies
 
-AI1st works with various MCP (Model Context Protocol) servers for enhanced capabilities:
+ASMO works with various MCP (Model Context Protocol) servers for enhanced capabilities:
 
 ```bash
 # For database integration
@@ -48,11 +48,11 @@ pnpm add @mcp/playwright
 
 ## Database Setup (Optional)
 
-For task persistence, AI1st uses PostgreSQL:
+For task persistence, ASMO uses PostgreSQL:
 
 ```bash
 # Set the database URL
-export DATABASE_URL="postgresql://user:password@localhost:5432/ai1st"
+export DATABASE_URL="postgresql://user:password@localhost:5432/asmo"
 ```
 
 ### Database Migration
@@ -81,22 +81,22 @@ CREATE TABLE tasks (
 
 ## Environment Variables
 
-AI1st uses environment variables for configuration:
+ASMO uses environment variables for configuration:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `DATABASE_URL` | PostgreSQL connection string | - |
 | `ANTHROPIC_API_KEY` | Anthropic API key for LLM | - |
-| `AI1ST_YOLO_THRESHOLD` | YOLO mode complexity threshold | 30 |
-| `AI1ST_LOG_LEVEL` | Logging level | info |
+| `ASMO_YOLO_THRESHOLD` | YOLO mode complexity threshold | 30 |
+| `ASMO_LOG_LEVEL` | Logging level | info |
 
 Create a `.env` file in your project root:
 
 ```bash
-DATABASE_URL=postgresql://localhost:5432/ai1st
+DATABASE_URL=postgresql://localhost:5432/asmo
 ANTHROPIC_API_KEY=your-api-key
-AI1ST_YOLO_THRESHOLD=30
-AI1ST_LOG_LEVEL=info
+ASMO_YOLO_THRESHOLD=30
+ASMO_LOG_LEVEL=info
 ```
 
 ## Verify Installation
@@ -104,8 +104,8 @@ AI1ST_LOG_LEVEL=info
 Create a test file to verify the installation:
 
 ```typescript
-// test-ai1st.ts
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+// test-asmo.ts
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 async function main() {
   const registry = new AgentRegistry()
@@ -113,7 +113,7 @@ async function main() {
 
   await engine.initialize()
 
-  console.log('✅ AI1st installed successfully!')
+  console.log('✅ ASMO installed successfully!')
   console.log(`Available workflows: ${engine.getWorkflows().length}`)
 }
 
@@ -123,7 +123,7 @@ main().catch(console.error)
 Run with:
 
 ```bash
-npx tsx test-ai1st.ts
+npx tsx test-asmo.ts
 ```
 
 ## TypeScript Configuration
@@ -144,7 +144,7 @@ For TypeScript projects, add these settings to your `tsconfig.json`:
 
 ## Monorepo Setup
 
-If you're using AI1st in a monorepo with pnpm workspaces:
+If you're using ASMO in a monorepo with pnpm workspaces:
 
 ```yaml
 # pnpm-workspace.yaml
@@ -156,23 +156,23 @@ packages:
 // package.json
 {
   "dependencies": {
-    "@ai1st/core": "workspace:*"
+    "@asmo/core": "workspace:*"
   }
 }
 ```
 
 ## Next Steps
 
-Now that AI1st is installed, proceed to:
+Now that ASMO is installed, proceed to:
 
 - [Quick Start](./quick-start.md) - Run your first workflow
-- [Configuration](./configuration.md) - Configure AI1st for your project
+- [Configuration](./configuration.md) - Configure ASMO for your project
 
 ## Troubleshooting
 
 ### Common Issues
 
-**Error: Cannot find module '@ai1st/core'**
+**Error: Cannot find module '@asmo/core'**
 
 Ensure you've installed the package and your Node.js version is 18+:
 

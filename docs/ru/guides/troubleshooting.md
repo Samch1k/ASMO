@@ -1,10 +1,10 @@
 # Решение проблем
 
-Решения типичных проблем при использовании AI1st.
+Решения типичных проблем при использовании ASMO.
 
 ## Проблемы установки
 
-### Cannot find module '@ai1st/core'
+### Cannot find module '@asmo/core'
 
 **Причина:** Пакет не установлен или устаревшая версия Node.js.
 
@@ -14,7 +14,7 @@
 node --version
 
 # Переустановите пакет
-pnpm install @ai1st/core
+pnpm install @asmo/core
 
 # Очистите кэш при необходимости
 pnpm store prune
@@ -119,8 +119,8 @@ const selection = await engine.selectWorkflowAdaptively(task, {
 **Решение:**
 ```bash
 # Проверьте настройки
-export AI1ST_YOLO_ENABLED=true
-export AI1ST_YOLO_THRESHOLD=30
+export ASMO_YOLO_ENABLED=true
+export ASMO_YOLO_THRESHOLD=30
 ```
 
 ## Проблемы Party Mode
@@ -145,8 +145,8 @@ const session = await engine.executePartyMode(
 
 Если эти решения не помогли:
 
-1. **Включите логи:** `export AI1ST_LOG_LEVEL=debug`
-2. **Поищите issues:** [GitHub Issues](https://github.com/Samch1k/ai1st-orchestration/issues)
+1. **Включите логи:** `export ASMO_LOG_LEVEL=debug`
+2. **Поищите issues:** [GitHub Issues](https://github.com/Samch1k/ASMO/issues)
 3. **Создайте issue:** включите сообщение об ошибке, шаги воспроизведения и детали окружения
 
 ## См. также

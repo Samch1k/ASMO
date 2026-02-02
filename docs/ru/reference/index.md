@@ -1,6 +1,6 @@
 # Справочник
 
-Полный справочник API, агентов, workflows и навыков AI1st.
+Полный справочник API, агентов, workflows и навыков ASMO.
 
 ## Разделы
 
@@ -52,10 +52,10 @@
 Команды CLI инструмента:
 
 ```bash
-ai1st execute "task"    # Выполнить задачу
-ai1st analyze "task"    # Анализ сложности
-ai1st list agents       # Список агентов
-ai1st list workflows    # Список workflows
+asmo execute "task"    # Выполнить задачу
+asmo analyze "task"    # Анализ сложности
+asmo list agents       # Список агентов
+asmo list workflows    # Список workflows
 ```
 
 ## Быстрый доступ
@@ -68,7 +68,7 @@ import {
   AgentRegistry,
   ComplexityAnalyzer,
   YoloModeManager
-} from '@ai1st/core'
+} from '@asmo/core'
 ```
 
 ### Типы
@@ -79,7 +79,7 @@ import type {
   AgentConfig,
   ComplexityLevel,
   ExecuteOptions
-} from '@ai1st/core'
+} from '@asmo/core'
 ```
 
 ## Версионирование

@@ -1,15 +1,15 @@
 # Adaptive Selection Example
 
-Let AI1st automatically select the best workflow for your task.
+Let ASMO automatically select the best workflow for your task.
 
 ## Scenario
 
-You need to add user authentication. Instead of choosing a workflow manually, let AI1st analyze the task and select the appropriate workflow.
+You need to add user authentication. Instead of choosing a workflow manually, let ASMO analyze the task and select the appropriate workflow.
 
 ## Basic Adaptive Selection
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 async function main() {
   const registry = new AgentRegistry()

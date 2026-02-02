@@ -1,13 +1,13 @@
 # Примеры
 
-Практические примеры использования AI1st.
+Практические примеры использования ASMO.
 
 ## Быстрый старт
 
 ### Базовый Workflow
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)
@@ -38,8 +38,8 @@ console.log(result)
 
 ```bash
 # Клонируйте репозиторий
-git clone https://github.com/Samch1k/ai1st-orchestration.git
-cd ai1st-orchestration
+git clone https://github.com/Samch1k/ASMO.git
+cd ASMO
 
 # Установите зависимости
 pnpm install

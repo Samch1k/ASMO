@@ -174,7 +174,7 @@ function generateIndexMarkdown(skills: Skill[], lang: 'en' | 'ru'): string {
   if (lang === 'ru') {
     return `# Каталог навыков
 
-AI1st включает **${skills.length} навыков** в **${byCategory.size} категориях** для полного покрытия задач разработки.
+ASMO включает **${skills.length} навыков** в **${byCategory.size} категориях** для полного покрытия задач разработки.
 
 ## Статистика
 
@@ -206,7 +206,7 @@ ${skills
 
 ## Как работает skill matching
 
-AI1st автоматически подбирает навыки на основе:
+ASMO автоматически подбирает навыки на основе:
 
 1. **Ключевых слов** - Анализ описания задачи
 2. **Алиасов** - Альтернативные названия навыков
@@ -222,7 +222,7 @@ AI1st автоматически подбирает навыки на основ
 
   return `# Skills Catalog
 
-AI1st includes **${skills.length} skills** across **${byCategory.size} categories** for comprehensive development coverage.
+ASMO includes **${skills.length} skills** across **${byCategory.size} categories** for comprehensive development coverage.
 
 ## Statistics
 
@@ -254,7 +254,7 @@ ${skills
 
 ## How Skill Matching Works
 
-AI1st automatically selects skills based on:
+ASMO automatically selects skills based on:
 
 1. **Keywords** - Task description analysis
 2. **Aliases** - Alternative skill names

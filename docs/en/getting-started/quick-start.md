@@ -1,15 +1,15 @@
 # Quick Start
 
-Get your first AI1st workflow running in 5 minutes!
+Get your first ASMO workflow running in 5 minutes!
 
 ## Prerequisites
 
-Make sure you have [installed AI1st](./installation.md) before continuing.
+Make sure you have [installed ASMO](./installation.md) before continuing.
 
 ## Step 1: Initialize the Engine
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 // Create the agent registry and workflow engine
 const registry = new AgentRegistry()
@@ -37,7 +37,7 @@ console.log('Result:', result)
 
 ### Option B: Adaptive Workflow Selection (Recommended)
 
-Let AI1st automatically select the best workflow based on your task description:
+Let ASMO automatically select the best workflow based on your task description:
 
 ```typescript
 // Describe your task in natural language
@@ -97,7 +97,7 @@ console.log('Convergence Score:', session.state.convergenceScore)
 Here's a complete example bringing it all together:
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 async function main() {
   // Initialize
@@ -128,7 +128,7 @@ main().catch(console.error)
 
 ## Complexity Levels
 
-AI1st categorizes tasks into 5 complexity levels:
+ASMO categorizes tasks into 5 complexity levels:
 
 | Level | Score | Example Tasks | Default Workflow |
 |-------|-------|---------------|------------------|
@@ -155,7 +155,7 @@ AI1st categorizes tasks into 5 complexity levels:
 
 ## Next Steps
 
-- [Configuration](./configuration.md) - Customize AI1st for your project
-- [Concepts](../concepts/index.md) - Understand how AI1st works
+- [Configuration](./configuration.md) - Customize ASMO for your project
+- [Concepts](../concepts/index.md) - Understand how ASMO works
 - [Guides](../guides/index.md) - Learn advanced features
 - [Examples](../examples/index.md) - See more code examples

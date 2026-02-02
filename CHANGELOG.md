@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2025-02-02 (@asmo/core, @asmo/cli)
+
+### Added - Library-First Architecture for npm Publication
+- **Config Fallback Chain**: `.cursor/config` → `~/.asmo/config` → `bundled templates`
+- **WorkflowEngine Fallback**: Automatically loads workflows from first available location
+- **ConfigLoader Fallback**: Loads roles, skills, and schemas with fallback
+- **Standalone Library Support**: Can be used without Claude Code environment
+- **Bundled Templates**: Always available as final fallback in npm package
+
+### Changed - CLI Refactoring
+- **run command**: Now uses hybrid analysis (BMAD + ClaudeCodeAdapter)
+- **workflow command**: Simplified to use WorkflowEngine and real agents from @asmo/core
+- CLI is now thin wrapper around @asmo/core functionality
+
+### Removed - Duplication Cleanup
+- Deleted `asmo-skill.ts` (functionality merged into `run.ts`)
+- Removed `SimpleCLIAgent` (85 lines of duplication)
+- Removed `CLIAgentRegistry` (uses AgentRegistry from @asmo/core)
+- Removed `AGENT_PROMPTS` dictionary (uses RoleManager from @asmo/core)
+- Removed `BUILT_IN_WORKFLOWS` (uses WorkflowEngine)
+- Eliminated all hardcoded `.cursor/config` dependencies
+
+### Technical Details
+- WorkflowEngine checks fallback paths in order until one succeeds
+- Bundled templates path: `packages/core/templates/`
+- Templates included in published package via `package.json` files field
+- Backward compatible: existing `.cursor/config` setup continues to work
+- Both @asmo/core and @asmo/cli ready for npm publication
+
 ## [3.0.0] - 2026-02-01
 
 ### Added
@@ -106,7 +135,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Document Registry** (`DocumentRegistry`)
   - Centralized document storage and retrieval
   - Version tracking and metadata management
-  - File system persistence in `_ai1st-output/`
+  - File system persistence in `_asmo-output/`
 - **Document Sharding** (`DocumentSharder`)
   - Split large markdown files by headings
   - Configurable token limits per file

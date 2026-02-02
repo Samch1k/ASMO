@@ -20,8 +20,7 @@
 
 import { BaseAgent } from '../base-agent'
 import { AgentState } from '../types'
-import { ChatAnthropic } from '@langchain/anthropic'
-import { AIMessage } from '@langchain/core/messages'
+import { createAssistantMessage } from '../../llm'
 
 export interface ParallelOutput {
   agentId: string
@@ -56,8 +55,6 @@ export interface MergeResult {
  * MergeAgent - Consolidates parallel agent outputs
  */
 export class MergeAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('merge-coordinator', [
       'conflict_resolution',
@@ -65,12 +62,6 @@ export class MergeAgent extends BaseAgent {
       'report_generation',
       'quality_assurance'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.1, // Low temperature for consistent merging
-      maxTokens: 8192
-    })
   }
 
   async execute(state: AgentState): Promise<Partial<AgentState>> {
@@ -83,7 +74,7 @@ export class MergeAgent extends BaseAgent {
       if (parallelOutputs.length === 0) {
         console.log('⚠️  No parallel outputs found to merge')
         return {
-          messages: [...state.messages, new AIMessage('No parallel outputs to merge')],
+          messages: [...state.messages, createAssistantMessage('No parallel outputs to merge')],
           nextAction: 'END'
         }
       }
@@ -128,7 +119,7 @@ export class MergeAgent extends BaseAgent {
 
       // 6. Return result
       return {
-        messages: [...state.messages, new AIMessage(JSON.stringify(consolidatedReport, null, 2))],
+        messages: [...state.messages, createAssistantMessage(JSON.stringify(consolidatedReport, null, 2))],
         context: {
           ...state.context,
           consolidatedReport,
@@ -148,7 +139,7 @@ export class MergeAgent extends BaseAgent {
       console.error('❌ Merge Agent execution failed:', error.message)
 
       return {
-        messages: [...state.messages, new AIMessage(JSON.stringify({
+        messages: [...state.messages, createAssistantMessage(JSON.stringify({
           error: 'Merge failed',
           message: error.message
         }))],
@@ -376,8 +367,12 @@ ${conflict.conflictingValues.map(cv => `   - ${cv.agentId}: ${JSON.stringify(cv.
 Provide only the JSON output, no additional text.`
 
     try {
-      const response = await this.llm.invoke(prompt)
-      const content = response.content as string
+      const response = await this.callLLM(prompt, {
+        model: 'sonnet',
+        temperature: 0.1,
+        maxTokens: 8192
+      })
+      const content = response.content
 
       // Extract JSON from response
       const jsonMatch = content.match(/\{[\s\S]*\}/)

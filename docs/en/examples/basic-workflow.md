@@ -4,12 +4,12 @@ A step-by-step example of running a simple bug fix workflow.
 
 ## Scenario
 
-You have a bug: the login button doesn't respond to clicks. Let's use AI1st to fix it.
+You have a bug: the login button doesn't respond to clicks. Let's use ASMO to fix it.
 
 ## Setup
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 async function main() {
   // 1. Create the registry and engine
@@ -95,7 +95,7 @@ Output:
 ## Complete Example
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 async function main() {
   // Initialize
@@ -150,5 +150,5 @@ main().catch(console.error)
 
 ## Next Steps
 
-- [Adaptive Selection](./adaptive-selection.md) - Let AI1st choose the workflow
+- [Adaptive Selection](./adaptive-selection.md) - Let ASMO choose the workflow
 - [Multi-Agent](./multi-agent.md) - Collaborate with multiple agents

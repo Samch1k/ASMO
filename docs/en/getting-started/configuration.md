@@ -1,23 +1,23 @@
 # Configuration
 
-AI1st uses a 3-tier configuration system that allows flexible customization at different levels.
+ASMO uses a 3-tier configuration system that allows flexible customization at different levels.
 
 ## Configuration Hierarchy
 
-1. **Built-in Defaults** - Sensible defaults included with AI1st
-2. **Configuration Files** - Project-specific settings in `.ai1st/config/`
+1. **Built-in Defaults** - Sensible defaults included with ASMO
+2. **Configuration Files** - Project-specific settings in `.asmo/config/`
 3. **Environment Variables** - Runtime overrides
 
 Higher tiers override lower tiers.
 
 ## Configuration Files
 
-Create a `.ai1st/config/` directory in your project root for configuration files.
+Create a `.asmo/config/` directory in your project root for configuration files.
 
 ### Orchestration Configuration
 
 ```typescript
-// .ai1st/config/orchestration.config.ts
+// .asmo/config/orchestration.config.ts
 export default {
   // Agent timeouts in milliseconds
   timeouts: {
@@ -46,7 +46,7 @@ export default {
 ### Workflow Configuration
 
 ```typescript
-// .ai1st/config/workflows.config.ts
+// .asmo/config/workflows.config.ts
 export default {
   // Default workflow for different complexity levels
   defaultWorkflows: {
@@ -76,7 +76,7 @@ export default {
 ### Agent Configuration
 
 ```typescript
-// .ai1st/config/agents.config.ts
+// .asmo/config/agents.config.ts
 export default {
   // LLM settings per agent
   llm: {
@@ -111,39 +111,39 @@ Override any configuration at runtime using environment variables:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `AI1ST_LOG_LEVEL` | Logging verbosity (debug, info, warn, error) | `info` |
-| `AI1ST_CONFIG_PATH` | Path to configuration directory | `.ai1st/config` |
+| `ASMO_LOG_LEVEL` | Logging verbosity (debug, info, warn, error) | `info` |
+| `ASMO_CONFIG_PATH` | Path to configuration directory | `.asmo/config` |
 
 ### YOLO Mode
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `AI1ST_YOLO_ENABLED` | Enable YOLO mode | `true` |
-| `AI1ST_YOLO_THRESHOLD` | Complexity threshold for YOLO | `30` |
-| `AI1ST_YOLO_AUDIT` | Enable audit trail | `true` |
+| `ASMO_YOLO_ENABLED` | Enable YOLO mode | `true` |
+| `ASMO_YOLO_THRESHOLD` | Complexity threshold for YOLO | `30` |
+| `ASMO_YOLO_AUDIT` | Enable audit trail | `true` |
 
 ### Database
 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `DATABASE_URL` | PostgreSQL connection string | - |
-| `AI1ST_CACHE_SIZE` | LRU cache size | `1000` |
-| `AI1ST_CACHE_TTL` | Cache TTL in seconds | `300` |
+| `ASMO_CACHE_SIZE` | LRU cache size | `1000` |
+| `ASMO_CACHE_TTL` | Cache TTL in seconds | `300` |
 
 ### LLM
 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `ANTHROPIC_API_KEY` | Anthropic API key | - |
-| `AI1ST_LLM_MODEL` | Default LLM model | `claude-3-sonnet` |
-| `AI1ST_LLM_TEMPERATURE` | Default temperature | `0.2` |
+| `ASMO_LLM_MODEL` | Default LLM model | `claude-3-sonnet` |
+| `ASMO_LLM_TEMPERATURE` | Default temperature | `0.2` |
 
 ## Programmatic Configuration
 
-You can also configure AI1st programmatically:
+You can also configure ASMO programmatically:
 
 ```typescript
-import { WorkflowEngine, AgentRegistry, ConfigManager } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry, ConfigManager } from '@asmo/core'
 
 // Get the config manager
 const config = ConfigManager.getInstance()
@@ -168,7 +168,7 @@ await engine.initialize()
 
 ## Configuration Validation
 
-AI1st validates configuration on startup. Invalid configurations will throw errors:
+ASMO validates configuration on startup. Invalid configurations will throw errors:
 
 ```typescript
 try {
@@ -186,7 +186,7 @@ try {
 Full configuration schema for reference:
 
 ```typescript
-interface AI1stConfig {
+interface ASMOConfig {
   timeouts: {
     [agentId: string]: number
     default: number
@@ -229,11 +229,11 @@ interface AI1stConfig {
 
 1. **Use Environment Variables for Secrets** - Never commit API keys or database URLs
 2. **Start with Defaults** - Only override what you need
-3. **Use Project Config for Team Settings** - Commit `.ai1st/config/` to version control
+3. **Use Project Config for Team Settings** - Commit `.asmo/config/` to version control
 4. **Test Configuration Changes** - Validate before deploying
 
 ## Next Steps
 
-- [Concepts](../concepts/index.md) - Understand how AI1st works
+- [Concepts](../concepts/index.md) - Understand how ASMO works
 - [YOLO Mode](../guides/yolo-mode.md) - Configure automatic approvals
 - [Custom Agents](../guides/custom-agents.md) - Create your own agents

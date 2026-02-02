@@ -1,15 +1,15 @@
 # Быстрый старт
 
-Запустите первый AI1st workflow за 5 минут!
+Запустите первый ASMO workflow за 5 минут!
 
 ## Предварительные требования
 
-Убедитесь, что вы [установили AI1st](./installation.md).
+Убедитесь, что вы [установили ASMO](./installation.md).
 
 ## Шаг 1: Инициализация Engine
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 // Создаём registry и engine
 const registry = new AgentRegistry()
@@ -37,7 +37,7 @@ console.log('Результат:', result)
 
 ### Вариант B: Адаптивный выбор (рекомендуется)
 
-Позвольте AI1st автоматически выбрать лучший workflow:
+Позвольте ASMO автоматически выбрать лучший workflow:
 
 ```typescript
 // Опишите задачу на естественном языке
@@ -95,7 +95,7 @@ console.log('Конвергенция:', session.state.convergenceScore)
 ## Полный пример
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 async function main() {
   // Инициализация
@@ -151,7 +151,7 @@ main().catch(console.error)
 
 ## Следующие шаги
 
-- [Конфигурация](./configuration.md) — настройте AI1st
-- [Концепции](../concepts/index.md) — как работает AI1st
+- [Конфигурация](./configuration.md) — настройте ASMO
+- [Концепции](../concepts/index.md) — как работает ASMO
 - [Руководства](../guides/index.md) — продвинутые возможности
 - [Примеры](../examples/index.md) — больше примеров кода

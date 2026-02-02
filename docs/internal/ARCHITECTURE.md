@@ -1,12 +1,12 @@
-# AI1ST Framework: Technical Architecture
+# ASMO Framework: Technical Architecture
 
 > Technical documentation for developers and architects
 
 ## Overview
 
-AI1ST Framework is a multi-agent orchestration system implementing BMAD (Business-driven Multi-Agent Development) methodology. It provides adaptive workflow selection, task lifecycle management, and structured decision-making processes.
+ASMO Framework is a multi-agent orchestration system implementing BMAD (Business-driven Multi-Agent Development) methodology. It provides adaptive workflow selection, task lifecycle management, and structured decision-making processes.
 
-**Package:** `@ai1st/core` (npm)
+**Package:** `@asmo/core` (npm)
 
 **Stack:** TypeScript, PostgreSQL, LRU-cache, Commander.js, tsup
 
@@ -14,7 +14,7 @@ AI1ST Framework is a multi-agent orchestration system implementing BMAD (Busines
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      AI1ST Framework                             │
+│                      ASMO Framework                             │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌────────────────┐ │
@@ -139,7 +139,7 @@ class BrainstormingSession extends PartySession {
 **Usage:**
 
 ```typescript
-import { createBrainstormingSession } from '@ai1st/core'
+import { createBrainstormingSession } from '@asmo/core'
 
 const session = createBrainstormingSession(
   'API Authentication Strategy',
@@ -383,33 +383,33 @@ ORDER BY
 
 ```bash
 # Install
-npm install ai1st-framework
+npm install asmo-framework
 
 # Analyze task complexity
-npx ai1st analyze "Add OAuth2 authentication"
+npx asmo analyze "Add OAuth2 authentication"
 # Output: score: 70, level: complex, recommendedWorkflow: full-planning-path
 
-npx ai1st analyze "Fix typo in README" --json
+npx asmo analyze "Fix typo in README" --json
 # Output: { "score": 15, "level": "trivial", ... }
 
 # Task management
-npx ai1st task create "Implement feature" -p high -d "Description here"
-npx ai1st task list --status in_progress
-npx ai1st task show <task-id>
-npx ai1st task start <task-id> --agent developer
-npx ai1st task complete <task-id> --output '{"result": "success"}'
-npx ai1st task fail <task-id> --reason "Blocked by dependency"
+npx asmo task create "Implement feature" -p high -d "Description here"
+npx asmo task list --status in_progress
+npx asmo task show <task-id>
+npx asmo task start <task-id> --agent developer
+npx asmo task complete <task-id> --output '{"result": "success"}'
+npx asmo task fail <task-id> --reason "Blocked by dependency"
 
 # Workflow execution
-npx ai1st workflow quick-flow --task "Fix typo"
-npx ai1st workflow full-planning-path --task "Add authentication"
+npx asmo workflow quick-flow --task "Fix typo"
+npx asmo workflow full-planning-path --task "Add authentication"
 ```
 
 ## File Structure
 
 ```
 packages/
-├── core/                         # @ai1st/core package
+├── core/                         # @asmo/core package
 │   ├── src/
 │   │   ├── orchestration/
 │   │   │   ├── workflow-engine.ts        # Core engine + TaskManager integration
@@ -432,7 +432,7 @@ packages/
 │   │   └── index.ts                      # Public exports
 │   ├── templates/                        # Configuration templates
 │   └── tests/
-├── cli/                          # @ai1st/cli package
+├── cli/                          # @asmo/cli package
 │   ├── src/
 │   │   ├── index.ts              # Commander.js setup
 │   │   └── commands/
@@ -440,7 +440,7 @@ packages/
 │   │       ├── workflow.ts
 │   │       └── task.ts
 │   └── bin/
-│       └── ai1st.js              # CLI entry point
+│       └── asmo.js              # CLI entry point
 └── docs/
     ├── OVERVIEW.md               # Non-technical summary
     └── ARCHITECTURE.md           # This document
@@ -448,14 +448,14 @@ packages/
 
 ## CI/CD
 
-**File:** `.github/workflows/publish-ai1st.yml`
+**File:** `.github/workflows/publish-asmo.yml`
 
 ```yaml
-name: Publish AI1ST Framework
+name: Publish ASMO Framework
 
 on:
   push:
-    tags: ['ai1st-v*']
+    tags: ['asmo-v*']
   workflow_dispatch:
     inputs:
       version:
@@ -490,8 +490,8 @@ jobs:
 **Release process:**
 
 ```bash
-git tag ai1st-v1.0.0
-git push origin ai1st-v1.0.0
+git tag asmo-v1.0.0
+git push origin asmo-v1.0.0
 # → Triggers build, typecheck, npm publish, GitHub release
 ```
 
@@ -501,8 +501,8 @@ git push origin ai1st-v1.0.0
 |----------|-------------|---------|
 | `DATABASE_URL` | PostgreSQL connection string | Required |
 | `ANTHROPIC_API_KEY` | Anthropic API key for agents | Optional |
-| `AI1ST_YOLO_THRESHOLD` | YOLO mode complexity threshold | 30 |
-| `AI1ST_LOG_LEVEL` | Logging level (debug/info/warn/error) | info |
+| `ASMO_YOLO_THRESHOLD` | YOLO mode complexity threshold | 30 |
+| `ASMO_LOG_LEVEL` | Logging level (debug/info/warn/error) | info |
 
 ## Testing
 

@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Analyst Agent - Strategic Analysis and Research Specialist
@@ -19,8 +18,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Filesystem MCP: Read and write analysis documents
  */
 export class AnalystAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('analyst', [
       'analysis',
@@ -32,12 +29,6 @@ export class AnalystAgent extends BaseAgent {
       'product_brief_creation',
       'trend_analysis'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.4, // Slightly higher for creative analysis
-      maxTokens: 6144
-    })
   }
 
   /**
@@ -203,8 +194,12 @@ Format as structured JSON:
   "risks": ["risk1", "risk2"]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    const content = response.content
 
     const parsed = this.parseAnalysisResponse(content)
 
@@ -245,8 +240,12 @@ Format as structured JSON:
   "recommendations": ["rec1", "rec2"]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    const content = response.content
 
     const parsed = this.parseAnalysisResponse(content)
 
@@ -291,8 +290,12 @@ Format as structured JSON:
   "recommendations": ["next step 1", "next step 2"]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    const content = response.content
 
     const parsed = this.parseAnalysisResponse(content)
 
@@ -338,8 +341,12 @@ Format as structured JSON:
   "recommendations": ["next step 1", "next step 2"]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    const content = response.content
 
     const parsed = this.parseAnalysisResponse(content)
 
@@ -378,8 +385,12 @@ Format as structured JSON:
   "recommendations": ["strategy1", "strategy2"]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    const content = response.content
 
     const parsed = this.parseAnalysisResponse(content)
 
@@ -418,8 +429,12 @@ Format as structured JSON:
   "recommendations": ["rec1", "rec2"]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 6144
+    })
+    const content = response.content
 
     const parsed = this.parseAnalysisResponse(content)
 

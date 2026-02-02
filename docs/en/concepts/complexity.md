@@ -1,6 +1,6 @@
 # Complexity Analysis
 
-AI1st uses complexity analysis to automatically select appropriate workflows and agents.
+ASMO uses complexity analysis to automatically select appropriate workflows and agents.
 
 ## Overview
 
@@ -102,7 +102,7 @@ Performance considerations:
 ### Automatic (Recommended)
 
 ```typescript
-// AI1st analyzes and selects automatically
+// ASMO analyzes and selects automatically
 const result = await engine.execute(
   'Add two-factor authentication',
   undefined,
@@ -128,7 +128,7 @@ console.log('Factors:', selection.complexity.factors)
 ### Direct Analyzer Access
 
 ```typescript
-import { ComplexityAnalyzer } from '@ai1st/core'
+import { ComplexityAnalyzer } from '@asmo/core'
 
 const analyzer = new ComplexityAnalyzer()
 const score = await analyzer.analyzeTask(

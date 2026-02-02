@@ -1,6 +1,6 @@
 # Testing
 
-Guidelines for testing AI1st code.
+Guidelines for testing ASMO code.
 
 ## Test Stack
 
@@ -18,7 +18,7 @@ pnpm test
 pnpm test -- --coverage
 
 # Run specific file
-pnpm --filter @ai1st/core test complexity-analyzer.test.ts
+pnpm --filter @asmo/core test complexity-analyzer.test.ts
 
 # Watch mode
 pnpm test -- --watch

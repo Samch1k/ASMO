@@ -27,7 +27,12 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@asmo/core": ["./packages/core/src/index.ts"],
+      "@asmo/core/*": ["./packages/core/src/*"]
+    }
   },
-  "exclude": ["node_modules", "dist", "build", ".next", "coverage"]
+  "exclude": ["node_modules", "dist", "build", ".next", "coverage", "**/tests/**", "**/*.test.ts", "**/*.spec.ts"]
 }

@@ -122,7 +122,7 @@ ${role.metadata.output_artifacts.map(a => `- \`${a}\``).join('\n')}
 ## Использование
 
 \`\`\`typescript
-import { AgentRegistry } from '@ai1st/core'
+import { AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const agent = await registry.getAgent('${role.id}')
@@ -186,7 +186,7 @@ ${role.metadata.output_artifacts.map(a => `- \`${a}\``).join('\n')}
 ## Usage
 
 \`\`\`typescript
-import { AgentRegistry } from '@ai1st/core'
+import { AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const agent = await registry.getAgent('${role.id}')
@@ -252,7 +252,7 @@ function generateIndexMarkdown(roles: Role[], lang: 'en' | 'ru'): string {
   if (lang === 'ru') {
     return `# Каталог агентов
 
-AI1st включает **${roles.length} агентов**, организованных в три категории.
+ASMO включает **${roles.length} агентов**, организованных в три категории.
 
 ## Обзор
 
@@ -301,7 +301,7 @@ ${validationRoles.map(r => `| [${getAgentEmoji(r.id)} ${r.name}](./validation/${
 
   return `# Agent Catalog
 
-AI1st includes **${roles.length} agents** organized into three categories.
+ASMO includes **${roles.length} agents** organized into three categories.
 
 ## Overview
 

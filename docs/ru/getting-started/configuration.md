@@ -1,23 +1,23 @@
 # Конфигурация
 
-AI1st использует 3-уровневую систему конфигурации для гибкой настройки.
+ASMO использует 3-уровневую систему конфигурации для гибкой настройки.
 
 ## Иерархия конфигурации
 
 1. **Встроенные значения** — разумные значения по умолчанию
-2. **Файлы конфигурации** — проектные настройки в `.ai1st/config/`
+2. **Файлы конфигурации** — проектные настройки в `.asmo/config/`
 3. **Переменные окружения** — переопределения в runtime
 
 Более высокие уровни переопределяют более низкие.
 
 ## Файлы конфигурации
 
-Создайте директорию `.ai1st/config/` в корне проекта.
+Создайте директорию `.asmo/config/` в корне проекта.
 
 ### Конфигурация оркестрации
 
 ```typescript
-// .ai1st/config/orchestration.config.ts
+// .asmo/config/orchestration.config.ts
 export default {
   // Таймауты агентов в миллисекундах
   timeouts: {
@@ -46,7 +46,7 @@ export default {
 ### Конфигурация Workflows
 
 ```typescript
-// .ai1st/config/workflows.config.ts
+// .asmo/config/workflows.config.ts
 export default {
   // Workflow по умолчанию для разных уровней сложности
   defaultWorkflows: {
@@ -79,37 +79,37 @@ export default {
 
 | Переменная | Описание | По умолчанию |
 |------------|----------|--------------|
-| `AI1ST_LOG_LEVEL` | Уровень логирования (debug, info, warn, error) | `info` |
-| `AI1ST_CONFIG_PATH` | Путь к директории конфигурации | `.ai1st/config` |
+| `ASMO_LOG_LEVEL` | Уровень логирования (debug, info, warn, error) | `info` |
+| `ASMO_CONFIG_PATH` | Путь к директории конфигурации | `.asmo/config` |
 
 ### YOLO Mode
 
 | Переменная | Описание | По умолчанию |
 |------------|----------|--------------|
-| `AI1ST_YOLO_ENABLED` | Включить YOLO mode | `true` |
-| `AI1ST_YOLO_THRESHOLD` | Порог сложности для YOLO | `30` |
-| `AI1ST_YOLO_AUDIT` | Включить аудит | `true` |
+| `ASMO_YOLO_ENABLED` | Включить YOLO mode | `true` |
+| `ASMO_YOLO_THRESHOLD` | Порог сложности для YOLO | `30` |
+| `ASMO_YOLO_AUDIT` | Включить аудит | `true` |
 
 ### База данных
 
 | Переменная | Описание | По умолчанию |
 |------------|----------|--------------|
 | `DATABASE_URL` | Строка подключения PostgreSQL | - |
-| `AI1ST_CACHE_SIZE` | Размер LRU кэша | `1000` |
-| `AI1ST_CACHE_TTL` | TTL кэша в секундах | `300` |
+| `ASMO_CACHE_SIZE` | Размер LRU кэша | `1000` |
+| `ASMO_CACHE_TTL` | TTL кэша в секундах | `300` |
 
 ### LLM
 
 | Переменная | Описание | По умолчанию |
 |------------|----------|--------------|
 | `ANTHROPIC_API_KEY` | API ключ Anthropic | - |
-| `AI1ST_LLM_MODEL` | LLM модель по умолчанию | `claude-3-sonnet` |
-| `AI1ST_LLM_TEMPERATURE` | Temperature по умолчанию | `0.2` |
+| `ASMO_LLM_MODEL` | LLM модель по умолчанию | `claude-3-sonnet` |
+| `ASMO_LLM_TEMPERATURE` | Temperature по умолчанию | `0.2` |
 
 ## Программная конфигурация
 
 ```typescript
-import { WorkflowEngine, AgentRegistry, ConfigManager } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry, ConfigManager } from '@asmo/core'
 
 // Получаем менеджер конфигурации
 const config = ConfigManager.getInstance()
@@ -136,11 +136,11 @@ await engine.initialize()
 
 1. **Используйте переменные окружения для секретов** — никогда не коммитьте API ключи
 2. **Начинайте с defaults** — переопределяйте только то, что нужно
-3. **Используйте конфиги для командных настроек** — коммитьте `.ai1st/config/`
+3. **Используйте конфиги для командных настроек** — коммитьте `.asmo/config/`
 4. **Тестируйте изменения** — проверяйте перед деплоем
 
 ## Следующие шаги
 
-- [Концепции](../concepts/index.md) — как работает AI1st
+- [Концепции](../concepts/index.md) — как работает ASMO
 - [YOLO Mode](../guides/yolo-mode.md) — настройка автоматических утверждений
 - [Кастомные агенты](../guides/custom-agents.md) — создание своих агентов

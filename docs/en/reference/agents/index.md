@@ -1,6 +1,6 @@
 # Agent Catalog
 
-AI1st includes **24 agents** organized into three categories.
+ASMO includes **24 agents** organized into three categories.
 
 ## Overview
 

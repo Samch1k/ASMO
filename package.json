@@ -1,8 +1,8 @@
 {
-  "name": "ai1st-orchestration",
+  "name": "asmo",
   "version": "0.1.0",
   "private": true,
-  "description": "AI1st - Autonomous Development Teams. Transform AI from helpful assistant to autonomous team.",
+  "description": "ASMO - AI System for Multiagent Orchestration. Transform AI from helpful assistant to autonomous team.",
   "author": "Your Name",
   "license": "MIT",
   "engines": {

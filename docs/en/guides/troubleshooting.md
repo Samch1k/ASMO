@@ -1,10 +1,10 @@
 # Troubleshooting
 
-Solutions to common issues when using AI1st.
+Solutions to common issues when using ASMO.
 
 ## Installation Issues
 
-### Cannot find module '@ai1st/core'
+### Cannot find module '@asmo/core'
 
 **Cause:** Package not installed or Node.js version too old.
 
@@ -14,7 +14,7 @@ Solutions to common issues when using AI1st.
 node --version
 
 # Reinstall package
-pnpm install @ai1st/core
+pnpm install @asmo/core
 
 # Clear cache if needed
 pnpm store prune
@@ -52,7 +52,7 @@ pnpm install
 
 Or use dynamic import:
 ```typescript
-const { WorkflowEngine } = await import('@ai1st/core')
+const { WorkflowEngine } = await import('@asmo/core')
 ```
 
 ## Database Issues
@@ -89,7 +89,7 @@ psql $DATABASE_URL -f packages/core/migrations/095_add_task_master_tables.sql
 
 **Solution:**
 ```typescript
-import { TaskPersister } from '@ai1st/core'
+import { TaskPersister } from '@asmo/core'
 
 const persister = new TaskPersister(databaseUrl)
 await persister.clearCache()
@@ -181,7 +181,7 @@ console.log(agent.allowed_mcps)
 **Solution:**
 ```typescript
 // Register manually
-import { AgentRegistry } from '@ai1st/core'
+import { AgentRegistry } from '@asmo/core'
 import { MyCustomAgent } from './my-agent'
 
 const registry = new AgentRegistry()
@@ -228,8 +228,8 @@ const selection = await engine.selectWorkflowAdaptively(task, {
 **Solution:**
 ```bash
 # Check settings
-export AI1ST_YOLO_ENABLED=true
-export AI1ST_YOLO_THRESHOLD=30
+export ASMO_YOLO_ENABLED=true
+export ASMO_YOLO_THRESHOLD=30
 ```
 
 ```typescript
@@ -326,11 +326,11 @@ config.set('llm.temperature', 0.1)  // Lower = more deterministic
 **Solution:**
 ```bash
 # Reduce logging
-export AI1ST_LOG_LEVEL=warn
+export ASMO_LOG_LEVEL=warn
 
 # Enable caching
-export AI1ST_CACHE_SIZE=1000
-export AI1ST_CACHE_TTL=300
+export ASMO_CACHE_SIZE=1000
+export ASMO_CACHE_TTL=300
 ```
 
 ### Memory issues
@@ -347,8 +347,8 @@ config.set('parallel.maxAgents', 3)
 
 If these solutions don't help:
 
-1. **Check logs:** `export AI1ST_LOG_LEVEL=debug`
-2. **Search issues:** [GitHub Issues](https://github.com/Samch1k/ai1st-orchestration/issues)
+1. **Check logs:** `export ASMO_LOG_LEVEL=debug`
+2. **Search issues:** [GitHub Issues](https://github.com/Samch1k/ASMO/issues)
 3. **Create issue:** Include error message, reproduction steps, and environment details
 
 ## See Also

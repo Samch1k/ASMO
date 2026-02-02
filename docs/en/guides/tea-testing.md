@@ -172,7 +172,7 @@ const result = await engine.execute('tea-8-test-maintenance', {
 The `TestArchitectAgent` powers all TEA workflows:
 
 ```typescript
-import { TestArchitectAgent } from '@ai1st/core'
+import { TestArchitectAgent } from '@asmo/core'
 
 const architect = new TestArchitectAgent()
 const info = architect.getInfo()
@@ -224,7 +224,7 @@ jobs:
 
       - name: TEA Quality Gate
         run: |
-          npx ai1st tea quality-gates \
+          npx asmo tea quality-gates \
             --coverage-file coverage/lcov.info \
             --test-results test-results.json \
             --threshold 80

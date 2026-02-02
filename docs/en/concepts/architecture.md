@@ -4,9 +4,9 @@
 
 ## Overview
 
-AI1st Framework is a multi-agent orchestration system implementing BMAD (Business-driven Multi-Agent Development) methodology. It provides adaptive workflow selection, task lifecycle management, and structured decision-making processes.
+ASMO Framework is a multi-agent orchestration system implementing BMAD (Business-driven Multi-Agent Development) methodology. It provides adaptive workflow selection, task lifecycle management, and structured decision-making processes.
 
-**Package:** `@ai1st/core` (npm)
+**Package:** `@asmo/core` (npm)
 
 **Stack:** TypeScript, PostgreSQL, LRU-cache, Commander.js, tsup
 
@@ -14,7 +14,7 @@ AI1st Framework is a multi-agent orchestration system implementing BMAD (Busines
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      AI1ST Framework                             │
+│                      ASMO Framework                             │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌────────────────┐ │
@@ -230,7 +230,7 @@ CREATE TABLE task_comments (
 
 ```
 packages/
-├── core/                         # @ai1st/core package
+├── core/                         # @asmo/core package
 │   ├── src/
 │   │   ├── orchestration/
 │   │   │   ├── workflow-engine.ts
@@ -257,7 +257,7 @@ packages/
 │   │   ├── skills/
 │   │   └── instructions/
 │   └── tests/
-├── cli/                          # @ai1st/cli package
+├── cli/                          # @asmo/cli package
 └── docs/                         # VitePress documentation
 ```
 

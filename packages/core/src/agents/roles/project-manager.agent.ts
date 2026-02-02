@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Project Manager Agent - Sprint planning, task breakdown, risk management
@@ -18,8 +17,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Filesystem MCP: Read requirements and design documents
  */
 export class ProjectManagerAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('project-manager', [
       'sprint_planning',
@@ -29,12 +26,6 @@ export class ProjectManagerAgent extends BaseAgent {
       'task_breakdown',
       'estimation'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.2,
-      maxTokens: 8192
-    })
   }
 
   /**
@@ -243,8 +234,12 @@ Provide response in JSON format:
 
 Aim for 8-15 tasks (not too granular, not too high-level).`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192
+    })
+    const content = response.content
 
     // Parse JSON
     const jsonMatch = content.match(/\{[\s\S]*\}/)
@@ -333,8 +328,12 @@ Provide response in JSON format:
   "totalDays": 12
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -400,8 +399,12 @@ Provide response in JSON format:
 Critical path = longest sequence of dependent tasks (determines minimum project duration).
 Parallelizable = tasks that can be done simultaneously.`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -482,8 +485,12 @@ Provide response in JSON format:
   ]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {

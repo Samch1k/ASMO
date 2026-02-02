@@ -128,7 +128,7 @@ export class ContextCascade {
   constructor(config: ContextCascadeConfig = {}) {
     this.documentRegistry =
       config.documentRegistry ||
-      new DocumentRegistry({ outputDir: config.outputDir || '_ai1st-output' })
+      new DocumentRegistry({ outputDir: config.outputDir || '_asmo-output' })
     this.autoLoad = config.autoLoad !== false
     this.customDependencies = config.customDependencies || {}
 

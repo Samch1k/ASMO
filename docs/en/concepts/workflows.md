@@ -13,7 +13,7 @@ A workflow defines:
 
 ## Available Workflows
 
-AI1st includes **10 production-ready workflows**:
+ASMO includes **10 production-ready workflows**:
 
 | # | Workflow | Complexity | Time | Use Case |
 |---|----------|------------|------|----------|
@@ -77,7 +77,7 @@ const result = await engine.executeWorkflow('feature_implementation_full', {
 ### By Description (Adaptive)
 
 ```typescript
-// AI1st automatically selects the best workflow
+// ASMO automatically selects the best workflow
 const result = await engine.execute(
   'Add user authentication with OAuth2',
   undefined,
@@ -134,7 +134,7 @@ const result = await engine.execute('Fix typo in README')
 
 ## Workflow Selection
 
-AI1st uses complexity analysis to select workflows:
+ASMO uses complexity analysis to select workflows:
 
 | Complexity | Score | Typical Workflow |
 |------------|-------|------------------|

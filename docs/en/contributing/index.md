@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to AI1st! This guide will help you get started.
+Thank you for your interest in contributing to ASMO! This guide will help you get started.
 
 ## Table of Contents
 
@@ -12,8 +12,8 @@ Thank you for your interest in contributing to AI1st! This guide will help you g
 
 ```bash
 # Clone the repository
-git clone https://github.com/Samch1k/ai1st-orchestration.git
-cd ai1st-orchestration
+git clone https://github.com/Samch1k/ASMO.git
+cd ASMO
 
 # Install dependencies
 pnpm install
@@ -29,7 +29,7 @@ pnpm test
 
 ### Report Bugs
 
-Found a bug? [Open an issue](https://github.com/Samch1k/ai1st-orchestration/issues/new) with:
+Found a bug? [Open an issue](https://github.com/Samch1k/ASMO/issues/new) with:
 
 - Clear description
 - Steps to reproduce
@@ -38,7 +38,7 @@ Found a bug? [Open an issue](https://github.com/Samch1k/ai1st-orchestration/issu
 
 ### Suggest Features
 
-Have an idea? [Open a discussion](https://github.com/Samch1k/ai1st-orchestration/discussions) first to get feedback.
+Have an idea? [Open a discussion](https://github.com/Samch1k/ASMO/discussions) first to get feedback.
 
 ### Submit Code
 
@@ -93,8 +93,8 @@ refactor: simplify complexity analyzer
 ## Getting Help
 
 - Read the [documentation](../index.md)
-- Check [existing issues](https://github.com/Samch1k/ai1st-orchestration/issues)
-- Ask in [discussions](https://github.com/Samch1k/ai1st-orchestration/discussions)
+- Check [existing issues](https://github.com/Samch1k/ASMO/issues)
+- Ask in [discussions](https://github.com/Samch1k/ASMO/discussions)
 
 ## License
 

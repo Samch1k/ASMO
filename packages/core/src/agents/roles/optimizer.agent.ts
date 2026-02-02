@@ -1,17 +1,16 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Optimizer Agent - Responsible for performance optimization and analysis
- * 
+ *
  * Capabilities:
  * - Performance analysis and profiling
  * - Query optimization (database)
  * - Code optimization
  * - Caching strategy design
  * - Bundle size optimization
- * 
+ *
  * MCP Integrations:
  * - Vercel MCP (P0): Frontend performance metrics
  * - Supabase MCP (P0): Database query performance
@@ -19,8 +18,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Context7 MCP (P1): Research optimization patterns
  */
 export class OptimizerAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('optimizer', [
       'performance_analysis',
@@ -30,12 +27,6 @@ export class OptimizerAgent extends BaseAgent {
       'bundle_optimization',
       'profiling'
     ])
-    
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.2,
-      maxTokens: 8192
-    })
   }
 
   async execute(state: AgentState): Promise<Partial<AgentState>> {
@@ -288,35 +279,23 @@ FOCUS ON:
 
 Provide ONLY valid JSON.`
 
-    const response = await this.llm.invoke([
-      { role: "user", content: systemPrompt }
-    ])
-
-    const content = typeof response.content === 'string'
-      ? response.content
-      : JSON.stringify(response.content)
-
-    // Parse JSON response
     try {
-      const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || 
-                       content.match(/\{[\s\S]*\}/)
-      
-      if (jsonMatch) {
-        const jsonStr = jsonMatch[1] || jsonMatch[0]
-        return JSON.parse(jsonStr)
-      }
+      const result = await this.callLLMForJSON<{
+        bottlenecks: string[]
+        recommendations: string[]
+        codeChanges: string[]
+        requiresCodeChanges: boolean
+        estimatedImprovement: string
+      }>(systemPrompt, {
+        model: 'sonnet',
+        temperature: 0.2
+      })
 
-      return {
-        bottlenecks: [content],
-        recommendations: ['See analysis above'],
-        codeChanges: [],
-        requiresCodeChanges: false,
-        estimatedImprovement: 'Unknown'
-      }
+      return result
     } catch (parseError) {
       this.log('Failed to parse LLM response as JSON, using fallback', 'warn')
       return {
-        bottlenecks: [content],
+        bottlenecks: ['See analysis above'],
         recommendations: ['See analysis above'],
         codeChanges: [],
         requiresCodeChanges: false,
@@ -374,7 +353,7 @@ ${recommendations.estimatedImprovement}
 
 ---
 
-**Analyzed by**: Optimizer Agent (LangGraph Multi-Agent System)
+**Analyzed by**: Optimizer Agent (ASMO Multi-Agent System)
 **Timestamp**: ${timestamp}
 `
   }

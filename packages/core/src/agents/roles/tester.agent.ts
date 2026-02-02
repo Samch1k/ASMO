@@ -1,25 +1,22 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Tester Agent - Responsible for test creation and quality assurance
- * 
+ *
  * Capabilities:
  * - E2E test creation (Playwright)
  * - Unit test review
  * - Test coverage analysis
  * - Bug reproduction
  * - Smoke testing
- * 
+ *
  * MCP Integrations:
  * - Playwright MCP (P0): Browser automation and E2E testing
  * - Filesystem MCP (P1): Read implementation code
  * - GitHub MCP (P1): Create test reports
  */
 export class TesterAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('tester', [
       'e2e_testing',
@@ -29,12 +26,6 @@ export class TesterAgent extends BaseAgent {
       'smoke_testing',
       'acceptance_testing'
     ])
-    
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.2,
-      maxTokens: 8192
-    })
   }
 
   async execute(state: AgentState): Promise<Partial<AgentState>> {
@@ -219,32 +210,21 @@ For your project B2B platform:
 
 Provide ONLY valid JSON.`
 
-    const response = await this.llm.invoke([
-      { role: "user", content: systemPrompt }
-    ])
-
-    const content = typeof response.content === 'string'
-      ? response.content
-      : JSON.stringify(response.content)
-
     try {
-      const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || 
-                       content.match(/\{[\s\S]*\}/)
-      
-      if (jsonMatch) {
-        const jsonStr = jsonMatch[1] || jsonMatch[0]
-        return JSON.parse(jsonStr)
-      }
+      const result = await this.callLLMForJSON<{
+        scenarios: Array<{ name: string; description: string; steps: string[] }>
+        edgeCases: string[]
+        estimatedCoverage: number
+      }>(systemPrompt, {
+        model: 'sonnet',
+        temperature: 0.2
+      })
 
-      return {
-        scenarios: [{ name: 'Basic Test', description: content, steps: [] }],
-        edgeCases: [],
-        estimatedCoverage: 70
-      }
+      return result
     } catch (parseError) {
       this.log('Failed to parse test plan JSON, using fallback', 'warn')
       return {
-        scenarios: [{ name: 'Basic Test', description: content, steps: [] }],
+        scenarios: [{ name: 'Basic Test', description: 'See generated content', steps: [] }],
         edgeCases: [],
         estimatedCoverage: 70
       }
@@ -300,13 +280,14 @@ test.describe('Feature Name', () => {
 Generate complete, production-ready Playwright tests.
 Include file path as comment at the top.`
 
-    const response = await this.llm.invoke([
-      { role: "user", content: systemPrompt }
-    ])
+    const response = await this.callLLM(state.task, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192,
+      systemPrompt
+    })
 
-    return typeof response.content === 'string'
-      ? response.content
-      : JSON.stringify(response.content)
+    return response.content
   }
 
   /**
@@ -372,7 +353,7 @@ All tests must pass before merging to main:
 
 ---
 
-**Created by**: Tester Agent (LangGraph Multi-Agent System)
+**Created by**: Tester Agent (ASMO Multi-Agent System)
 **Timestamp**: ${timestamp}
 `
   }

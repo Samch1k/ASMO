@@ -1,6 +1,6 @@
 # Стандарты кода
 
-Руководство по стилю и соглашениям для кодовой базы AI1st.
+Руководство по стилю и соглашениям для кодовой базы ASMO.
 
 ## TypeScript
 
@@ -97,7 +97,7 @@ async function badExecute() {
 import { z } from 'zod'
 
 // 2. Внутренние пакеты
-import { AgentRegistry } from '@ai1st/core'
+import { AgentRegistry } from '@asmo/core'
 
 // 3. Относительные импорты
 import { validateConfig } from './utils'

@@ -1,0 +1,79 @@
+{
+  "id": "code_review_workflow",
+  "name": "Code Review Workflow",
+  "description": "Comprehensive code review with adversarial critique and security assessment. Three-stage review process for maximum quality.",
+  "trigger_condition": {
+    "keywords": [
+      "code review",
+      "review code",
+      "cr",
+      "обзор кода",
+      "проверить код",
+      "code quality"
+    ],
+    "task_types": [
+      "review",
+      "quality",
+      "code_review"
+    ],
+    "required_skills": [
+      "code_review",
+      "quality_assurance",
+      "security"
+    ]
+  },
+  "context_dependencies": [
+    "code_changes",
+    "diff"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "code-reviewer",
+      "phase": "initial_review",
+      "description": "Review for best practices, readability, and maintainability",
+      "deliverables": [
+        "review_comments",
+        "best_practices_assessment"
+      ],
+      "exit_criteria": "All code reviewed with constructive feedback",
+      "timeout": "20m"
+    },
+    {
+      "order": 2,
+      "role_id": "adversarial-reviewer",
+      "phase": "adversarial_review",
+      "description": "Find edge cases, potential bugs, and architectural issues",
+      "deliverables": [
+        "critical_issues",
+        "edge_cases",
+        "bug_scenarios"
+      ],
+      "exit_criteria": "At least 3 issues found or code confirmed exceptional",
+      "timeout": "20m"
+    },
+    {
+      "order": 3,
+      "role_id": "security-specialist",
+      "phase": "security_review",
+      "description": "Security vulnerability check (OWASP Top 10, injection, XSS, etc.)",
+      "deliverables": [
+        "security_assessment",
+        "vulnerability_report"
+      ],
+      "exit_criteria": "No critical security issues found",
+      "timeout": "15m"
+    }
+  ],
+  "estimated_time": "55m",
+  "success_criteria": "Code approved or actionable feedback provided with no critical security issues",
+  "metadata": {
+    "bmad": true,
+    "principles": [
+      "adversarial_thinking",
+      "security_first"
+    ],
+    "phase": "22",
+    "phase_name": "code-review"
+  }
+}

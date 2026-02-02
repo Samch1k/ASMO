@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * UX Designer Agent - User experience design and usability
@@ -18,8 +17,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Context7 MCP: Research UX best practices
  */
 export class UXDesignerAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('ux-designer', [
       'user_flows',
@@ -29,12 +26,6 @@ export class UXDesignerAgent extends BaseAgent {
       'accessibility',
       'interaction_design'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.4,
-      maxTokens: 4096
-    })
   }
 
   /**
@@ -233,10 +224,13 @@ Provide response in JSON format:
   ]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 4096
+    })
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       return [{
         name: 'Main User Flow',
@@ -309,10 +303,13 @@ Use box drawing characters for wireframes:
 │  └────────┘     │
 └─────────────────┘`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 4096
+    })
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       return [{
         name: 'Main Screen',
@@ -371,10 +368,13 @@ Provide response in JSON format:
   ]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 4096
+    })
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       return [{
         name: 'Primary Button',
@@ -427,10 +427,13 @@ Provide response in JSON format:
   ]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 4096
+    })
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       return [
         {
@@ -502,10 +505,13 @@ Provide response in JSON format:
   ]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 4096
+    })
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       return {
         mobileFirst: true,

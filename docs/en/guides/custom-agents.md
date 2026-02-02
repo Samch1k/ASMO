@@ -1,6 +1,6 @@
 # Custom Agents
 
-Learn how to create your own specialized agents for AI1st.
+Learn how to create your own specialized agents for ASMO.
 
 ## Overview
 
@@ -9,7 +9,7 @@ Custom agents allow you to:
 - Add domain-specific expertise
 - Integrate with proprietary tools
 - Customize agent behavior
-- Extend AI1st capabilities
+- Extend ASMO capabilities
 
 ## Agent Structure
 
@@ -47,7 +47,7 @@ Every agent has these components:
 Create a JSON file in your project:
 
 ```typescript
-// .ai1st/roles/payment-specialist.json
+// .asmo/roles/payment-specialist.json
 {
   "id": "payment-specialist",
   "name": "Payment Specialist",
@@ -100,8 +100,8 @@ Create a JSON file in your project:
 Implement the agent logic:
 
 ```typescript
-// .ai1st/agents/payment-specialist.ts
-import { BaseAgent, AgentState, AgentResult } from '@ai1st/core'
+// .asmo/agents/payment-specialist.ts
+import { BaseAgent, AgentState, AgentResult } from '@asmo/core'
 
 export class PaymentSpecialistAgent extends BaseAgent {
   readonly id = 'payment-specialist'
@@ -179,7 +179,7 @@ export class PaymentSpecialistAgent extends BaseAgent {
 Register your custom agent:
 
 ```typescript
-// .ai1st/config/agents.config.ts
+// .asmo/config/agents.config.ts
 import { PaymentSpecialistAgent } from '../agents/payment-specialist'
 
 export default {
@@ -188,7 +188,7 @@ export default {
   ],
 
   customRoles: [
-    '.ai1st/roles/payment-specialist.json'
+    '.asmo/roles/payment-specialist.json'
   ]
 }
 ```
@@ -196,8 +196,8 @@ export default {
 Or programmatically:
 
 ```typescript
-import { AgentRegistry } from '@ai1st/core'
-import { PaymentSpecialistAgent } from './.ai1st/agents/payment-specialist'
+import { AgentRegistry } from '@asmo/core'
+import { PaymentSpecialistAgent } from './.asmo/agents/payment-specialist'
 
 const registry = new AgentRegistry()
 registry.registerAgent(new PaymentSpecialistAgent())
@@ -275,7 +275,7 @@ const result = await agent.execute({
 Define custom skills for your agent:
 
 ```json
-// .ai1st/skills/payment-skills.json
+// .asmo/skills/payment-skills.json
 {
   "skills": [
     {

@@ -56,7 +56,7 @@ function getWorkflowEmoji(id: string): string {
   return emojis[id] || '📋'
 }
 
-function generateWorkflowMarkdown(workflow: Workflow, lang: 'en' | 'ru', index: number): string {
+function generateWorkflowMarkdown(workflow: Workflow, lang: 'en' | 'ru', _index: number): string {
   const emoji = getWorkflowEmoji(workflow.id)
 
   // Group steps by phase
@@ -158,7 +158,7 @@ ${workflow.success_criteria}
 ## Использование
 
 \`\`\`typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)
@@ -252,7 +252,7 @@ ${workflow.success_criteria}
 ## Usage
 
 \`\`\`typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)
@@ -297,7 +297,7 @@ function generateIndexMarkdown(workflows: Array<{ workflow: Workflow; category: 
   if (lang === 'ru') {
     return `# Каталог Workflows
 
-AI1st включает **${workflows.length} production-ready workflows** для типичных задач разработки.
+ASMO включает **${workflows.length} production-ready workflows** для типичных задач разработки.
 
 ## Обзор
 
@@ -341,7 +341,7 @@ Workflows автоматически выбираются на основе сл
 
   return `# Workflow Catalog
 
-AI1st includes **${workflows.length} production-ready workflows** for common development tasks.
+ASMO includes **${workflows.length} production-ready workflows** for common development tasks.
 
 ## Overview
 

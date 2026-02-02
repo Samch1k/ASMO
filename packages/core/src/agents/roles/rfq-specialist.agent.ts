@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * RFQ Specialist Agent - RFQ validation, supplier matching, bid evaluation
@@ -20,8 +19,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Filesystem MCP: Read RFQ templates and policies
  */
 export class RFQSpecialistAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('rfq-specialist', [
       'rfq_validation',
@@ -30,12 +27,6 @@ export class RFQSpecialistAgent extends BaseAgent {
       'procurement_strategy',
       'supplier_relationship_management'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.2,
-      maxTokens: 8192
-    })
   }
 
   /**
@@ -303,10 +294,13 @@ Provide response in JSON format:
 
 Approval threshold: 70/100`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192
+    })
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       // Fallback validation
       return {
@@ -458,10 +452,13 @@ Provide response in JSON format:
 
 Sort suppliers by matchScore (highest first).`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192
+    })
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       // Fallback: simple matching
       return suppliers.map(supplier => ({
@@ -550,10 +547,13 @@ Provide response in JSON format:
   ]
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192
+    })
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       // No bids available
       return []

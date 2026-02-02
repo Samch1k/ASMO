@@ -229,9 +229,75 @@ export interface WorkflowSelection {
   }>
 }
 
+/**
+ * Enhanced workflow selection result from hybrid analysis
+ * Combines BMAD (complexity) + ClaudeCodeAdapter (agents/skills) + SkillMatcher (patterns)
+ */
+export interface EnhancedWorkflowSelection extends WorkflowSelection {
+  /** Agent recommendations from ClaudeCodeAdapter */
+  recommendedAgents: string[]
+
+  /** Skills identified by ClaudeCodeAdapter */
+  identifiedSkills: string[]
+
+  /** Workflow patterns detected by SkillMatcher */
+  detectedPatterns: string[]
+
+  /** Analysis result from ClaudeCodeAdapter */
+  agentAnalysis: {
+    recommendedRoles: string[]
+    requiredSkills: string[]
+    suggestedWorkflow: string | null
+    confidence: number
+    reasoning: string
+  }
+
+  /** Confidence breakdown by source */
+  confidenceBreakdown: {
+    bmad: number           // From ComplexityAnalyzer
+    adapter: number        // From ClaudeCodeAdapter
+    patterns: number       // From SkillMatcher
+    combined: number       // Final combined confidence
+  }
+
+  /** Merge strategy used */
+  mergeStrategy: {
+    workflowSource: 'bmad' | 'adapter' | 'patterns'
+    agentsSource: 'adapter' | 'bmad'
+    reasoning: string
+  }
+}
+
 // ============================================================================
 // BRAINSTORMING TYPES
 // ============================================================================
+
+/**
+ * Session type for multi-agent collaboration
+ * Determines execution mode: sequential, party, or brainstorming
+ */
+export type SessionType = 'sequential' | 'party' | 'brainstorming'
+
+/**
+ * Session type decision result from SkillMatcher.detectSessionType()
+ * Used to determine which execution mode to use
+ */
+export interface SessionTypeDecision {
+  /** Type of session: sequential, party, or brainstorming */
+  type: SessionType
+
+  /** Maximum number of rounds (for party/brainstorming modes) */
+  maxRounds?: number
+
+  /** Convergence threshold (0.0-1.0, for party/brainstorming modes) */
+  convergenceThreshold?: number
+
+  /** Whether to generate ADR (for brainstorming mode) */
+  generateADR?: boolean
+
+  /** Reasoning for the decision */
+  reasoning: string
+}
 
 /**
  * Brainstorming phase definition

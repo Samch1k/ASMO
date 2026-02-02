@@ -13,7 +13,7 @@ Workflow определяет:
 
 ## Доступные Workflows
 
-AI1st включает **10 production-ready workflows**:
+ASMO включает **10 production-ready workflows**:
 
 | # | Workflow | Сложность | Время | Применение |
 |---|----------|-----------|-------|------------|
@@ -41,7 +41,7 @@ const result = await engine.executeWorkflow('feature_implementation_full', {
 ### По описанию (адаптивно)
 
 ```typescript
-// AI1st автоматически выбирает лучший workflow
+// ASMO автоматически выбирает лучший workflow
 const result = await engine.execute(
   'Добавить аутентификацию с OAuth2',
   undefined,
@@ -76,7 +76,7 @@ const result = await engine.execute('Исправить опечатку в READ
 
 ## Выбор Workflow
 
-AI1st использует анализ сложности для выбора:
+ASMO использует анализ сложности для выбора:
 
 | Сложность | Баллы | Типичный Workflow |
 |-----------|-------|-------------------|

@@ -1,0 +1,244 @@
+# ASMO Model Configuration
+# Defines model tiers and routing rules
+
+version: "1.0.0"
+
+# =============================================================================
+# MODEL DEFINITIONS
+# =============================================================================
+
+models:
+  # ---------------------------------------------------------------------------
+  # Opus - Complex reasoning and creative tasks
+  # ---------------------------------------------------------------------------
+  opus:
+    id: opus
+    name: Claude Opus
+    provider: anthropic
+    model_id: claude-opus-4-5-20251101
+
+    description: >
+      Most capable model for complex reasoning, creative tasks,
+      architecture decisions, and security analysis.
+
+    characteristics:
+      reasoning: excellent
+      speed: slow
+      cost: high
+      context_window: 200000
+      max_output: 16000
+
+    best_for:
+      - architecture design
+      - security audits
+      - complex debugging
+      - system design
+      - strategic analysis
+      - adversarial review
+
+    config:
+      temperature: 0.7
+      top_p: 0.95
+
+  # ---------------------------------------------------------------------------
+  # Sonnet - Balanced performance
+  # ---------------------------------------------------------------------------
+  sonnet:
+    id: sonnet
+    name: Claude Sonnet
+    provider: anthropic
+    model_id: claude-sonnet-4-20250514
+
+    description: >
+      Balanced model for most development tasks including
+      coding, testing, and code review.
+
+    characteristics:
+      reasoning: good
+      speed: medium
+      cost: medium
+      context_window: 200000
+      max_output: 16000
+
+    best_for:
+      - feature implementation
+      - bug fixes
+      - code review
+      - testing
+      - refactoring
+      - general development
+
+    config:
+      temperature: 0.5
+      top_p: 0.9
+
+  # ---------------------------------------------------------------------------
+  # Haiku - Fast and efficient
+  # ---------------------------------------------------------------------------
+  haiku:
+    id: haiku
+    name: Claude Haiku
+    provider: anthropic
+    model_id: claude-haiku-3-20240307
+
+    description: >
+      Fastest and most cost-effective model for simple tasks
+      like documentation, formatting, and quick fixes.
+
+    characteristics:
+      reasoning: basic
+      speed: fast
+      cost: low
+      context_window: 200000
+      max_output: 4096
+
+    best_for:
+      - documentation
+      - code formatting
+      - simple queries
+      - quick fixes
+      - typo corrections
+      - comment generation
+
+    config:
+      temperature: 0.3
+      top_p: 0.85
+
+# =============================================================================
+# ROUTING RULES
+# =============================================================================
+
+routing:
+  # Default model when no specific match
+  default_model: sonnet
+
+  # Complexity-based routing thresholds
+  complexity_thresholds:
+    haiku_max: 30      # Score 0-30 → Haiku
+    sonnet_max: 70     # Score 31-70 → Sonnet
+    # Score 71-100 → Opus
+
+  # Task type overrides (override complexity-based selection)
+  task_type_overrides:
+    # Quick tasks → Haiku
+    quick_fix: haiku
+    simple_query: haiku
+    documentation: haiku
+    code_formatting: haiku
+    comment_generation: haiku
+    typo_fix: haiku
+
+    # Balanced tasks → Sonnet
+    feature: sonnet
+    bug_fix: sonnet
+    code_review: sonnet
+    testing: sonnet
+    refactoring: sonnet
+    implementation: sonnet
+
+    # Complex tasks → Opus
+    architecture: opus
+    security_audit: opus
+    system_design: opus
+    complex_debugging: opus
+    performance_optimization: opus
+    strategic_analysis: opus
+    adversarial_review: opus
+
+  # Keyword-based inference (for task descriptions)
+  keyword_inference:
+    opus:
+      - architect
+      - design system
+      - security audit
+      - complex
+      - enterprise
+      - scalab
+      - migration
+      - critical
+      - strategic
+
+    haiku:
+      - simple
+      - quick
+      - typo
+      - format
+      - trivial
+      - minor
+      - small fix
+      - update comment
+      - rename
+      - document
+
+# =============================================================================
+# EXECUTION MODES
+# =============================================================================
+
+execution_modes:
+  # Session mode - Uses Claude subscription ($0 API cost)
+  session:
+    enabled: true
+    description: >
+      Uses Claude Code session for execution.
+      Best for development and testing.
+    config:
+      provider: claude_code
+      interactive: true
+
+  # API mode - Direct Anthropic API calls
+  api:
+    enabled: true
+    description: >
+      Direct API calls to Anthropic.
+      Best for production and automation.
+    config:
+      provider: anthropic
+      api_key_env: ANTHROPIC_API_KEY
+      base_url: https://api.anthropic.com
+
+# =============================================================================
+# COST ESTIMATION
+# =============================================================================
+
+cost_estimation:
+  # Per 1M tokens (approximate, as of 2025)
+  input_cost_per_1m:
+    opus: 15.00
+    sonnet: 3.00
+    haiku: 0.25
+
+  output_cost_per_1m:
+    opus: 75.00
+    sonnet: 15.00
+    haiku: 1.25
+
+  # Average tokens per task type
+  avg_tokens_per_task:
+    quick_fix: 500
+    bug_fix: 2000
+    feature: 5000
+    architecture: 10000
+    security_audit: 8000
+
+# =============================================================================
+# RETRY AND RELIABILITY
+# =============================================================================
+
+reliability:
+  # Default retry settings
+  default_retries: 3
+  initial_retry_delay_ms: 1000
+  retry_multiplier: 2
+  max_retry_delay_ms: 30000
+
+  # Timeout settings (ms)
+  timeouts:
+    haiku: 60000      # 1 minute
+    sonnet: 120000    # 2 minutes
+    opus: 180000      # 3 minutes
+
+  # Rate limit handling
+  rate_limit:
+    enabled: true
+    extra_delay_multiplier: 2
+    max_concurrent_requests: 5

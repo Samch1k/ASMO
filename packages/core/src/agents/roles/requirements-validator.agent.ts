@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Requirements Validator Agent - Validates requirements completeness and quality
@@ -25,8 +24,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Filesystem MCP (P1): Read requirement documents
  */
 export class RequirementsValidatorAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('requirements-validator', [
       'requirements_validation',
@@ -35,13 +32,6 @@ export class RequirementsValidatorAgent extends BaseAgent {
       'quality_assurance',
       'invest_criteria'
     ])
-
-    // Initialize Claude LLM
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.1, // Low temperature for consistent validation
-      maxTokens: 2048
-    })
   }
 
   /**
@@ -250,11 +240,14 @@ Provide response in JSON format:
   "testable": { "score": 9, "feedback": "..." }
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 2048
+    })
 
     // Parse JSON from response
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       // Fallback if LLM doesn't return JSON
       return {
@@ -310,11 +303,14 @@ Score: 0-40 points
 - 20-29: Some gaps, needs improvement
 - 0-19: Major gaps, significant revision needed`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 2048
+    })
 
     // Parse JSON
-    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       return {
         score: 20,

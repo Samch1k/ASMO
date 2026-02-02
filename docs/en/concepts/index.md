@@ -1,10 +1,10 @@
 # Core Concepts
 
-Understanding the fundamental concepts behind AI1st will help you leverage its full potential.
+Understanding the fundamental concepts behind ASMO will help you leverage its full potential.
 
 ## Overview
 
-AI1st is built around four key concepts:
+ASMO is built around four key concepts:
 
 | Concept | Description | Learn More |
 |---------|-------------|------------|
@@ -17,11 +17,11 @@ AI1st is built around four key concepts:
 | [Elicitation](./elicitation.md) | Advanced analysis techniques | 5 techniques |
 | [Context Cascade](./context-cascade.md) | Cascading context flow | Document dependencies |
 
-## The AI1st Philosophy
+## The ASMO Philosophy
 
 ### From Assistant to Team
 
-Traditional AI assistants respond to individual requests. AI1st transforms AI into an autonomous development team where:
+Traditional AI assistants respond to individual requests. ASMO transforms AI into an autonomous development team where:
 
 - **Multiple specialized agents** work together
 - **Workflows orchestrate** complex multi-step tasks
@@ -30,7 +30,7 @@ Traditional AI assistants respond to individual requests. AI1st transforms AI in
 
 ### Adaptive Intelligence
 
-AI1st doesn't use one-size-fits-all approaches. Instead:
+ASMO doesn't use one-size-fits-all approaches. Instead:
 
 1. **Analyze** - Task complexity is scored (0-100)
 2. **Select** - Appropriate workflow is chosen
@@ -41,7 +41,7 @@ AI1st doesn't use one-size-fits-all approaches. Instead:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      AI1ST Framework                             │
+│                      ASMO Framework                             │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌────────────────┐ │

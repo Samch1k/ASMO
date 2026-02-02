@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Design Validator Agent - Validates system design and architecture decisions
@@ -28,8 +27,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Filesystem MCP (P1): Read ADR documents
  */
 export class DesignValidatorAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('design-validator', [
       'design_review',
@@ -39,13 +36,6 @@ export class DesignValidatorAgent extends BaseAgent {
       'api_review',
       'database_review'
     ])
-
-    // Initialize Claude LLM
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.1, // Low temperature for consistent validation
-      maxTokens: 4096
-    })
   }
 
   /**
@@ -307,8 +297,12 @@ Score guidelines:
 - 15-19: Acceptable but has gaps
 - 0-14: Significant issues, needs revision`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 4096
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -357,8 +351,12 @@ Score guidelines:
 - 12-17: Acceptable but needs improvement
 - 0-11: Significant issues`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 4096
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -411,8 +409,12 @@ Score guidelines:
 - 12-17: Acceptable but has gaps
 - 0-11: Needs significant revision`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 4096
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -463,8 +465,12 @@ Score guidelines:
 - 10-13: Several smells, should be addressed
 - 0-9: Major smells, needs refactoring`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.1,
+      maxTokens: 4096
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {

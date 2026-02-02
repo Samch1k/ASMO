@@ -1,6 +1,6 @@
 # Установка
 
-Руководство по установке AI1st Framework в ваш проект.
+Руководство по установке ASMO Framework в ваш проект.
 
 ## Системные требования
 
@@ -13,24 +13,24 @@
 ### Используя pnpm (рекомендуется)
 
 ```bash
-pnpm add @ai1st/core
+pnpm add @asmo/core
 ```
 
 ### Используя npm
 
 ```bash
-npm install @ai1st/core
+npm install @asmo/core
 ```
 
 ### Используя yarn
 
 ```bash
-yarn add @ai1st/core
+yarn add @asmo/core
 ```
 
 ## Опциональные зависимости
 
-AI1st работает с различными MCP-серверами для расширенных возможностей:
+ASMO работает с различными MCP-серверами для расширенных возможностей:
 
 ```bash
 # Для работы с базой данных
@@ -48,11 +48,11 @@ pnpm add @mcp/playwright
 
 ## Настройка базы данных (опционально)
 
-Для персистентности задач AI1st использует PostgreSQL:
+Для персистентности задач ASMO использует PostgreSQL:
 
 ```bash
 # Установите URL базы данных
-export DATABASE_URL="postgresql://user:password@localhost:5432/ai1st"
+export DATABASE_URL="postgresql://user:password@localhost:5432/asmo"
 ```
 
 ## Переменные окружения
@@ -61,16 +61,16 @@ export DATABASE_URL="postgresql://user:password@localhost:5432/ai1st"
 |------------|----------|--------------|
 | `DATABASE_URL` | Строка подключения PostgreSQL | - |
 | `ANTHROPIC_API_KEY` | API ключ Anthropic | - |
-| `AI1ST_YOLO_THRESHOLD` | Порог сложности для YOLO mode | 30 |
-| `AI1ST_LOG_LEVEL` | Уровень логирования | info |
+| `ASMO_YOLO_THRESHOLD` | Порог сложности для YOLO mode | 30 |
+| `ASMO_LOG_LEVEL` | Уровень логирования | info |
 
 Создайте файл `.env` в корне проекта:
 
 ```bash
-DATABASE_URL=postgresql://localhost:5432/ai1st
+DATABASE_URL=postgresql://localhost:5432/asmo
 ANTHROPIC_API_KEY=your-api-key
-AI1ST_YOLO_THRESHOLD=30
-AI1ST_LOG_LEVEL=info
+ASMO_YOLO_THRESHOLD=30
+ASMO_LOG_LEVEL=info
 ```
 
 ## Проверка установки
@@ -78,8 +78,8 @@ AI1ST_LOG_LEVEL=info
 Создайте тестовый файл:
 
 ```typescript
-// test-ai1st.ts
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+// test-asmo.ts
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 async function main() {
   const registry = new AgentRegistry()
@@ -87,7 +87,7 @@ async function main() {
 
   await engine.initialize()
 
-  console.log('✅ AI1st успешно установлен!')
+  console.log('✅ ASMO успешно установлен!')
   console.log(`Доступных workflows: ${engine.getWorkflows().length}`)
 }
 
@@ -97,10 +97,10 @@ main().catch(console.error)
 Запустите:
 
 ```bash
-npx tsx test-ai1st.ts
+npx tsx test-asmo.ts
 ```
 
 ## Следующие шаги
 
 - [Быстрый старт](./quick-start.md) — запустите первый workflow
-- [Конфигурация](./configuration.md) — настройте AI1st для вашего проекта
+- [Конфигурация](./configuration.md) — настройте ASMO для вашего проекта

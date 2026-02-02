@@ -22,7 +22,7 @@
  */
 
 import { LRUCache } from 'lru-cache'
-import { getConfigManager } from './config/config-manager.js'
+import { getConfigManager } from './config/config-manager'
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Types

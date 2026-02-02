@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Product Owner Agent - Strategy, prioritization, and roadmap planning
@@ -17,8 +16,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Filesystem MCP: Read existing roadmap documents
  */
 export class ProductOwnerAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('product-owner', [
       'strategy',
@@ -27,12 +24,6 @@ export class ProductOwnerAgent extends BaseAgent {
       'stakeholder_management',
       'business_value_assessment'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.3,
-      maxTokens: 4096
-    })
   }
 
   /**
@@ -200,8 +191,12 @@ Provide response in JSON format:
 
 Score: 0-100 (Must Have: 80-100, Should Have: 60-79, Could Have: 40-59, Won't Have: 0-39)`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 4096
+    })
+    const content = response.content
 
     // Parse JSON
     const jsonMatch = content.match(/\{[\s\S]*\}/)
@@ -254,8 +249,12 @@ Provide response in JSON format:
   "reasoning": "Detailed explanation of business value assessment..."
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 4096
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
@@ -367,8 +366,12 @@ For each impacted group, describe the impact. Provide response in JSON format:
   "overallImpact": "High" | "Medium" | "Low"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
-    const content = typeof response.content === 'string' ? response.content : JSON.stringify(response.content)
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 4096
+    })
+    const content = response.content
 
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {

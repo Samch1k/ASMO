@@ -1,0 +1,100 @@
+{
+  "id": "dev_story_workflow",
+  "name": "Dev Story Workflow (TDD)",
+  "description": "TDD-based story implementation with 100% test coverage (Amelia's way). Follows Red-Green-Refactor cycle with strict test enforcement.",
+  "trigger_condition": {
+    "keywords": [
+      "implement story",
+      "develop story",
+      "feature implementation",
+      "dev story",
+      "реализовать историю",
+      "разработать историю",
+      "история для разработки"
+    ],
+    "task_types": [
+      "development",
+      "implementation",
+      "feature"
+    ],
+    "required_skills": [
+      "coding",
+      "testing",
+      "implementation",
+      "tdd_workflow"
+    ]
+  },
+  "context_dependencies": [
+    "story",
+    "acceptance_criteria"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "developer",
+      "phase": "test_first",
+      "description": "Write failing tests (Red phase) - TDD Step 1",
+      "deliverables": [
+        "test_suite",
+        "failing_tests"
+      ],
+      "exit_criteria": "All acceptance criteria covered by failing tests",
+      "timeout": "30m"
+    },
+    {
+      "order": 2,
+      "role_id": "developer",
+      "phase": "implementation",
+      "description": "Implement code to pass tests (Green phase) - TDD Step 2",
+      "deliverables": [
+        "implementation_code",
+        "passing_tests"
+      ],
+      "exit_criteria": "All tests passing with 100% coverage",
+      "timeout": "1h",
+      "metadata": {
+        "test_enforcement": true,
+        "min_coverage": 100
+      }
+    },
+    {
+      "order": 3,
+      "role_id": "developer",
+      "phase": "refactoring",
+      "description": "Refactor while keeping tests green (Refactor phase) - TDD Step 3",
+      "deliverables": [
+        "refactored_code",
+        "clean_code"
+      ],
+      "exit_criteria": "Code clean and all tests still passing",
+      "timeout": "20m",
+      "metadata": {
+        "test_enforcement": true
+      }
+    },
+    {
+      "order": 4,
+      "role_id": "code-reviewer",
+      "phase": "review",
+      "description": "Review code quality and test coverage",
+      "deliverables": [
+        "review_feedback",
+        "approval_or_changes"
+      ],
+      "exit_criteria": "Code approved or actionable feedback provided",
+      "timeout": "15m"
+    }
+  ],
+  "estimated_time": "2h 5m",
+  "success_criteria": "Story implemented with 100% passing tests following TDD cycle",
+  "metadata": {
+    "bmad": true,
+    "principles": [
+      "test_enforcement",
+      "tdd"
+    ],
+    "inspired_by": "Amelia (Developer)",
+    "phase": "21",
+    "phase_name": "dev-story"
+  }
+}

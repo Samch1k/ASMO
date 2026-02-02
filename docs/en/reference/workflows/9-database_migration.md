@@ -151,7 +151,7 @@ Schema migrated, data integrity preserved, application functional, rollback test
 ## Usage
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)

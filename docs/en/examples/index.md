@@ -1,13 +1,13 @@
 # Examples
 
-Practical examples of using AI1st in real-world scenarios.
+Practical examples of using ASMO in real-world scenarios.
 
 ## Available Examples
 
 | Example | Description | Complexity |
 |---------|-------------|------------|
 | [Basic Workflow](./basic-workflow.md) | Run a simple bug fix workflow | Beginner |
-| [Adaptive Selection](./adaptive-selection.md) | Let AI1st choose the workflow | Intermediate |
+| [Adaptive Selection](./adaptive-selection.md) | Let ASMO choose the workflow | Intermediate |
 | [Multi-Agent Collaboration](./multi-agent.md) | Use Party Mode for complex decisions | Advanced |
 
 ## Quick Examples
@@ -15,7 +15,7 @@ Practical examples of using AI1st in real-world scenarios.
 ### Execute a Workflow
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 const registry = new AgentRegistry()
 const engine = new WorkflowEngine(registry)
@@ -55,8 +55,8 @@ console.log('Agreements:', session.state.agreements)
 Clone the repository and run examples:
 
 ```bash
-git clone https://github.com/Samch1k/ai1st-orchestration.git
-cd ai1st-orchestration
+git clone https://github.com/Samch1k/ASMO.git
+cd ASMO
 
 # Install dependencies
 pnpm install

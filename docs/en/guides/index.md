@@ -1,6 +1,6 @@
 # Guides
 
-Practical how-to guides for using AI1st effectively.
+Practical how-to guides for using ASMO effectively.
 
 ## Available Guides
 
@@ -35,6 +35,6 @@ Practical how-to guides for using AI1st effectively.
 
 ## Quick Links
 
-- **New to AI1st?** Start with [Getting Started](../getting-started/index.md)
+- **New to ASMO?** Start with [Getting Started](../getting-started/index.md)
 - **Understanding concepts?** Read [Core Concepts](../concepts/index.md)
 - **Looking for reference?** Check [API Reference](../reference/index.md)

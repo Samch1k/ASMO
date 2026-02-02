@@ -212,7 +212,7 @@ export const DEFAULT_ORCHESTRATION_CONFIG: OrchestrationConfig = {
    */
   contextCascade: {
     enabled: true,
-    outputDir: '_ai1st-output',
+    outputDir: '_asmo-output',
     autoLoad: true
   },
 

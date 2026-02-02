@@ -1,19 +1,19 @@
 import type { Skill, AgentWithRoleSkills, SkillMatch } from '../agents/types'
 import type { AgentRegistry } from './agent-registry'
 import type { ConfigLoader } from './config-loader'
-import { ChatAnthropic } from '@langchain/anthropic'
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
+import type { SessionTypeDecision } from './types'
+import { getLLMProvider, type ILLMProvider } from '../llm'
 
 /**
  * SkillMatcher - LLM-based skill extraction and agent matching
  *
- * Uses Claude 3 Haiku to analyze user prompts and extract required skills,
+ * Uses Claude to analyze user prompts and extract required skills,
  * then matches those skills to appropriate agents with confidence scoring.
  */
 export class SkillMatcher {
   private configLoader: ConfigLoader
   private agentRegistry: AgentRegistry
-  private llm: BaseChatModel
+  private llmProvider: ILLMProvider
   private _skillDependencies: Map<string, SkillDependency>
 
   // Legacy: support for direct skill catalog (backward compatibility)
@@ -36,12 +36,8 @@ export class SkillMatcher {
 
     this.agentRegistry = agentRegistry
 
-    // Use Claude 3 Haiku for fast skill extraction
-    this.llm = new ChatAnthropic({
-      model: 'claude-3-haiku-20240307',
-      temperature: 0.1, // Low temperature for consistent skill extraction
-      maxTokens: 1024
-    })
+    // Use LLM provider for skill extraction (haiku for speed)
+    this.llmProvider = getLLMProvider()
 
     // Load skill dependencies (reserved for future use)
     this._skillDependencies = this.loadSkillDependencies()
@@ -61,7 +57,7 @@ export class SkillMatcher {
    * @param task - User's task description
    * @returns Array of workflow skill IDs
    */
-  private detectWorkflowPatterns(task: string): string[] {
+  detectWorkflowPatterns(task: string): string[] {
     const taskLower = task.toLowerCase()
     const workflows: string[] = []
 
@@ -218,14 +214,14 @@ OUTPUT FORMAT (JSON only):
 ["skill_id_1", "skill_id_2", ...]`
 
     try {
-      const response = await this.llm.invoke([
-        { role: 'user', content: systemPrompt }
-      ])
+      const response = await this.llmProvider.generate(systemPrompt, {
+        model: 'haiku', // Fast model for skill extraction
+        temperature: 0.1,
+        maxTokens: 1024
+      })
 
       // Parse LLM response
-      const content = typeof response.content === 'string'
-        ? response.content
-        : JSON.stringify(response.content)
+      const content = response.content
 
       // Extract JSON array from response (handle various formats)
       const jsonMatch = content.match(/\[[\s\S]*?\]/)
@@ -234,7 +230,13 @@ OUTPUT FORMAT (JSON only):
         return workflowSkills // Return at least workflow skills
       }
 
-      const skillIds: string[] = JSON.parse(jsonMatch[0])
+      let skillIds: string[]
+      try {
+        skillIds = JSON.parse(jsonMatch[0])
+      } catch (e) {
+        console.warn('⚠️  Failed to parse skill IDs from LLM response:', e)
+        return workflowSkills // Return at least workflow skills as fallback
+      }
 
       // STEP 3: Merge LLM-extracted skills with workflow skills
       const mergedSkills = [...new Set([...skillIds, ...workflowSkills])]
@@ -570,6 +572,57 @@ OUTPUT FORMAT (JSON only):
       .filter(w => w.length > 2 && !stopWords.has(w))
 
     return [...new Set(words)] // Unique words only
+  }
+
+  /**
+   * Detect session type based on task description and complexity
+   *
+   * Phase 2 of hybrid system integration:
+   * - Determines whether to use sequential, party, or brainstorming mode
+   * - Uses existing detectWorkflowPatterns() for pattern detection
+   * - Considers task complexity for party mode activation
+   *
+   * Decision rules:
+   * 1. Brainstorming: If 'design_brainstorming_workflow' pattern detected
+   * 2. Party: If complexity >= 60 AND multiple workflow patterns detected
+   * 3. Sequential: Default mode for simple/standard tasks
+   *
+   * @param task - User's task description
+   * @param complexity - Complexity score from ComplexityAnalyzer (0-100)
+   * @returns Session type decision with configuration
+   */
+  detectSessionType(task: string, complexity: number): SessionTypeDecision {
+    // Use existing pattern detection
+    const workflows = this.detectWorkflowPatterns(task)
+
+    // Priority 1: Brainstorming workflow pattern
+    if (workflows.includes('design_brainstorming_workflow')) {
+      return {
+        type: 'brainstorming',
+        maxRounds: 4,
+        convergenceThreshold: 0.8,
+        generateADR: true,
+        reasoning: 'Brainstorm keywords detected - structured 4-round session for exploring multiple design options'
+      }
+    }
+
+    // Priority 2: Party mode for complex tasks with multiple approaches
+    if (complexity >= 60 && workflows.length > 1) {
+      return {
+        type: 'party',
+        maxRounds: 3,
+        convergenceThreshold: 0.75,
+        reasoning: `Complex task (${complexity}/100) with multiple valid approaches - collaborative discussion until consensus`
+      }
+    }
+
+    // Default: Sequential mode for standard tasks
+    return {
+      type: 'sequential',
+      reasoning: workflows.length === 0
+        ? 'Simple task - single agent execution'
+        : 'Standard workflow - sequential agent execution'
+    }
   }
 }
 

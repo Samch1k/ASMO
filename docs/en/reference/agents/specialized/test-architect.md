@@ -54,7 +54,7 @@ test-architect:
 ## Usage
 
 ```typescript
-import { TestArchitectAgent } from '@ai1st/core'
+import { TestArchitectAgent } from '@asmo/core'
 
 const tea = new TestArchitectAgent()
 

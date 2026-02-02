@@ -1,37 +1,48 @@
-# @ai1st/core
+# @asmo/core
 
-The core orchestration engine for AI1st autonomous development teams.
+The core orchestration engine for ASMO autonomous development teams.
 
 ## Features
 
-- 🤖 **Multi-Agent System**: Coordinate multiple AI agents working together
-- 🔄 **Workflow Engine**: Define and execute complex development workflows
-- 🎯 **Adaptive Workflow Selection**: Automatically choose workflows based on task complexity
-- 📊 **Complexity Analysis**: Intelligent task analysis with 5 complexity levels
-- 📋 **10 Production-Ready Workflows**: From bug fixes to architecture design (NEW!)
-- ⚙️ **Configuration System**: 3-tier configuration (defaults → file → environment)
-- 📝 **Instruction Manager**: Markdown-based agent guidance with priority system
-- ✅ **Quality Gates**: Automatic approval checkpoints and validation
-- 📈 **Metrics & Learning**: Built-in performance tracking and optimization
-- 🔄 **Parallel Execution**: Run multiple agents simultaneously
-- 🎓 **Skill-Based Matching**: 85 skills with dependency resolution
+- **Multi-Agent System**: Coordinate multiple AI agents working together
+- **Workflow Engine**: Define and execute complex development workflows
+- **Adaptive Workflow Selection**: Automatically choose workflows based on task complexity
+- **Complexity Analysis**: Intelligent task analysis with 5 complexity levels
+- **10 Production-Ready Workflows**: From bug fixes to architecture design (NEW!)
+- **Configuration System**: 3-tier configuration (defaults → file → environment)
+- **Instruction Manager**: Markdown-based agent guidance with priority system
+- **Quality Gates**: Automatic approval checkpoints and validation
+- **Metrics & Learning**: Built-in performance tracking and optimization
+- **Parallel Execution**: Run multiple agents simultaneously
+- **Skill-Based Matching**: 85 skills with dependency resolution
+
+### NEW: BMAD Integration (v3.0)
+- **Agent Personalities**: Amelia (TDD), Winston (Boring Tech), Bob (Zero Ambiguity), John (WHY-First)
+- **Menu Commands**: Bilingual shortcuts `[DS]`/`[ИС]`, `[CR]`/`[КО]`, `[CS]`/`[СИ]`
+- **Principle Validators**: Strict enforcement with blocking (test failures, ambiguity, missing business value)
+- **Personality Prompts**: Dynamic enrichment with traits and bilingual signatures
+- **Test Enforcement**: Amelia blocks completion if ANY tests fail
+- **Zero Ambiguity**: Bob detects vague terms (fast, many, user-friendly)
+- **WHY-First**: John requires business value explanation in all requirements
 
 ## Installation
 
 ```bash
-npm install @ai1st/core
+npm install @asmo/core
 # or
-pnpm add @ai1st/core
+pnpm add @asmo/core
 # or
-yarn add @ai1st/core
+yarn add @asmo/core
 ```
+
+**✅ Works standalone** - No external dependencies or configuration required! Bundled templates are included and automatically used as fallback.
 
 ## Quick Start
 
 ### Traditional Workflow Execution
 
 ```typescript
-import { WorkflowEngine, AgentRegistry } from '@ai1st/core'
+import { WorkflowEngine, AgentRegistry } from '@asmo/core'
 
 // Initialize the orchestration engine
 const registry = new AgentRegistry()
@@ -65,6 +76,97 @@ console.log('Reasoning:', selection.reasoning)
 console.log('Agents:', selection.complexity.recommendedAgents)
 ```
 
+### BMAD Menu Commands (v3.0)
+
+Execute workflows with short bilingual commands:
+
+```typescript
+// Dev Story - TDD implementation with Amelia
+await engine.execute('[DS] implement user authentication')
+// Amelia enforces: Red → Green → Refactor
+// Blocks if test_results.failed > 0
+
+// Create Story - Zero ambiguity with Bob
+await engine.execute('[CS] add email notifications')
+// Bob detects: "add" is ambiguous
+// ❌ Blocked: Use specific terms and numbers
+
+// Code Review - Comprehensive review
+await engine.execute('[CR] review payment integration')
+// 3-stage review: code-reviewer → adversarial-reviewer → security-specialist
+
+// Russian commands also supported
+await engine.execute('[ИС] реализовать авторизацию')  // Dev Story
+await engine.execute('[СИ] добавить уведомления')      // Create Story
+await engine.execute('[КО] проверить код оплаты')       // Code Review
+```
+
+**Menu Commands Reference:**
+
+| EN | RU | Workflow | BMAD Agent | Enforced Principle |
+|----|----|----------|------------|--------------------|
+| `[DS]` | `[ИС]` | Dev Story | Amelia | Test Enforcement (100% pass) |
+| `[CS]` | `[СИ]` | Create Story | Bob + John | Zero Ambiguity + WHY First |
+| `[CR]` | `[КО]` | Code Review | Multiple | Quality Gates |
+| `[IR]` | `[ГР]` | Implementation Readiness | Bob | Zero Ambiguity |
+
+### BMAD Principles in Action
+
+#### Test Enforcement (Amelia)
+
+```typescript
+// Developer step returns test results
+const result = await engine.execute('[DS] implement login')
+
+// If tests fail, workflow is BLOCKED:
+// 🚫 Amelia says: 2 test(s) failing
+// I will not mark this complete until 100% of tests pass
+//
+// Required format in step output:
+context: {
+  test_results: {
+    passed: 8,
+    failed: 2,  // ❌ Amelia blocks here
+    total: 10
+  }
+}
+```
+
+#### Zero Ambiguity (Bob)
+
+```typescript
+// Vague requirement
+await engine.execute('[CS] improve performance')
+
+// Bob detects ambiguity:
+// 🚫 Bob says: Ambiguous term "improve" - be specific
+// 🚫 Bob says: Ambiguous term "performance" - what metric?
+//
+// Fixed version:
+await engine.execute(
+  '[CS] reduce API response time from 500ms to <200ms (p95)'
+)
+// ✅ Bob approves - specific and measurable
+```
+
+#### WHY First (John)
+
+```typescript
+// Missing business value
+await engine.execute('[CS] add dark mode')
+
+// John blocks:
+// 🚫 John says: Missing "WHY" - explain business value
+//
+// Fixed version:
+await engine.execute(
+  '[CS] add dark mode toggle ' +
+  'So that night-shift users can use app without eye strain, ' +
+  'increasing session duration by 25%'
+)
+// ✅ John approves - clear business value
+```
+
 ### Complexity Levels
 
 The system analyzes tasks and assigns complexity levels:
@@ -74,6 +176,66 @@ The system analyzes tasks and assigns complexity levels:
 - **Medium** (41-60): Standard features → Feature development workflow
 - **Complex** (61-80): Refactoring, security → Quality assurance workflow
 - **Enterprise** (81-100): Architecture, migrations → Full QA with extensive testing
+
+## Configuration
+
+### Config Fallback Chain
+
+@asmo/core uses an intelligent fallback system to locate configuration files. It checks locations in this order:
+
+1. **`.cursor/config`** - Claude Code environment (if present)
+2. **`~/.asmo/config`** - User home directory configuration
+3. **Bundled templates** - Included in npm package (always available)
+
+This means @asmo/core works out of the box without any configuration!
+
+### Configuration Paths
+
+The following configuration files use the fallback chain:
+
+**Workflows:**
+```
+.cursor/config/orchestration/workflows/   (Claude Code)
+~/.asmo/config/workflows/                 (User home)
+node_modules/@asmo/core/templates/workflows/  (Bundled in npm package)
+```
+
+**Roles and Skills:**
+```
+.cursor/config/roles/                     (Claude Code)
+~/.asmo/config/roles/                     (User home)
+node_modules/@asmo/core/templates/roles/  (Bundled in npm package)
+
+.cursor/config/skills/                    (Claude Code)
+~/.asmo/config/skills/                    (User home)
+node_modules/@asmo/core/templates/skills/ (Bundled in npm package)
+```
+
+### Custom Configuration
+
+To use custom configuration, create `~/.asmo/config/` directory:
+
+```bash
+mkdir -p ~/.asmo/config/workflows
+mkdir -p ~/.asmo/config/roles
+mkdir -p ~/.asmo/config/skills
+
+# Copy bundled templates as starting point
+cp -r node_modules/@asmo/core/templates/* ~/.asmo/config/
+```
+
+Then customize the configuration files for your needs.
+
+### Using Bundled Templates
+
+By default, @asmo/core uses the bundled templates included in the npm package. These templates provide:
+
+- **20+ Production Workflows** - Bug fixes, features, refactoring, security audits, etc.
+- **26 Specialized Agents** - Architect, Developer, Tester, Security Specialist, etc.
+- **85 Skills** - With dependency resolution and complexity analysis
+- **Instructions** - Markdown-based guidance for each agent role
+
+No setup required - just `npm install @asmo/core` and start using!
 
 ## API Reference
 
@@ -195,7 +357,7 @@ export default {
 
 ## Available Workflows
 
-AI1st includes **10 production-ready workflows**:
+ASMO includes **10 production-ready workflows**:
 
 1. **Quick Flow** - Fast bug fixes and simple tasks
 2. **Feature Development** - Complete feature implementation with gates
@@ -220,4 +382,4 @@ Full documentation site coming in Phase 3!
 
 ## License
 
-MIT © 2026 AI1st Contributors
+MIT © 2026 ASMO Contributors

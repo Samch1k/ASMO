@@ -14,7 +14,7 @@ Document Sharding автоматически разбивает большие m
 ## Базовое использование
 
 ```typescript
-import { DocumentSharder } from '@ai1st/core'
+import { DocumentSharder } from '@asmo/core'
 
 const sharder = new DocumentSharder({
   maxTokensPerFile: 10000,
@@ -138,7 +138,7 @@ await fs.writeFile('/docs/PRD-reassembled.md', reassembled)
 Document Sharding работает с Context Cascade для загрузки конкретных секций:
 
 ```typescript
-import { ContextCascade, DocumentRegistry, DocumentSharder } from '@ai1st/core'
+import { ContextCascade, DocumentRegistry, DocumentSharder } from '@asmo/core'
 
 const registry = new DocumentRegistry()
 const sharder = new DocumentSharder()

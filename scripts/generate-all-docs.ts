@@ -9,7 +9,7 @@ import { generateWorkflowDocs } from './generate-workflow-docs'
 import { generateSkillDocs } from './generate-skill-docs'
 
 async function main() {
-  console.log('📚 Generating AI1st Documentation...\n')
+  console.log('📚 Generating ASMO Documentation...\n')
 
   try {
     // Generate in parallel

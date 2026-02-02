@@ -36,7 +36,7 @@ Adversarial Review addresses these by requiring reviewers to actively find probl
 ## Usage
 
 ```typescript
-import { AdversarialReviewSession, AdversarialReviewerAgent } from '@ai1st/core'
+import { AdversarialReviewSession, AdversarialReviewerAgent } from '@asmo/core'
 
 // Create session and reviewer
 const session = new AdversarialReviewSession({

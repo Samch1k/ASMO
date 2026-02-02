@@ -56,7 +56,7 @@ analyst:
 ## Usage
 
 ```typescript
-import { AnalystAgent } from '@ai1st/core'
+import { AnalystAgent } from '@asmo/core'
 
 const analyst = new AnalystAgent()
 

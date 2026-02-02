@@ -14,7 +14,7 @@ Large documents (PRDs, architecture specs, etc.) often exceed AI context windows
 ## Basic Usage
 
 ```typescript
-import { DocumentSharder } from '@ai1st/core'
+import { DocumentSharder } from '@asmo/core'
 
 const sharder = new DocumentSharder({
   maxTokensPerFile: 10000,
@@ -156,7 +156,7 @@ next: 03-user-stories.md
 Document Sharding works with Context Cascade to load specific sections:
 
 ```typescript
-import { ContextCascade, DocumentRegistry, DocumentSharder } from '@ai1st/core'
+import { ContextCascade, DocumentRegistry, DocumentSharder } from '@asmo/core'
 
 const registry = new DocumentRegistry()
 const sharder = new DocumentSharder()
@@ -182,16 +182,16 @@ if (stats.needsSharding) {
 
 ```bash
 # Check if sharding needed
-npx ai1st shard --check docs/PRD.md
+npx asmo shard --check docs/PRD.md
 
 # Shard a document
-npx ai1st shard docs/PRD.md
+npx asmo shard docs/PRD.md
 
 # Shard with custom settings
-npx ai1st shard docs/PRD.md --level 3 --max-tokens 5000
+npx asmo shard docs/PRD.md --level 3 --max-tokens 5000
 
 # Reassemble
-npx ai1st shard --reassemble docs/PRD/
+npx asmo shard --reassemble docs/PRD/
 ```
 
 ## Best Practices

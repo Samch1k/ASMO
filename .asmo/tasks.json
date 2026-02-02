@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "tasks": {
+    "df3bf668-4654-4825-b084-68dbdb3d057e": {
+      "id": "df3bf668-4654-4825-b084-68dbdb3d057e",
+      "title": "Test task",
+      "description": "Testing JSON persistence",
+      "status": "created",
+      "priority": "high",
+      "createdAt": "2026-02-01T18:23:53.752Z",
+      "updatedAt": "2026-02-01T18:23:53.752Z",
+      "metadata": {},
+      "tags": []
+    }
+  },
+  "executions": {},
+  "comments": {},
+  "nextExecutionId": 1,
+  "nextCommentId": 1
+}

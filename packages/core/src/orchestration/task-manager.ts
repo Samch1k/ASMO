@@ -25,7 +25,11 @@ import {
   type CreateTaskInput,
   type TaskQueryOptions
 } from './task-persister'
+import { JsonTaskPersister, getJsonTaskPersister } from './json-task-persister'
 import type { ComplexityScore } from './types'
+
+// Persister interface (common methods between TaskPersister and JsonTaskPersister)
+type IPersister = TaskPersister | JsonTaskPersister
 
 // =============================================================================
 // TYPES
@@ -71,12 +75,21 @@ export interface TaskTreeNode {
  * TaskManager - High-level task operations
  */
 export class TaskManager {
-  private persister: TaskPersister
+  private persister: IPersister
   private eventListeners: Map<TaskEvent['type'], Array<(event: TaskEvent) => void>> = new Map()
   private initialized = false
+  private useJson: boolean
 
   constructor(connectionString?: string) {
-    this.persister = getTaskPersister(connectionString)
+    // Use JSON persister when no DATABASE_URL is provided
+    const dbUrl = connectionString || process.env.DATABASE_URL
+    this.useJson = !dbUrl
+
+    if (this.useJson) {
+      this.persister = getJsonTaskPersister()
+    } else {
+      this.persister = getTaskPersister(connectionString)
+    }
   }
 
   // ===========================================================================
@@ -87,12 +100,14 @@ export class TaskManager {
    * Initialize task manager
    */
   async initialize(): Promise<void> {
-    const connected = await this.persister.isConnected()
-    if (!connected) {
-      console.warn('⚠️  [TaskManager] Database not connected - operating in memory-only mode')
+    if (!this.useJson) {
+      const connected = await this.persister.isConnected()
+      if (!connected) {
+        console.warn('⚠️  [TaskManager] Database not connected - operating in memory-only mode')
+      }
     }
     this.initialized = true
-    console.log('✅ [TaskManager] Initialized')
+    console.log(`✅ [TaskManager] Initialized (${this.useJson ? 'JSON storage' : 'PostgreSQL'})`)
   }
 
   /**

@@ -1,18 +1,26 @@
 {
-  "name": "@ai1st/cli",
+  "name": "@asmo/cli",
   "version": "1.0.0",
-  "description": "AI1ST Framework CLI - AI-First Software Development",
+  "description": "ASMO Framework CLI - AI System for Multiagent Orchestration",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "ai1st": "./bin/ai1st.js"
+    "asmo": "./bin/asmo.js"
   },
+  "files": [
+    "dist",
+    "bin",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
-    "@ai1st/core": "workspace:*",
+    "@asmo/core": "workspace:*",
     "commander": "^12.0.0"
   },
   "devDependencies": {
@@ -22,7 +30,15 @@
   "keywords": ["ai", "cli", "orchestration", "bmad"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Samch1k/ai1st-orchestration"
+    "url": "https://github.com/Samch1k/ASMO",
+    "directory": "packages/cli"
   },
-  "license": "MIT"
+  "homepage": "https://github.com/Samch1k/ASMO#readme",
+  "bugs": {
+    "url": "https://github.com/Samch1k/ASMO/issues"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }

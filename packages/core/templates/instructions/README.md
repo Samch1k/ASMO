@@ -4,7 +4,7 @@ This directory contains markdown-based instruction files that guide agent behavi
 
 ## Overview
 
-AI1st uses a **Priority 2 feature** called the **Instruction Manager** that loads context-specific instructions for agents based on:
+ASMO uses a **Priority 2 feature** called the **Instruction Manager** that loads context-specific instructions for agents based on:
 - Agent role (architect, developer, tester, etc.)
 - Current workflow phase (design, implementation, testing, etc.)
 
@@ -46,9 +46,9 @@ instructions/
 The **InstructionManager** (`packages/core/src/orchestration/instruction-manager.ts`) automatically loads instructions based on the current context:
 
 ```typescript
-import { InstructionManager } from '@ai1st/core'
+import { InstructionManager } from '@asmo/core'
 
-const instructionManager = new InstructionManager('.ai1st/instructions')
+const instructionManager = new InstructionManager('.asmo/instructions')
 
 // Load system prompt for a specific agent
 const architectInstructions = await instructionManager.getSystemPrompt('architect')
@@ -80,10 +80,10 @@ await agent.execute({
 
 ### 1. For Your Project
 
-Copy this template directory to your project's `.ai1st/instructions/` folder:
+Copy this template directory to your project's `.asmo/instructions/` folder:
 
 ```bash
-cp -r packages/core/templates/instructions/ .ai1st/instructions/
+cp -r packages/core/templates/instructions/ .asmo/instructions/
 ```
 
 ### 2. Customize Technology Stack
@@ -137,8 +137,8 @@ Create additional phase files for your workflow phases:
 
 ```bash
 # Example: Add testing phase for tester agent
-mkdir -p .ai1st/instructions/tester/phases
-touch .ai1st/instructions/tester/phases/testing.md
+mkdir -p .asmo/instructions/tester/phases
+touch .asmo/instructions/tester/phases/testing.md
 ```
 
 ### 6. Create Project-Specific Agents
@@ -147,8 +147,8 @@ If you have project-specific agents (from `project-roles.json`), create instruct
 
 ```bash
 # Example: Product catalog specialist agent
-mkdir -p .ai1st/instructions/product-catalog-specialist
-touch .ai1st/instructions/product-catalog-specialist/system-prompt.md
+mkdir -p .asmo/instructions/product-catalog-specialist
+touch .asmo/instructions/product-catalog-specialist/system-prompt.md
 ```
 
 ## Instruction File Format
@@ -344,7 +344,7 @@ const query = await db
 **Problem**: Agent not following instruction file guidance
 
 **Solutions**:
-1. Check file path: Instructions must be in `.ai1st/instructions/`
+1. Check file path: Instructions must be in `.asmo/instructions/`
 2. Verify file naming: Must match agent ID exactly
 3. Check InstructionManager initialization in config
 4. Review agent logs for instruction loading errors

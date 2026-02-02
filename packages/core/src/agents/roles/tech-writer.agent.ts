@@ -1,6 +1,5 @@
 import { BaseAgent } from "../base-agent"
 import { AgentState } from "../types"
-import { ChatAnthropic } from "@langchain/anthropic"
 
 /**
  * Tech Writer Agent - Documentation Specialist
@@ -20,8 +19,6 @@ import { ChatAnthropic } from "@langchain/anthropic"
  * - Context7 MCP: Research documentation best practices
  */
 export class TechWriterAgent extends BaseAgent {
-  private llm: ChatAnthropic
-
   constructor() {
     super('tech-writer', [
       'documentation',
@@ -32,12 +29,6 @@ export class TechWriterAgent extends BaseAgent {
       'release_notes',
       'architecture_docs'
     ])
-
-    this.llm = new ChatAnthropic({
-      modelName: "claude-sonnet-4-20250514",
-      temperature: 0.3,
-      maxTokens: 8192
-    })
   }
 
   /**
@@ -224,7 +215,11 @@ Return as JSON:
   "content": "Full markdown documentation"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 8192
+    })
     return this.parseDocumentationResponse(response.content)
   }
 
@@ -256,7 +251,11 @@ Return as JSON:
   "content": "Full markdown documentation"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 8192
+    })
     return this.parseDocumentationResponse(response.content)
   }
 
@@ -290,7 +289,11 @@ Return as JSON:
   "content": "Full markdown README"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 8192
+    })
     return this.parseDocumentationResponse(response.content)
   }
 
@@ -325,7 +328,11 @@ Return as JSON:
   "content": "Full markdown documentation"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 8192
+    })
     return this.parseDocumentationResponse(response.content)
   }
 
@@ -358,7 +365,11 @@ Return as JSON:
   "content": "Full markdown release notes"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 8192
+    })
     return this.parseDocumentationResponse(response.content)
   }
 
@@ -393,7 +404,11 @@ Return as JSON:
   "content": "Full markdown tutorial"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 8192
+    })
     return this.parseDocumentationResponse(response.content)
   }
 
@@ -428,7 +443,11 @@ Return as JSON:
   "content": "Full markdown documentation"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 8192
+    })
     return this.parseDocumentationResponse(response.content)
   }
 
@@ -455,7 +474,11 @@ Return the improved documentation in JSON format:
   "content": "Improved markdown documentation"
 }`
 
-    const response = await this.llm.invoke([{ role: 'user', content: prompt }])
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.3,
+      maxTokens: 8192
+    })
     return this.parseDocumentationResponse(response.content)
   }
 

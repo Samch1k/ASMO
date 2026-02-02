@@ -1,8 +1,8 @@
-# AI1st Core Library Tests
+# ASMO Core Library Tests
 
 ## Current Test Coverage
 
-This directory contains tests for the `@ai1st/core` library. Currently, we have **smoke tests** that verify basic functionality and API surface area.
+This directory contains tests for the `@asmo/core` library. Currently, we have **smoke tests** that verify basic functionality and API surface area.
 
 ### What's Tested
 
