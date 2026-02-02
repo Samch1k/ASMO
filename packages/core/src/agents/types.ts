@@ -1,4 +1,4 @@
-import { BaseMessage } from "@langchain/core/messages"
+import type { Message } from "../llm"
 
 /**
  * Context object shared between agents
@@ -10,18 +10,18 @@ export interface AgentContext extends Record<string, any> {
 }
 
 /**
- * Agent state shared across all nodes in the LangGraph workflow
+ * Agent state shared across all nodes in the ASMO workflow
  * This state is passed between agents and accumulates context
  */
 export interface AgentState {
   /** Messages exchanged in the conversation */
-  messages: BaseMessage[]
+  messages: Message[]
 
   /** The main task to be accomplished */
   task: string
 
   /** Type of task being performed */
-  taskType: 'bug_fix' | 'feature' | 'optimization' | 'architecture'
+  taskType: 'bug_fix' | 'feature' | 'optimization' | 'architecture' | 'deployment' | 'testing' | 'documentation' | 'review'
 
   /** Shared context between agents (includes optional instructions field) */
   context: AgentContext
@@ -56,6 +56,15 @@ export interface AgentState {
 
   /** Metadata for tracking workflow state */
   metadata?: Record<string, any>
+
+  /** Artifacts produced during execution */
+  artifacts?: Artifact[]
+
+  /** Deliverables for the current workflow */
+  deliverables?: string[]
+
+  /** Current workflow being executed */
+  workflow?: any
 }
 
 /**
@@ -64,24 +73,33 @@ export interface AgentState {
 export interface AgentResult {
   /** Unique identifier of the agent */
   agentId: string
-  
+
+  /** Agent name (optional) */
+  agentName?: string
+
   /** Execution status */
   status: 'success' | 'failed' | 'needs_handoff' | 'needs_approval'
-  
+
   /** Output produced by the agent */
   output: any
-  
+
+  /** Result data (alias for output, for compatibility) */
+  result?: any
+
   /** Artifacts created by the agent (code, ADRs, diagrams, etc.) */
   artifacts: Artifact[]
-  
+
   /** Next agent to handoff to (if status is 'needs_handoff') */
   handoffTo?: string
-  
+
   /** Confidence score (0-1) */
   confidence: number
-  
+
   /** Timestamp when agent executed */
-  timestamp: Date
+  timestamp: Date | string
+
+  /** Error message if status is 'failed' */
+  error?: string
 }
 
 /**
@@ -155,6 +173,51 @@ export interface ActivationRules {
 }
 
 /**
+ * ✨ BMAD Phase 2: Agent personality definition
+ */
+export interface AgentPersonality {
+  /** BMAD persona name (e.g., Winston, Amelia, Bob, John) */
+  persona_name?: string
+
+  /** Personality traits */
+  traits: string[]
+
+  /** Communication style description */
+  style: string
+
+  /** Catchphrase in English */
+  catchphrase_en: string
+
+  /** Catchphrase in Russian */
+  catchphrase_ru: string
+
+  /** Communication preferences */
+  communication: {
+    formality: 'low' | 'medium' | 'medium-high' | 'high'
+    emoji_usage: 'none' | 'minimal' | 'moderate' | 'frequent' | 'rare'
+    signature_en: string
+    signature_ru: string
+  }
+}
+
+/**
+ * ✨ BMAD Phase 2: Agent principle definition
+ */
+export interface AgentPrinciple {
+  /** Principle name (e.g., 'test_enforcement', 'zero_ambiguity') */
+  name: string
+
+  /** Description in English */
+  description_en: string
+
+  /** Description in Russian */
+  description_ru: string
+
+  /** Whether this principle blocks execution if violated */
+  strict: boolean
+}
+
+/**
  * Role definition
  */
 export interface Role {
@@ -205,6 +268,12 @@ export interface Role {
 
   /** TypeScript class name implementing this role (must end with 'Agent') */
   agent_class: string
+
+  /** ✨ BMAD Phase 2: Agent personality (optional) */
+  personality?: AgentPersonality
+
+  /** ✨ BMAD Phase 2: Agent principles (optional) */
+  principles?: AgentPrinciple[]
 
   /** Additional role-specific metadata */
   metadata?: {

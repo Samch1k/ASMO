@@ -32,6 +32,17 @@ import { getInstructionManager, type InstructionManager } from './instruction-ma
 // ✨ BMAD Phase 1.5: Adaptive workflow selection
 import { ComplexityAnalyzer } from './complexity-analyzer'
 import { WorkflowSelector } from './workflow-selector'
+// ✨ BMAD Phase 1.1: Menu-driven commands
+import { MenuCommandRouter } from './menu-command-router'
+// ✨ BMAD Phase 1.2: Test enforcement validator
+import { TestEnforcementValidator } from './validators/test-enforcement-validator'
+// ✨ BMAD Phase 2.2: Principle validators (Bob, Winston, John)
+import {
+  ZeroAmbiguityValidator,
+  BoringTechnologyValidator,
+  WhyFirstValidator,
+  type ValidationResult
+} from './validators/principle-validators'
 import type {
   Workflow,
   WorkflowStep,
@@ -43,6 +54,7 @@ import type {
 } from './types'
 import fs from 'fs/promises'
 import path from 'path'
+import os from 'os'
 
 /**
  * WorkflowEngine - Executes multi-agent workflows
@@ -77,6 +89,16 @@ export class WorkflowEngine {
   // ✨ BMAD Phase 1.5: Adaptive workflow selection
   private complexityAnalyzer: ComplexityAnalyzer
   private workflowSelector: WorkflowSelector
+  // ✨ BMAD Phase 1.1: Menu-driven commands
+  private menuRouter!: MenuCommandRouter  // Initialized after workflows loaded
+  // ✨ BMAD Phase 1.2: Test enforcement validator
+  private testEnforcementValidator: TestEnforcementValidator
+  // ✨ BMAD Phase 2.2: Principle validators (Bob, Winston, John)
+  private principleValidators: {
+    zeroAmbiguity: ZeroAmbiguityValidator
+    boringTechnology: BoringTechnologyValidator
+    whyFirst: WhyFirstValidator
+  }
 
   constructor(
     private agentRegistry: AgentRegistry,
@@ -138,12 +160,27 @@ export class WorkflowEngine {
     this.complexityAnalyzer = new ComplexityAnalyzer(complexityConfig)
     this.workflowSelector = new WorkflowSelector(workflowSelectorConfig)
 
-    console.log('✨ WorkflowEngine: Phase tracking, approval checkpoints, retry logic, BMad metrics, and adaptive selection enabled')
+    // ✨ BMAD Phase 1.2: Initialize test enforcement validator (Amelia's Principle)
+    this.testEnforcementValidator = new TestEnforcementValidator()
+
+    // ✨ BMAD Phase 2.2: Initialize principle validators (Bob, Winston, John)
+    this.principleValidators = {
+      zeroAmbiguity: new ZeroAmbiguityValidator(),
+      boringTechnology: new BoringTechnologyValidator(),
+      whyFirst: new WhyFirstValidator()
+    }
+
+    console.log('✨ WorkflowEngine: Phase tracking, approval checkpoints, retry logic, BMad metrics, test enforcement (Amelia), principle validators (Bob, Winston, John), and adaptive selection enabled')
   }
 
   /**
    * Initialize workflow engine by loading workflows from config
    * Supports both phase-based structure and legacy workflows.json
+   *
+   * Fallback chain for workflows:
+   * 1. .cursor/config/orchestration/workflows (Claude Code)
+   * 2. ~/.asmo/config/workflows (user home)
+   * 3. packages/core/templates/workflows (bundled, always available)
    */
   async initialize(configPath?: string): Promise<void> {
     try {
@@ -165,66 +202,115 @@ export class WorkflowEngine {
         }
       }
 
-      // Try phase-based structure first
-      const workflowsDir = path.join(process.cwd(), '.cursor/config/orchestration/workflows')
+      // Define fallback chain for phase-based workflows
+      const workflowPaths = [
+        path.join(process.cwd(), '.cursor/config/orchestration/workflows'),  // Claude Code
+        path.join(os.homedir(), '.asmo/config/workflows'),                   // User home
+        path.join(process.cwd(), 'packages/core/templates/workflows'),       // Monorepo dev
+        path.join(__dirname, '../templates/workflows'),                       // Bundled ESM (dist → templates)
+        path.join(__dirname, '../../templates/workflows')                     // Bundled legacy
+      ]
 
-      if (await this.directoryExists(workflowsDir)) {
-        console.log('📂 Loading workflows from phase-based structure...')
-        const workflows = await this.loadPhaseBasedWorkflows(workflowsDir)
+      // Try each path in the fallback chain
+      let loadedFrom: string | null = null
+      for (const workflowsDir of workflowPaths) {
+        if (await this.directoryExists(workflowsDir)) {
+          console.log(`📂 Loading workflows from: ${workflowsDir}`)
+          const workflows = await this.loadPhaseBasedWorkflows(workflowsDir)
 
-        this.workflows.clear()
-        for (const workflow of workflows) {
-          this.workflows.set(workflow.id, workflow)
+          this.workflows.clear()
+          for (const workflow of workflows) {
+            this.workflows.set(workflow.id, workflow)
+          }
+
+          loadedFrom = workflowsDir
+
+          // ✨ BMAD Phase 1.5: Register workflows with complexity analyzer and selector
+          const workflowsToRegister = Array.from(this.workflows.values())
+          this.complexityAnalyzer.registerWorkflows(workflowsToRegister)
+          this.workflowSelector.registerWorkflows(workflowsToRegister)
+
+          console.log(`✅ WorkflowEngine initialized: ${this.workflows.size} workflows loaded from phase-based structure`)
+          console.log(`🎯 Adaptive selection: enabled`)
+
+          // ✨ Phase 2: Initialize team manager
+          await this.teamManager.initialize()
+
+          // ✨ BMAD Phase 1.1: Initialize MenuCommandRouter after workflows loaded
+          this.menuRouter = new MenuCommandRouter(this)
+          console.log('✨ MenuCommandRouter: Bilingual command support enabled ([IR]/[ГР], [DS]/[ИС], etc.)')
+
+          // Set initialized flag AFTER all components are ready
+          this.initialized = true
+
+          break  // Success - stop trying other paths
         }
+      }
 
-        this.initialized = true
+      // If phase-based loading failed, try legacy workflows.json fallback
+      if (!loadedFrom) {
+        console.log('📂 Phase-based structure not found in any location, trying legacy workflows.json...')
 
-        // ✨ BMAD Phase 1.5: Register workflows with complexity analyzer and selector
-        const workflowsToRegister = Array.from(this.workflows.values())
-        this.complexityAnalyzer.registerWorkflows(workflowsToRegister)
-        this.workflowSelector.registerWorkflows(workflowsToRegister)
+        const legacyPaths = [
+          configPath,  // User-specified path (if provided)
+          path.join(process.cwd(), '.cursor/config/orchestration/workflows.json'),
+          path.join(os.homedir(), '.asmo/config/workflows.json')
+        ].filter(Boolean) as string[]
 
-        console.log(`✅ WorkflowEngine initialized: ${this.workflows.size} workflows loaded from phase-based structure`)
-        console.log(`🎯 Adaptive selection: enabled`)
+        for (const workflowPath of legacyPaths) {
+          try {
+            const data = await fs.readFile(workflowPath, 'utf-8')
+            const config: WorkflowConfig = JSON.parse(data)
 
-        // ✨ Phase 2: Initialize team manager
-        await this.teamManager.initialize()
-      } else {
-        // Fallback to legacy workflows.json
-        console.log('📂 Phase-based structure not found, loading from legacy workflows.json...')
-        const workflowPath = configPath || path.join(
-          process.cwd(),
-          '.cursor/config/orchestration/workflows.json'
+            // Load workflows
+            this.workflows.clear()
+            for (const workflow of config.workflows) {
+              this.workflows.set(workflow.id, workflow)
+            }
+
+            // Load global settings (legacy workflows.json overrides take precedence over config file)
+            if (config.global_settings) {
+              this.globalSettings = { ...this.globalSettings, ...config.global_settings }
+              console.log('💡 Note: Using global_settings from workflows.json (overrides orchestration.config.ts)')
+            }
+
+            loadedFrom = workflowPath
+
+            // ✨ BMAD Phase 1.5: Register workflows with complexity analyzer and selector
+            const workflowsToRegister = Array.from(this.workflows.values())
+            this.complexityAnalyzer.registerWorkflows(workflowsToRegister)
+            this.workflowSelector.registerWorkflows(workflowsToRegister)
+
+            console.log(`✅ WorkflowEngine initialized: ${this.workflows.size} workflows loaded from legacy workflows.json`)
+            console.log(`   Source: ${workflowPath}`)
+            console.log(`🎯 Adaptive selection: enabled`)
+            console.log(`💡 Consider migrating to phase-based structure`)
+
+            // ✨ Phase 2: Initialize team manager
+            await this.teamManager.initialize()
+
+            // ✨ BMAD Phase 1.1: Initialize MenuCommandRouter after workflows loaded
+            this.menuRouter = new MenuCommandRouter(this)
+            console.log('✨ MenuCommandRouter: Bilingual command support enabled ([IR]/[ГР], [DS]/[ИС], etc.)')
+
+            // Set initialized flag AFTER all components are ready
+            this.initialized = true
+
+            break  // Success - stop trying other paths
+          } catch {
+            // Continue to next path if this one fails
+            continue
+          }
+        }
+      }
+
+      // If still not loaded, throw error
+      if (!loadedFrom) {
+        throw new Error(
+          'Failed to load workflows from any location. Tried:\n' +
+          workflowPaths.map(p => `  - ${p}`).join('\n') + '\n' +
+          'Ensure workflows exist in one of these locations.'
         )
-
-        const data = await fs.readFile(workflowPath, 'utf-8')
-        const config: WorkflowConfig = JSON.parse(data)
-
-        // Load workflows
-        this.workflows.clear()
-        for (const workflow of config.workflows) {
-          this.workflows.set(workflow.id, workflow)
-        }
-
-        // Load global settings (legacy workflows.json overrides take precedence over config file)
-        if (config.global_settings) {
-          this.globalSettings = { ...this.globalSettings, ...config.global_settings }
-          console.log('💡 Note: Using global_settings from workflows.json (overrides orchestration.config.ts)')
-        }
-
-        this.initialized = true
-
-        // ✨ BMAD Phase 1.5: Register workflows with complexity analyzer and selector
-        const workflowsToRegister = Array.from(this.workflows.values())
-        this.complexityAnalyzer.registerWorkflows(workflowsToRegister)
-        this.workflowSelector.registerWorkflows(workflowsToRegister)
-
-        console.log(`✅ WorkflowEngine initialized: ${this.workflows.size} workflows loaded from legacy workflows.json`)
-        console.log(`🎯 Adaptive selection: enabled`)
-        console.log(`💡 Consider migrating to phase-based structure with: tsx .cursor/scripts/migrate-workflows-to-phases.ts`)
-
-        // ✨ Phase 2: Initialize team manager
-        await this.teamManager.initialize()
       }
     } catch (error) {
       console.error('❌ Failed to initialize WorkflowEngine:', error)
@@ -409,9 +495,57 @@ export class WorkflowEngine {
     initialState?: Partial<AgentState>,
     context?: ProjectContext
   ): Promise<WorkflowExecutionResult> {
-    if (!this.initialized) {
+    if (!this.initialized || !this.menuRouter) {
       throw new Error('WorkflowEngine not initialized. Call initialize() first.')
     }
+
+    // ✨ BMAD Phase 1.1: Try menu command detection FIRST
+    const menuMatch = await this.menuRouter.detectAndRoute(workflowIdOrDescription)
+
+    if (menuMatch) {
+      // Menu command detected!
+      if (!menuMatch.workflow) {
+        throw new Error(
+          `Menu command [${menuMatch.command.code}] maps to workflow "${menuMatch.command.workflowId}" which doesn't exist yet.\n` +
+          `Status: ${menuMatch.command.status}\n` +
+          `This workflow needs to be created before using this command.`
+        )
+      }
+
+      console.log(`\n📋 ═══════════════════════════════════════════════════`)
+      console.log(`📋 MENU COMMAND: [${menuMatch.command.code}]`)
+      console.log(`📋 Name (EN): ${menuMatch.command.name_en}`)
+      console.log(`📋 Name (RU): ${menuMatch.command.name_ru}`)
+      console.log(`📋 Workflow: ${menuMatch.workflow.name}`)
+      if (menuMatch.taskContext) {
+        console.log(`📋 Task Context: ${menuMatch.taskContext}`)
+      }
+      console.log(`📋 ═══════════════════════════════════════════════════\n`)
+
+      // Validate required context
+      if (menuMatch.command.requiredContext && initialState?.context) {
+        const missingContext = this.menuRouter.validateRequiredContext(
+          menuMatch.command,
+          initialState.context
+        )
+        if (missingContext.length > 0) {
+          throw new Error(
+            `Menu command [${menuMatch.command.code}] requires context: ${missingContext.join(', ')}`
+          )
+        }
+      }
+
+      // Enrich initial state with task context from command
+      const enrichedState = {
+        ...initialState,
+        task: menuMatch.taskContext || initialState?.task || menuMatch.command.name_en
+      }
+
+      // Execute the workflow
+      return this.executeWorkflow(menuMatch.workflow, enrichedState as AgentState)
+    }
+
+    // ✨ BMAD: No menu command detected, fallback to existing logic
 
     // Determine if input is workflow ID or task description
     const isWorkflowId = this.workflows.has(workflowIdOrDescription)
@@ -710,7 +844,10 @@ export class WorkflowEngine {
       // Select best agent (by confidence)
       const agent = agents.sort((a, b) => b.confidence - a.confidence)[0]
 
-      console.log(`   Starting: ${agent.role.name} (${step.phase})...`)
+      // Use BMAD persona name if available, otherwise role name
+      const displayName = agent.role.personality?.persona_name || agent.role.name
+
+      console.log(`   Starting: ${displayName} (${step.phase})...`)
 
       // ✨ Phase 3: Display checklist before step execution
       if (this.currentWorkflow && this.checklistManager.hasChecklist(this.currentWorkflow.id)) {
@@ -745,7 +882,7 @@ export class WorkflowEngine {
       )
 
       const duration = (Date.now() - startTime) / 1000
-      console.log(`   ✓ ${agent.role.name} completed in ${duration.toFixed(1)}s`)
+      console.log(`   ✓ ${displayName} completed in ${duration.toFixed(1)}s`)
 
       // ✨ Phase 3: Validate checklist completion criteria
       if (this.currentWorkflow && this.checklistManager.hasChecklist(this.currentWorkflow.id)) {
@@ -773,6 +910,36 @@ export class WorkflowEngine {
         output
       }
 
+      // ✨ BMAD Phase 1.2: Validate test enforcement (Amelia's Principle) - STRICT BLOCKING
+      const testValidation = await this.testEnforcementValidator.validateTestPassage(
+        state,
+        step,
+        stepResult
+      )
+
+      if (!testValidation.valid) {
+        // BLOCK completion - строгое блокирование
+        const formattedErrors = this.testEnforcementValidator.formatValidationResult(testValidation)
+        console.error(formattedErrors)
+        throw new Error(`Step blocked by test enforcement: ${testValidation.errors.join('; ')}`)
+      }
+
+      // Log warnings (if any)
+      if (testValidation.warnings.length > 0) {
+        testValidation.warnings.forEach(warn => console.warn(`   ${warn}`))
+      }
+
+      // ✨ BMAD Phase 2.2: Validate BMAD principles (Bob, Winston, John) - STRICT BLOCKING
+      const principleValidations = await this.validatePrinciples(step, agent, stepResult, state)
+
+      // Check for principle violations
+      const violations = principleValidations.filter(v => !v.valid)
+      if (violations.length > 0) {
+        const violatedPrinciples = violations.map(v => v.principle).join(', ')
+        const allErrors = violations.flatMap(v => v.errors).join('; ')
+        throw new Error(`Step blocked by principle violations (${violatedPrinciples}): ${allErrors}`)
+      }
+
       // ✨ BMad: Record step completion
       this.metricsCollector.recordStepCompletion(step, agent.agentId, stepResult, state)
 
@@ -796,6 +963,138 @@ export class WorkflowEngine {
 
       return stepResult
     }
+  }
+
+  /**
+   * ✨ BMAD Phase 2.2: Validate BMAD principles (Bob, Winston, John)
+   *
+   * Checks if the step result violates any strict principles defined for the agent.
+   * Supports bilingual error messages (EN/RU).
+   *
+   * @param step - The workflow step being validated
+   * @param agent - The agent that executed the step
+   * @param stepResult - The result from step execution
+   * @param state - Current workflow state
+   * @returns Array of validation results (one per strict principle)
+   */
+  private async validatePrinciples(
+    _step: WorkflowStep,
+    agent: AgentWithRoleSkills,
+    stepResult: StepResult,
+    state: AgentState
+  ): Promise<ValidationResult[]> {
+    const results: ValidationResult[] = []
+
+    // Get agent's strict principles
+    const strictPrinciples = agent.role.principles?.filter(p => p.strict) || []
+
+    if (strictPrinciples.length === 0) {
+      // No strict principles to validate
+      return results
+    }
+
+    // Detect language from state context or task
+    const language = this.detectLanguage(state)
+
+    console.log(`   🔍 Validating ${strictPrinciples.length} strict principle(s) for ${agent.agentId}...`)
+
+    // Validate each strict principle
+    for (const principle of strictPrinciples) {
+      let validation: ValidationResult | null = null
+
+      switch (principle.name) {
+        case 'zero_ambiguity': {
+          // Bob's principle: Check for ambiguous terms in story/requirements
+          const text = stepResult.output.context?.story ||
+                       stepResult.output.context?.requirements ||
+                       stepResult.output.context?.acceptance_criteria ||
+                       ''
+
+          if (text) {
+            validation = await this.principleValidators.zeroAmbiguity.validate(text, language)
+          }
+          break
+        }
+
+        case 'boring_technology': {
+          // Winston's principle: Check for risky technology choices
+          const techStack = stepResult.output.context?.tech_stack ||
+                           stepResult.output.context?.technologies ||
+                           []
+
+          if (Array.isArray(techStack) && techStack.length > 0) {
+            validation = await this.principleValidators.boringTechnology.validate(techStack, language)
+          }
+          break
+        }
+
+        case 'why_first': {
+          // John's principle: Check for business value explanation
+          const requirement = stepResult.output.context?.requirement ||
+                             stepResult.output.context?.story ||
+                             stepResult.output.context?.feature_description ||
+                             ''
+
+          if (requirement) {
+            validation = await this.principleValidators.whyFirst.validate(requirement, language)
+          }
+          break
+        }
+
+        default:
+          // Unknown principle - skip validation
+          console.warn(`   ⚠️  Unknown principle: ${principle.name} - skipping validation`)
+          break
+      }
+
+      // If validation was performed, add to results
+      if (validation) {
+        results.push(validation)
+
+        // Log errors (BLOCKING)
+        if (!validation.valid) {
+          console.error(`\n   ❌ Principle Violation: ${validation.principle}`)
+          console.error(`   Agent: ${validation.agent}`)
+          validation.errors.forEach(err => console.error(`   ${err}`))
+        }
+
+        // Log warnings (non-blocking)
+        if (validation.warnings.length > 0) {
+          validation.warnings.forEach(warn => console.warn(`   ${warn}`))
+        }
+      }
+    }
+
+    return results
+  }
+
+  /**
+   * ✨ BMAD Phase 2.2: Detect language from state
+   *
+   * Simple language detection based on Cyrillic characters in context.
+   *
+   * @param state - Current workflow state
+   * @returns Language code ('en' or 'ru')
+   */
+  private detectLanguage(state: AgentState): 'en' | 'ru' {
+    // Check context for explicit language setting
+    if (state.context?.language === 'ru' || state.context?.language === 'en') {
+      return state.context.language
+    }
+
+    // Check task for Cyrillic characters
+    if (state.task && /[а-яА-ЯёЁ]/.test(state.task)) {
+      return 'ru'
+    }
+
+    // Check context values for Cyrillic
+    const contextStr = JSON.stringify(state.context || {})
+    if (/[а-яА-ЯёЁ]/.test(contextStr)) {
+      return 'ru'
+    }
+
+    // Default to English
+    return 'en'
   }
 
   /**
