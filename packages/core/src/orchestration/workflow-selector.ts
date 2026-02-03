@@ -17,12 +17,14 @@ import type {
   Workflow,
   WorkflowSelection,
   EnhancedWorkflowSelection,
+  WorkflowSelectionWithPhase,
   ComplexityScore,
   ProjectContext
 } from './types'
 import { ComplexityAnalyzer, ComplexityAnalyzerConfig } from './complexity-analyzer'
 import { ClaudeCodeAdapter, AnalysisResult } from '../agents/claude-code-adapter'
 import { SkillMatcher } from './skill-matcher'
+import { PhaseDetector, PhaseDetectorConfig } from './phase-detector'
 
 /**
  * Workflow selector configuration
@@ -59,7 +61,7 @@ export interface WorkflowSelectorConfig {
   enableHybridAnalysis?: boolean
 
   /**
-   * ClaudeCodeAdapter instance (required for hybrid analysis)
+   * ClaudeCodeAdapter instance (required for hybrid analysis and phase detection)
    */
   claudeCodeAdapter?: ClaudeCodeAdapter
 
@@ -67,23 +69,36 @@ export interface WorkflowSelectorConfig {
    * SkillMatcher instance (required for hybrid analysis)
    */
   skillMatcher?: SkillMatcher
+
+  /**
+   * Enable phase detection for workflow joining
+   * Allows starting workflows from optimal phase based on context
+   * @default false
+   */
+  enablePhaseDetection?: boolean
+
+  /**
+   * Phase detector configuration
+   */
+  phaseDetectorConfig?: PhaseDetectorConfig
 }
 
 /**
  * Default configuration
  */
-const DEFAULT_CONFIG: Required<Omit<WorkflowSelectorConfig, 'complexityConfig' | 'claudeCodeAdapter' | 'skillMatcher'>> = {
+const DEFAULT_CONFIG: Required<Omit<WorkflowSelectorConfig, 'complexityConfig' | 'claudeCodeAdapter' | 'skillMatcher' | 'phaseDetectorConfig'>> = {
   autoSelect: true,
   confidenceThreshold: 0.7,
   maxAlternatives: 2,
-  enableHybridAnalysis: false
+  enableHybridAnalysis: false,
+  enablePhaseDetection: false
 }
 
 /**
  * WorkflowSelector - Select appropriate workflow based on task complexity
  */
 export class WorkflowSelector {
-  private config: Required<Omit<WorkflowSelectorConfig, 'complexityConfig' | 'claudeCodeAdapter' | 'skillMatcher'>>
+  private config: Required<Omit<WorkflowSelectorConfig, 'complexityConfig' | 'claudeCodeAdapter' | 'skillMatcher' | 'phaseDetectorConfig'>>
   private complexityAnalyzer: ComplexityAnalyzer
   private workflows: Map<string, Workflow> = new Map()
 
@@ -91,11 +106,15 @@ export class WorkflowSelector {
   private claudeCodeAdapter?: ClaudeCodeAdapter
   private skillMatcher?: SkillMatcher
 
+  // Phase detection component (optional)
+  private phaseDetector?: PhaseDetector
+
   constructor(config?: WorkflowSelectorConfig) {
     this.config = {
       ...DEFAULT_CONFIG,
       ...config,
-      enableHybridAnalysis: config?.enableHybridAnalysis ?? false
+      enableHybridAnalysis: config?.enableHybridAnalysis ?? false,
+      enablePhaseDetection: config?.enablePhaseDetection ?? false
     }
     this.complexityAnalyzer = new ComplexityAnalyzer(config?.complexityConfig)
 
@@ -105,6 +124,15 @@ export class WorkflowSelector {
     }
     if (config?.skillMatcher) {
       this.skillMatcher = config.skillMatcher
+    }
+
+    // Initialize phase detector if enabled and ClaudeCodeAdapter is available
+    if (this.config.enablePhaseDetection && this.claudeCodeAdapter) {
+      this.phaseDetector = new PhaseDetector(
+        this.claudeCodeAdapter,
+        config?.phaseDetectorConfig
+      )
+      console.log('📍 PhaseDetector initialized for adaptive workflow joining')
     }
   }
 
@@ -162,6 +190,70 @@ export class WorkflowSelector {
     }
 
     return selection
+  }
+
+  /**
+   * Select workflow WITH phase detection for adaptive joining
+   *
+   * Uses LLM analysis (via ClaudeCodeAdapter) to determine:
+   * 1. Which workflow to use (via standard selection or hybrid)
+   * 2. Which phase to join at (based on task intent and context)
+   *
+   * @param taskDescription - User's task description
+   * @param context - Project context (optional)
+   * @param userPreference - User-specified workflow ID (optional)
+   * @returns Workflow selection with phase detection result
+   */
+  async selectWorkflowWithPhase(
+    taskDescription: string,
+    context?: ProjectContext,
+    userPreference?: string
+  ): Promise<WorkflowSelectionWithPhase> {
+    console.log('\n🎯 WorkflowSelector: Selecting workflow with phase detection...')
+
+    // 1. Standard workflow selection (hybrid or normal based on config)
+    const selection = this.config.enableHybridAnalysis
+      ? await this.selectWorkflowHybrid(taskDescription, context)
+      : await this.selectWorkflow(taskDescription, context, userPreference)
+
+    // 2. Phase detection (if enabled and available)
+    if (!this.phaseDetector) {
+      console.log('   Phase detection disabled or unavailable')
+      // Return selection with first phase as default
+      const firstPhase = selection.workflow.steps[0]?.phase || 'unknown'
+      return {
+        ...selection,
+        phase: firstPhase,
+        phaseConfidence: 0.5,
+        phaseReasoning: 'Phase detection disabled. Starting from first phase.',
+        skipPhases: [],
+        joinPoint: 0
+      }
+    }
+
+    // 3. Detect optimal phase
+    console.log(`   Running phase detection for workflow: ${selection.workflow.name}`)
+    const phaseDetection = await this.phaseDetector.detectPhase(
+      taskDescription,
+      selection.workflow,
+      context
+    )
+
+    // 4. Log result
+    console.log(`   ✅ Phase detected: ${phaseDetection.phase} (confidence: ${(phaseDetection.confidence * 100).toFixed(0)}%)`)
+    if (phaseDetection.skipPhases.length > 0) {
+      console.log(`   ⏭️  Skipping phases: ${phaseDetection.skipPhases.join(' → ')}`)
+    }
+
+    // 5. Return combined result
+    return {
+      ...selection,
+      phase: phaseDetection.phase,
+      phaseConfidence: phaseDetection.confidence,
+      phaseReasoning: phaseDetection.reasoning,
+      skipPhases: phaseDetection.skipPhases,
+      joinPoint: phaseDetection.stepIndex
+    }
   }
 
   /**

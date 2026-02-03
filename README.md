@@ -14,12 +14,15 @@ ASMO is an autonomous AI development orchestration system that coordinates multi
 ## Key Features
 
 ### Core Orchestration
+
 - **28 Specialized Agents** — Architect, Developer, Tester, Security, UX, DevOps, Analyst, Tech Writer, and more
 - **28 Production Workflows** — From quick fixes to enterprise architecture + TEA testing workflows
 - **85 Skills Catalog** — Automatic skill matching across 12 categories
 - **Complexity Analysis** — 5-level task analysis with intelligent workflow selection
+- **Adaptive Phase Detection** — Smart phase joining based on project context and user intent (LLM-powered)
 
 ### Dynamic Orchestrator
+
 - **Intelligent Model Routing** — Automatic selection of Opus/Sonnet/Haiku based on task complexity
 - **Dual Execution Modes** — Session ($0 with Claude subscription) or API (pay-per-use)
 - **Circuit Breaker** — Fault tolerance with automatic recovery
@@ -27,18 +30,21 @@ ASMO is an autonomous AI development orchestration system that coordinates multi
 - **YAML Config** — Declarative agent and model configuration
 
 ### Collaboration & Quality
+
 - **YOLO Mode** — Automatic approval bypass for trivial tasks
 - **Party Mode** — Multi-agent collaboration with consensus building
 - **Adversarial Review** — Critical code review that MUST find issues
 - **Advanced Elicitation** — 5 techniques: First Principles, Red Team/Blue Team, Pre-mortem, Socratic, Devil's Advocate
 
 ### BMAD Personalities & Principles
+
 - **Agent Personalities** — Amelia (TDD), Winston (Boring Tech), Bob (Zero Ambiguity), John (WHY-First)
 - **Menu Commands** — Bilingual shortcuts: `[DS]`/`[ИС]`, `[CR]`/`[КО]`, `[CS]`/`[СИ]`
 - **Strict Enforcement** — Blocks completion on principle violations (test failures, ambiguity, missing business value)
 - **Personality Prompts** — Dynamic enrichment with traits, catchphrases, and bilingual signatures
 
 ### Architecture
+
 - **3-Tier Configuration** — Defaults → File → Environment
 - **Context Cascade** — Automatic context flow between workflow phases
 - **Document Sharding** — Split large documents into manageable sections
@@ -62,6 +68,7 @@ yarn add @asmo/core
 **✅ Library-First Architecture** - @asmo/core works standalone without configuration. Bundled templates with workflows, agents, and skills are included and automatically used as fallback.
 
 **Config Fallback Chain:**
+
 1. `.cursor/config` - Claude Code environment (if present)
 2. `~/.asmo/config` - User home directory
 3. `node_modules/@asmo/core/templates` - Bundled templates (always available)
@@ -99,14 +106,47 @@ console.log('Status:', result.status)
 
 ```typescript
 // Get detailed analysis before execution
-const selection = await engine.selectWorkflowAdaptively(
-  'Implement payment processing with Stripe'
+const selection = await engine.selectWorkflowAdaptively('Implement payment processing with Stripe')
+
+console.log('Complexity:', selection.complexity.level) // 'complex'
+console.log('Workflow:', selection.workflow.name) // 'Full Development'
+console.log('Agents:', selection.selectedAgents) // ['architect', 'developer', ...]
+```
+
+### Adaptive Phase Detection (NEW!)
+
+Skip redundant phases based on project context and user intent:
+
+```typescript
+import { WorkflowSelector, ClaudeCodeAdapter } from '@asmo/core'
+
+const selector = new WorkflowSelector({
+  claudeCodeAdapter: new ClaudeCodeAdapter(),
+  enablePhaseDetection: true,
+  phaseDetectorConfig: {
+    minConfidence: 0.5,
+    fallbackStrategy: 'first_phase', // 'keyword' | 'error'
+  },
+})
+
+// Detects optimal phase based on task + existing artifacts
+const selection = await selector.selectWorkflowWithPhase(
+  'Проверь код на security issues', // Bilingual support (EN/RU)
+  { projectPath: '/my/project' }
 )
 
-console.log('Complexity:', selection.complexity.level)  // 'complex'
-console.log('Workflow:', selection.workflow.name)        // 'Full Development'
-console.log('Agents:', selection.selectedAgents)         // ['architect', 'developer', ...]
+console.log('Phase:', selection.phase) // 'review' (skips test_first, implementation)
+console.log('Skipped:', selection.skipPhases) // ['test_first', 'implementation', 'refactoring']
+console.log('Intent:', selection.llmIntent) // 'review'
+console.log('Confidence:', selection.confidence) // 0.92
 ```
+
+**How it works:**
+
+1. **ContextAnalyzer** scans project for existing artifacts (code, tests, docs)
+2. **PhaseDetector** uses LLM (ClaudeCodeAdapter in-subscription) to analyze intent
+3. Validates phase prerequisites and skips completed phases
+4. Falls back to keywords or first phase if LLM confidence is low
 
 ### Party Mode (Multi-Agent Collaboration)
 
@@ -133,12 +173,12 @@ const orchestrator = getDynamicOrchestrator({ verbose: true })
 const task: OrchestrationTask = {
   id: 'task-001',
   description: 'Implement user authentication',
-  complexity: { score: 55, level: 'medium' }  // → Routes to Sonnet
+  complexity: { score: 55, level: 'medium' }, // → Routes to Sonnet
 }
 
 // Preview routing without executing
 const routing = orchestrator.previewRouting(task)
-console.log('Model:', routing.model)      // 'sonnet'
+console.log('Model:', routing.model) // 'sonnet'
 console.log('Rationale:', routing.rationale)
 
 // Execute task
@@ -153,17 +193,17 @@ console.log('Duration:', result.metrics.totalDuration)
 import { getExecutorFactory } from '@asmo/core'
 
 const factory = getExecutorFactory({
-  preferredMode: 'auto'  // 'session' ($0) | 'api' (pay-per-use) | 'auto'
+  preferredMode: 'auto', // 'session' ($0) | 'api' (pay-per-use) | 'auto'
 })
 
 const result = await factory.execute({
   taskId: 'task-001',
   prompt: 'Generate authentication code',
   state: agentState,
-  model: 'sonnet'
+  model: 'sonnet',
 })
 
-console.log('Mode used:', result.metrics.mode)  // 'session' or 'api'
+console.log('Mode used:', result.metrics.mode) // 'session' or 'api'
 if (result.metrics.mode === 'api') {
   console.log('Cost:', result.metrics.estimatedCost)
 }
@@ -176,6 +216,7 @@ if (result.metrics.mode === 'api') {
 ### Meet the BMAD Agents
 
 #### **Amelia** 👩‍💻 - Developer (TDD Evangelist)
+
 ```typescript
 {
   motto: "I will not mark this complete until 100% of tests pass",
@@ -189,12 +230,14 @@ if (result.metrics.mode === 'api') {
 ```
 
 **What Amelia does:**
+
 - Enforces TDD workflow: Red → Green → Refactor
 - Blocks completion if ANY tests fail
 - Requires 100% test coverage on new code
 - Validates `test_results` in step output
 
 #### **Winston** 🏗️ - Architect (Boring Tech Advocate)
+
 ```typescript
 {
   motto: "Let's choose boring technology that works",
@@ -212,12 +255,14 @@ if (result.metrics.mode === 'api') {
 ```
 
 **What Winston does:**
+
 - Flags risky tech: MongoDB, GraphQL, Microservices, Bun, Deno
 - Suggests battle-tested alternatives
 - Warns about premature optimization
 - Prefers proven solutions over shiny new tools
 
 #### **Bob** 📋 - Scrum Master (Zero Ambiguity Guardian)
+
 ```typescript
 {
   motto: "If it's ambiguous, it's not ready",
@@ -232,12 +277,14 @@ if (result.metrics.mode === 'api') {
 ```
 
 **What Bob does:**
+
 - Detects vague terms: "fast", "many", "user-friendly", "etc"
 - Requires measurable criteria with numbers
 - Enforces Given-When-Then format
 - Blocks stories with ambiguous requirements
 
 #### **John** 🎯 - Product Owner (WHY-First Leader)
+
 ```typescript
 {
   motto: "Let's understand WHY before deciding HOW",
@@ -252,6 +299,7 @@ if (result.metrics.mode === 'api') {
 ```
 
 **What John does:**
+
 - Blocks requirements without "why" or business value
 - Enforces user story format: "So that [benefit]" is mandatory
 - Connects features to business outcomes
@@ -281,16 +329,16 @@ asmo run "[ГР]"                             # Russian
 
 **Available Commands:**
 
-| EN | RU | Workflow | BMAD Agent | Principle |
-|----|----|----------|------------|-----------|
-| `[IR]` | `[ГР]` | Implementation Readiness | Bob | Zero Ambiguity |
-| `[DS]` | `[ИС]` | Dev Story (TDD) | Amelia | Test Enforcement |
-| `[CR]` | `[КО]` | Code Review | Multiple | Quality Gates |
-| `[CS]` | `[СИ]` | Create Story | Bob + John | Zero Ambiguity + WHY First |
-| `[CC]` | `[КК]` | Course Correction | Winston | Risk Management |
-| `[CP]` | `[СБ]` | Create Product Brief | John | WHY First |
-| `[VP]` | `[ВТ]` | Validate PRD | Bob + John | Zero Ambiguity + WHY First |
-| `[CE]` | `[СЭ]` | Create Epics | John | WHY First |
+| EN     | RU     | Workflow                 | BMAD Agent | Principle                  |
+| ------ | ------ | ------------------------ | ---------- | -------------------------- |
+| `[IR]` | `[ГР]` | Implementation Readiness | Bob        | Zero Ambiguity             |
+| `[DS]` | `[ИС]` | Dev Story (TDD)          | Amelia     | Test Enforcement           |
+| `[CR]` | `[КО]` | Code Review              | Multiple   | Quality Gates              |
+| `[CS]` | `[СИ]` | Create Story             | Bob + John | Zero Ambiguity + WHY First |
+| `[CC]` | `[КК]` | Course Correction        | Winston    | Risk Management            |
+| `[CP]` | `[СБ]` | Create Product Brief     | John       | WHY First                  |
+| `[VP]` | `[ВТ]` | Validate PRD             | Bob + John | Zero Ambiguity + WHY First |
+| `[CE]` | `[СЭ]` | Create Epics             | John       | WHY First                  |
 
 ### Principles Enforcement in Action
 
@@ -350,8 +398,8 @@ const result = await engine.execute('[CS] add dark mode')
 // Fixed version:
 const result = await engine.execute(
   '[CS] add dark mode toggle ' +
-  'So that night-shift users can use app without eye strain, ' +
-  'increasing session duration by 25% and improving retention'
+    'So that night-shift users can use app without eye strain, ' +
+    'increasing session duration by 25% and improving retention'
 )
 // ✅ John approves - clear business value
 ```
@@ -359,9 +407,7 @@ const result = await engine.execute(
 #### Example 4: Winston Warns About Risky Tech
 
 ```typescript
-const result = await engine.execute(
-  'design notification system with MongoDB and Microservices'
-)
+const result = await engine.execute('design notification system with MongoDB and Microservices')
 
 // Winston flags risky choices:
 // ⚠️  Winston says: "MongoDB" is medium risk - Consider PostgreSQL with JSONB
@@ -385,7 +431,7 @@ const loader = new PersonalityPromptLoader()
 // Automatic language detection (Cyrillic → Russian)
 const prompt = await loader.loadPromptWithPersonality(
   agentConfig,
-  'реализовать аутентификацию',  // Russian task
+  'реализовать аутентификацию', // Russian task
   { language: 'ru' }
 )
 
@@ -397,6 +443,7 @@ const prompt = await loader.loadPromptWithPersonality(
 ```
 
 **Prompt Structure:**
+
 ```markdown
 # About Me / Обо мне
 
@@ -412,16 +459,17 @@ I'm **Amelia**, your TDD evangelist and quality guardian.
 [... base prompt content ...]
 
 ---
-*- Amelia, Developer (Tests Must Pass ✅)*
-*- Амелия, Разработчик (Тесты Обязательны ✅)*
+
+_- Amelia, Developer (Tests Must Pass ✅)_
+_- Амелия, Разработчик (Тесты Обязательны ✅)_
 ```
 
 ## Documentation
 
-| Language | Link |
-|----------|------|
-| English | [docs/en/](./docs/en/getting-started/index.md) |
-| Russian | [docs/ru/](./docs/ru/getting-started/index.md) |
+| Language | Link                                           |
+| -------- | ---------------------------------------------- |
+| English  | [docs/en/](./docs/en/getting-started/index.md) |
+| Russian  | [docs/ru/](./docs/ru/getting-started/index.md) |
 
 ### Quick Links
 
@@ -449,26 +497,26 @@ asmo/
 
 ## Agents (28)
 
-| Category | Agents | Description |
-|----------|--------|-------------|
-| **Core** | 6 | Architect, Developer, Tester, UI Developer, UX Designer, DevOps |
-| **Specialized** | 14 | Security, Performance, Database, API, Analyst, Tech Writer, Test Architect, Adversarial Reviewer, etc. |
-| **Validation** | 5 | Code Reviewer, Design Validator, etc. |
-| **Business** | 3 | Product Owner, Business Analyst, Scrum Master |
+| Category        | Agents | Description                                                                                            |
+| --------------- | ------ | ------------------------------------------------------------------------------------------------------ |
+| **Core**        | 6      | Architect, Developer, Tester, UI Developer, UX Designer, DevOps                                        |
+| **Specialized** | 14     | Security, Performance, Database, API, Analyst, Tech Writer, Test Architect, Adversarial Reviewer, etc. |
+| **Validation**  | 5      | Code Reviewer, Design Validator, etc.                                                                  |
+| **Business**    | 3      | Product Owner, Business Analyst, Scrum Master                                                          |
 
 [View full catalog →](./docs/en/reference/agents/index.md)
 
 ## Workflows (28)
 
-| Level | Workflows | Complexity Score |
-|-------|-----------|------------------|
-| Simple | Quick Flow, Bug Fix | 0-40 |
-| Standard | Feature Dev, Refactoring, Performance | 41-60 |
-| Complex | Security Audit, API Design, Database Migration | 61-80 |
-| Enterprise | Architecture Design | 81-100 |
-| **BMAD Planning** | Product Brief, PRD, UX Design, Epics & Stories, Sprint Planning | N/A |
-| **BMAD Implementation** | Correct Course, Retrospective, Automate Tests | N/A |
-| **TEA Testing** | 8 workflows: Risk Assessment, Test Strategy, Quality Gates, Release Readiness, etc. | N/A |
+| Level                   | Workflows                                                                           | Complexity Score |
+| ----------------------- | ----------------------------------------------------------------------------------- | ---------------- |
+| Simple                  | Quick Flow, Bug Fix                                                                 | 0-40             |
+| Standard                | Feature Dev, Refactoring, Performance                                               | 41-60            |
+| Complex                 | Security Audit, API Design, Database Migration                                      | 61-80            |
+| Enterprise              | Architecture Design                                                                 | 81-100           |
+| **BMAD Planning**       | Product Brief, PRD, UX Design, Epics & Stories, Sprint Planning                     | N/A              |
+| **BMAD Implementation** | Correct Course, Retrospective, Automate Tests                                       | N/A              |
+| **TEA Testing**         | 8 workflows: Risk Assessment, Test Strategy, Quality Gates, Release Readiness, etc. | N/A              |
 
 [View full catalog →](./docs/en/reference/workflows/index.md)
 

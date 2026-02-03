@@ -28,6 +28,32 @@
     "story",
     "acceptance_criteria"
   ],
+  "phases": {
+    "test_first": {
+      "description": "Write failing tests covering acceptance criteria (TDD Red phase)",
+      "description_ru": "Написание падающих тестов по acceptance criteria (TDD Red фаза)",
+      "order": 1,
+      "intent_keywords": ["test first", "write tests", "tdd", "red phase", "тесты сначала", "написать тесты"]
+    },
+    "implementation": {
+      "description": "Implement minimum code to pass tests (TDD Green phase)",
+      "description_ru": "Реализация минимального кода для прохождения тестов (TDD Green фаза)",
+      "order": 2,
+      "intent_keywords": ["implement", "code", "develop", "build", "green phase", "реализовать", "написать код"]
+    },
+    "refactoring": {
+      "description": "Clean up code while maintaining test coverage (TDD Refactor phase)",
+      "description_ru": "Рефакторинг кода с сохранением тестового покрытия (TDD Refactor фаза)",
+      "order": 3,
+      "intent_keywords": ["refactor", "clean", "improve", "optimize", "рефакторинг", "улучшить", "оптимизировать"]
+    },
+    "review": {
+      "description": "Code review for quality, security, and best practices",
+      "description_ru": "Ревью кода на качество, безопасность и лучшие практики",
+      "order": 4,
+      "intent_keywords": ["review", "check", "verify", "audit", "security", "ревью", "проверить", "безопасность"]
+    }
+  },
   "steps": [
     {
       "order": 1,
@@ -39,7 +65,13 @@
         "failing_tests"
       ],
       "exit_criteria": "All acceptance criteria covered by failing tests",
-      "timeout": "30m"
+      "timeout": "30m",
+      "phase_join_criteria": {
+        "required_artifacts": [],
+        "prerequisites": ["story defined", "acceptance criteria available"],
+        "context_indicators": ["no existing tests", "new feature", "greenfield"],
+        "skip_if": []
+      }
     },
     {
       "order": 2,
@@ -55,6 +87,12 @@
       "metadata": {
         "test_enforcement": true,
         "min_coverage": 100
+      },
+      "phase_join_criteria": {
+        "required_artifacts": ["test files exist"],
+        "prerequisites": ["tests written", "tests failing (red)"],
+        "context_indicators": ["tests exist but failing", "implementation needed"],
+        "skip_if": ["implementation already exists", "tests already passing"]
       }
     },
     {
@@ -70,6 +108,12 @@
       "timeout": "20m",
       "metadata": {
         "test_enforcement": true
+      },
+      "phase_join_criteria": {
+        "required_artifacts": ["implementation code", "passing tests"],
+        "prerequisites": ["implementation complete", "tests passing (green)"],
+        "context_indicators": ["code needs cleanup", "refactor", "optimize", "clean up"],
+        "skip_if": ["code already clean", "no refactoring needed"]
       }
     },
     {
@@ -82,7 +126,13 @@
         "approval_or_changes"
       ],
       "exit_criteria": "Code approved or actionable feedback provided",
-      "timeout": "15m"
+      "timeout": "15m",
+      "phase_join_criteria": {
+        "required_artifacts": ["implementation code"],
+        "prerequisites": ["code exists"],
+        "context_indicators": ["review", "check", "verify", "audit", "security", "ревью", "проверить"],
+        "skip_if": []
+      }
     }
   ],
   "estimated_time": "2h 5m",
@@ -95,6 +145,7 @@
     ],
     "inspired_by": "Amelia (Developer)",
     "phase": "21",
-    "phase_name": "dev-story"
+    "phase_name": "dev-story",
+    "adaptive_phase_detection": true
   }
 }

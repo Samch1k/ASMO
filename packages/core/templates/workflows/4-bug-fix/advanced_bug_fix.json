@@ -24,6 +24,38 @@
     ],
     "complexity_range": ["medium", "complex"]
   },
+  "phases": {
+    "investigation": {
+      "description": "Deep investigation with root cause analysis",
+      "description_ru": "Глубокое исследование с анализом первопричины",
+      "order": 1,
+      "intent_keywords": ["investigate", "analyze", "debug", "find cause", "исследовать", "проанализировать"]
+    },
+    "solution_design": {
+      "description": "Design fix approach and prevention strategy",
+      "description_ru": "Проектирование решения и стратегии предотвращения",
+      "order": 2,
+      "intent_keywords": ["design fix", "plan solution", "спроектировать решение"]
+    },
+    "implementation": {
+      "description": "Implement fix with tests and error handling",
+      "description_ru": "Реализация исправления с тестами",
+      "order": 3,
+      "intent_keywords": ["fix", "implement", "code", "исправить", "реализовать"]
+    },
+    "verification": {
+      "description": "Thorough testing and regression validation",
+      "description_ru": "Тщательное тестирование и проверка на регрессии",
+      "order": 4,
+      "intent_keywords": ["test", "verify", "validate", "regression", "тестировать", "проверить"]
+    },
+    "review": {
+      "description": "Code review for quality and prevention",
+      "description_ru": "Ревью кода на качество",
+      "order": 5,
+      "intent_keywords": ["review", "check code", "ревью", "проверить код"]
+    }
+  },
   "steps": [
     {
       "order": 1,
@@ -37,7 +69,13 @@
         "reproduction_steps"
       ],
       "exit_criteria": "Root cause identified with full understanding of system impact",
-      "timeout": "45m"
+      "timeout": "45m",
+      "phase_join_criteria": {
+        "required_artifacts": [],
+        "prerequisites": ["bug reported"],
+        "context_indicators": ["bug", "error", "issue", "crash", "investigate"],
+        "skip_if": ["root cause already known"]
+      }
     },
     {
       "order": 2,
@@ -50,7 +88,13 @@
         "testing_strategy"
       ],
       "exit_criteria": "Fix approach approved with prevention measures defined",
-      "timeout": "30m"
+      "timeout": "30m",
+      "phase_join_criteria": {
+        "required_artifacts": ["root cause analysis"],
+        "prerequisites": ["root cause identified"],
+        "context_indicators": ["design solution", "plan fix"],
+        "skip_if": ["fix design exists", "simple fix"]
+      }
     },
     {
       "order": 3,
@@ -64,7 +108,13 @@
         "updated_documentation"
       ],
       "exit_criteria": "Fix implemented with comprehensive tests",
-      "timeout": "60m"
+      "timeout": "60m",
+      "phase_join_criteria": {
+        "required_artifacts": ["fix design"],
+        "prerequisites": ["fix approach approved"],
+        "context_indicators": ["fix", "implement", "code"],
+        "skip_if": ["fix already implemented"]
+      }
     },
     {
       "order": 4,
@@ -77,7 +127,13 @@
         "performance_impact_analysis"
       ],
       "exit_criteria": "Bug verified as fixed with no regressions",
-      "timeout": "45m"
+      "timeout": "45m",
+      "phase_join_criteria": {
+        "required_artifacts": ["fix implementation"],
+        "prerequisites": ["fix implemented"],
+        "context_indicators": ["test", "verify", "regression"],
+        "skip_if": ["tests already pass"]
+      }
     },
     {
       "order": 5,
@@ -89,9 +145,18 @@
         "improvement_suggestions"
       ],
       "exit_criteria": "Code reviewed and approved",
-      "timeout": "20m"
+      "timeout": "20m",
+      "phase_join_criteria": {
+        "required_artifacts": ["fix code"],
+        "prerequisites": ["fix exists"],
+        "context_indicators": ["review", "check", "approve"],
+        "skip_if": []
+      }
     }
   ],
   "estimated_time": "3h 20m",
-  "success_criteria": "Bug resolved, prevention measures in place, all tests passing, no regressions"
+  "success_criteria": "Bug resolved, prevention measures in place, all tests passing, no regressions",
+  "metadata": {
+    "adaptive_phase_detection": true
+  }
 }

@@ -20,6 +20,32 @@
       "feature_implementation"
     ]
   },
+  "phases": {
+    "design": {
+      "description": "Architecture design, ADR creation, and UX design",
+      "description_ru": "Проектирование архитектуры, создание ADR, UX дизайн",
+      "order": 1,
+      "intent_keywords": ["design", "architect", "plan", "ux", "wireframe", "спроектировать", "архитектура"]
+    },
+    "implementation": {
+      "description": "Backend and frontend implementation with unit tests",
+      "description_ru": "Реализация бэкенда и фронтенда с юнит-тестами",
+      "order": 2,
+      "intent_keywords": ["implement", "code", "develop", "build", "реализовать", "написать код", "разработать"]
+    },
+    "testing": {
+      "description": "E2E testing and integration testing",
+      "description_ru": "E2E тестирование и интеграционное тестирование",
+      "order": 3,
+      "intent_keywords": ["test", "e2e", "integration", "qa", "тестировать", "проверить"]
+    },
+    "deployment": {
+      "description": "Deployment to staging/production environment",
+      "description_ru": "Деплой в staging/production окружение",
+      "order": 4,
+      "intent_keywords": ["deploy", "release", "ship", "staging", "production", "деплой", "выкатить"]
+    }
+  },
   "steps": [
     {
       "order": 1,
@@ -33,7 +59,13 @@
         "api_design"
       ],
       "exit_criteria": "Architecture documented and approved",
-      "timeout": "20m"
+      "timeout": "20m",
+      "phase_join_criteria": {
+        "required_artifacts": [],
+        "prerequisites": ["requirements defined"],
+        "context_indicators": ["new feature", "greenfield", "no architecture"],
+        "skip_if": ["architecture exists", "ADR exists"]
+      }
     },
     {
       "order": 1,
@@ -47,7 +79,13 @@
         "component_specifications"
       ],
       "exit_criteria": "UX design completed and approved",
-      "timeout": "20m"
+      "timeout": "20m",
+      "phase_join_criteria": {
+        "required_artifacts": [],
+        "prerequisites": ["requirements defined"],
+        "context_indicators": ["new UI", "user-facing feature"],
+        "skip_if": ["UX design exists", "backend only"]
+      }
     },
     {
       "order": 2,
@@ -62,7 +100,13 @@
         "documentation"
       ],
       "exit_criteria": "Backend implemented and unit tests pass",
-      "timeout": "60m"
+      "timeout": "60m",
+      "phase_join_criteria": {
+        "required_artifacts": ["architecture design"],
+        "prerequisites": ["design approved"],
+        "context_indicators": ["implement", "code", "build"],
+        "skip_if": ["implementation exists"]
+      }
     },
     {
       "order": 2,
@@ -76,7 +120,13 @@
         "storybook_stories"
       ],
       "exit_criteria": "UI implemented, responsive, and accessible",
-      "timeout": "40m"
+      "timeout": "40m",
+      "phase_join_criteria": {
+        "required_artifacts": ["UX design"],
+        "prerequisites": ["UX approved"],
+        "context_indicators": ["UI", "frontend", "components"],
+        "skip_if": ["UI exists", "backend only"]
+      }
     },
     {
       "order": 3,
@@ -88,7 +138,13 @@
         "test_results"
       ],
       "exit_criteria": "All E2E tests pass",
-      "timeout": "30m"
+      "timeout": "30m",
+      "phase_join_criteria": {
+        "required_artifacts": ["implementation code"],
+        "prerequisites": ["implementation complete"],
+        "context_indicators": ["test", "e2e", "integration", "qa"],
+        "skip_if": ["tests exist and pass"]
+      }
     },
     {
       "order": 4,
@@ -100,9 +156,18 @@
       ],
       "exit_criteria": "Deployed to staging successfully",
       "timeout": "15m",
-      "requires_approval": true
+      "requires_approval": true,
+      "phase_join_criteria": {
+        "required_artifacts": ["passing tests"],
+        "prerequisites": ["all tests pass"],
+        "context_indicators": ["deploy", "release", "ship"],
+        "skip_if": []
+      }
     }
   ],
   "estimated_time": "2h 25m",
-  "success_criteria": "Feature deployed and working in staging with UX-designed UI"
+  "success_criteria": "Feature deployed and working in staging with UX-designed UI",
+  "metadata": {
+    "adaptive_phase_detection": true
+  }
 }
