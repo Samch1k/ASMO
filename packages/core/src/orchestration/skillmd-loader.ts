@@ -297,6 +297,9 @@ export class SkillMDLoader {
 }
 
 /**
- * Singleton instance for global use
+ * Create SkillMDLoader with specified skills directory
+ * Use this factory instead of direct instantiation for proper path handling
  */
-export const skillMDLoader = new SkillMDLoader()
+export function createSkillMDLoader(skillsDir?: string): SkillMDLoader {
+  return new SkillMDLoader(skillsDir)
+}

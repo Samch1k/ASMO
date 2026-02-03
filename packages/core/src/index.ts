@@ -59,7 +59,7 @@ export { TeamManager } from './orchestration/team-manager'
 export { ConfigLoader, getConfigLoader } from './orchestration/config-loader'
 export { RoleManager } from './orchestration/role-manager'
 export { InstructionManager } from './orchestration/instruction-manager'
-export { SkillMDLoader } from './orchestration/skillmd-loader'
+export { SkillMDLoader, createSkillMDLoader } from './orchestration/skillmd-loader'
 
 // BMAD Phase 1: Complexity Analysis & Adaptive Selection
 export { ComplexityAnalyzer } from './orchestration/complexity-analyzer'

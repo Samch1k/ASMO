@@ -112,9 +112,9 @@ export class ConfigLoader {
 
     // Feature flag precedence: constructor option > env var > default
     // SKILL.md is default format (Anthropic Standard 2026)
+    const envSkillMD = process.env.USE_SKILLMD
     this.useSkillMD = options.useSkillMD ??
-      (process.env.USE_SKILLMD === 'true' || process.env.USE_SKILLMD === '1') ??
-      true  // Default to SKILL.md format
+      (envSkillMD !== undefined ? (envSkillMD === 'true' || envSkillMD === '1') : true)
 
     this.useYamlFormat = !this.useSkillMD && (
       options.useYamlFormat ??
@@ -388,7 +388,7 @@ export class ConfigLoader {
       return index
     } catch (error: any) {
       if (error.code === 'ENOENT') {
-        throw new Error('index.yaml not found. Run migration script first: pnpm tsx .cursor/scripts/migrate-skills.ts')
+        throw new Error(`index.yaml not found at ${indexPath}. Either create index.yaml for YAML mode or set USE_SKILLMD=true for SKILL.md mode.`)
       } else {
         throw new Error(`Failed to load skill index: ${error.message}`)
       }
@@ -808,6 +808,8 @@ export async function getConfigLoader(options?: { useYamlFormat?: boolean }): Pr
     const configPath = await ConfigLoader['findConfigBasePath']()
     configLoaderInstance = new ConfigLoader(configPath, options)
     await configLoaderInstance.initialize()
+    // Populate skill metadata cache for skill lookup
+    await configLoaderInstance.loadSkillIndex()
   }
   return configLoaderInstance
 }

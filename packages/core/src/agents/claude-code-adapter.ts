@@ -1,5 +1,5 @@
 import { RoleManager } from '../orchestration/role-manager'
-import { ConfigLoader } from '../orchestration/config-loader'
+import { ConfigLoader, getConfigLoader } from '../orchestration/config-loader'
 import { Role, Skill } from './types'
 import type { ComplexityScore, SessionTypeDecision } from '../orchestration/types'
 
@@ -125,9 +125,8 @@ export class ClaudeCodeAdapter {
 
     console.log('🔧 Initializing ClaudeCodeAdapter...')
 
-    // Initialize ConfigLoader
-    this.configLoader = new ConfigLoader('.cursor/config')
-    await this.configLoader.initialize()
+    // Initialize ConfigLoader using fallback chain
+    this.configLoader = await getConfigLoader()
 
     // Initialize RoleManager
     this.roleManager = new RoleManager(this.configLoader)
