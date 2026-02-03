@@ -13,6 +13,10 @@ import type { AgentState } from '../agents/types'
 import type { ModelTier } from './routing-logger'
 import { getRoutingLogger } from './routing-logger'
 import { getCircuitBreakerManager, CircuitOpenError } from './reliability'
+import { categorizeError as categorizeErrorFn, type ErrorCategory } from './errors'
+
+// Re-export ErrorCategory for backward compatibility
+export type { ErrorCategory } from './errors'
 
 // Agent execution result (partial state update from execute())
 export type AgentExecutionOutput = Partial<AgentState>
@@ -54,14 +58,6 @@ export interface ExecutionResult {
     retryDelays: number[]
   }
 }
-
-export type ErrorCategory =
-  | 'rate_limit'      // API rate limiting
-  | 'timeout'         // Execution timeout
-  | 'validation'      // Input/output validation
-  | 'agent_error'     // Agent internal error
-  | 'network'         // Network issues
-  | 'unknown'         // Unknown errors
 
 // =============================================================================
 // DEFAULT CONFIG
@@ -221,36 +217,10 @@ export class AgentExecutor {
 
   /**
    * Categorize error for retry logic
+   * Uses shared error-categorizer utility
    */
   private categorizeError(error: Error): ErrorCategory {
-    const message = error.message.toLowerCase()
-
-    // Rate limiting
-    if (message.includes('rate limit') || message.includes('429') || message.includes('too many requests')) {
-      return 'rate_limit'
-    }
-
-    // Timeout
-    if (message.includes('timeout') || message.includes('timed out')) {
-      return 'timeout'
-    }
-
-    // Validation
-    if (message.includes('validation') || message.includes('invalid') || message.includes('schema')) {
-      return 'validation'
-    }
-
-    // Network
-    if (message.includes('network') || message.includes('econnrefused') || message.includes('fetch')) {
-      return 'network'
-    }
-
-    // Agent errors
-    if (message.includes('agent') || message.includes('execute')) {
-      return 'agent_error'
-    }
-
-    return 'unknown'
+    return categorizeErrorFn(error)
   }
 
   /**

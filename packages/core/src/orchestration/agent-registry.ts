@@ -1,4 +1,5 @@
 import type { Role, Skill, AgentWithRoleSkills } from '../agents/types'
+import type { BaseAgent } from '../agents/base-agent'
 
 // Import all agent classes for static registry
 import { ArchitectAgent } from '../agents/roles/architect.agent'
@@ -65,6 +66,20 @@ const AGENT_CLASS_REGISTRY: Record<string, any> = {
 }
 
 /**
+ * Options for selecting an agent
+ */
+export interface SelectAgentOptions {
+  /** Direct selection by agent ID (highest priority) */
+  agentId?: string
+  /** Search by skills */
+  skills?: string[]
+  /** Search by role ID */
+  roleId?: string
+  /** Sort by confidence when selecting by role (default: true) */
+  sortByConfidence?: boolean
+}
+
+/**
  * Agent Registry Statistics
  */
 export interface AgentRegistryStats {
@@ -88,6 +103,7 @@ export class AgentRegistry {
   private agents: Map<string, AgentWithRoleSkills> = new Map()
   private agentsBySkill: Map<string, AgentWithRoleSkills[]> = new Map()
   private agentsByRole: Map<string, AgentWithRoleSkills[]> = new Map()
+  private agentInstances: Map<string, BaseAgent> = new Map()
   private initialized = false
 
   /**
@@ -127,6 +143,7 @@ export class AgentRegistry {
 
     // Store in main registry
     this.agents.set(agentId, agentWithRole)
+    this.agentInstances.set(agentId, instance)
 
     // Index by skills
     for (const skill of skills) {
@@ -250,6 +267,17 @@ export class AgentRegistry {
   }
 
   /**
+   * Get agent instance by ID
+   *
+   * @param agentId - Agent identifier
+   * @returns Agent instance or undefined
+   */
+  getAgentInstance(agentId: string): BaseAgent | undefined {
+    this.checkInitialized()
+    return this.agentInstances.get(agentId)
+  }
+
+  /**
    * Get all registered agents
    *
    * @returns Array of all agents
@@ -257,6 +285,16 @@ export class AgentRegistry {
   getAllAgents(): AgentWithRoleSkills[] {
     this.checkInitialized()
     return Array.from(this.agents.values())
+  }
+
+  /**
+   * Get all registered agent instances
+   *
+   * @returns Array of agent instances
+   */
+  getAllAgentInstances(): BaseAgent[] {
+    this.checkInitialized()
+    return Array.from(this.agentInstances.values())
   }
 
   /**
@@ -336,6 +374,55 @@ export class AgentRegistry {
    */
   getAgentsByRoleType(roleType: string): AgentWithRoleSkills[] {
     return this.getAllAgents().filter(a => a.role.role_type === roleType)
+  }
+
+  /**
+   * Select an agent based on options (unified selection method)
+   *
+   * Priority order:
+   * 1. Direct agentId selection
+   * 2. Role-based selection (with optional confidence sorting)
+   * 3. Skill-based selection
+   * 4. Fallback to first available agent
+   *
+   * @param options - Selection criteria
+   * @returns Selected agent instance or undefined
+   */
+  selectAgent(options: SelectAgentOptions): BaseAgent | undefined {
+    this.checkInitialized()
+
+    // 1. Direct selection by agent ID (highest priority)
+    if (options.agentId) {
+      const agent = this.getAgentInstance(options.agentId)
+      if (agent) return agent
+    }
+
+    // 2. Selection by role
+    if (options.roleId) {
+      const agents = this.getAgentsByRole(options.roleId)
+      if (agents.length) {
+        // Sort by confidence if requested (default: true)
+        const shouldSort = options.sortByConfidence !== false
+        const sorted = shouldSort
+          ? [...agents].sort((a, b) => b.confidence - a.confidence)
+          : agents
+        return this.getAgentInstance(sorted[0].agentId)
+      }
+    }
+
+    // 3. Selection by skills (first match)
+    if (options.skills?.length) {
+      for (const skill of options.skills) {
+        const agents = this.getAgentsBySkill(skill)
+        if (agents.length) {
+          return this.getAgentInstance(agents[0].agentId)
+        }
+      }
+    }
+
+    // 4. Fallback - first available agent
+    const all = this.getAllAgentInstances()
+    return all.length > 0 ? all[0] : undefined
   }
 
   /**

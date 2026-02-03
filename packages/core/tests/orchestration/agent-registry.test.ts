@@ -34,6 +34,10 @@ describe('AgentRegistry', () => {
       expect(typeof agentRegistry.getAgent).toBe('function')
     })
 
+    it('should have a getAgentInstance method', () => {
+      expect(typeof agentRegistry.getAgentInstance).toBe('function')
+    })
+
     it('should have a getAllAgents method', () => {
       expect(typeof agentRegistry.getAllAgents).toBe('function')
     })

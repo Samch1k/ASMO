@@ -43,7 +43,7 @@ export {
 // ORCHESTRATION
 // ===================================
 export { WorkflowEngine } from './orchestration/workflow-engine'
-export { AgentRegistry } from './orchestration/agent-registry'
+export { AgentRegistry, type SelectAgentOptions } from './orchestration/agent-registry'
 export { SkillMatcher } from './orchestration/skill-matcher'
 export { PhaseManager } from './orchestration/phase-manager'
 export { IterationManager } from './orchestration/iteration-manager'
@@ -93,6 +93,7 @@ export { ElicitationManager } from './orchestration/elicitation'
 
 // BMAD Integration: Utilities
 export { DocumentSharder } from './utils/document-sharding'
+export { SingletonFactory, createSingleton } from './utils/singleton'
 
 // ===================================
 // CONFIGURATION
@@ -261,9 +262,17 @@ export {
   resetAgentExecutor,
   type ExecutorConfig,
   type ExecutionContext,
-  type ExecutionResult,
-  type ErrorCategory
+  type ExecutionResult
 } from './orchestration/agent-executor'
+
+// Error utilities
+export {
+  type ErrorCategory,
+  categorizeError,
+  isRetryable,
+  getRetryDelayMultiplier,
+  analyzeError
+} from './orchestration/errors'
 
 export {
   RoutingLogger,

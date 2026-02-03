@@ -109,6 +109,9 @@ export interface Artifact {
   /** Type of artifact */
   type: 'code' | 'adr' | 'diagram' | 'test' | 'documentation'
   
+  /** Optional artifact name (e.g., filename) */
+  name?: string
+
   /** Artifact content */
   content: string
   
@@ -353,14 +356,13 @@ export interface SkillMatch {
 }
 
 /**
- * Routing decision
+ * Agent routing decision (for multi-agent selection)
  */
-export interface RoutingDecision {
+export interface AgentRoutingDecision {
   selected_agents: string[]
   parallel: boolean
   reasoning: string
   confidence: number
   fallback_agents?: string[]
 }
-
 

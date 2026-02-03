@@ -14,6 +14,7 @@
 
 import type { BaseAgent } from '../agents/base-agent'
 import type { AgentState, Artifact } from '../agents/types'
+import type { SelectAgentOptions } from './agent-registry'
 import { TaskRouter, getTaskRouter, type TaskContext, type RoutingResult } from './task-router'
 import { AgentExecutor, getAgentExecutor, type ExecutorConfig, type AgentExecutionOutput } from './agent-executor'
 import { getRoutingLogger, type ModelTier } from './routing-logger'
@@ -65,10 +66,16 @@ export interface OrchestrationResult {
   error?: string
 }
 
-export interface AgentRegistry {
-  getAgent(agentId: string): BaseAgent | undefined
-  getAgentsBySkill(skill: string): BaseAgent[]
-  getAllAgents(): BaseAgent[]
+export interface AgentRegistryLike {
+  /** Unified agent selection method (preferred) */
+  selectAgent?: (options: SelectAgentOptions) => BaseAgent | undefined
+  /** Legacy methods for backward compatibility */
+  getAgent?: (agentId: string) => { agentId: string; execute?: Function } | undefined
+  getAgentsBySkill?: (skill: string) => { agentId: string }[]
+  getAllAgents?: () => { agentId: string }[]
+  getAgentInstance?: (agentId: string) => BaseAgent | undefined
+  getAgentsBySkillInstances?: (skill: string) => BaseAgent[]
+  getAllAgentInstances?: () => BaseAgent[]
 }
 
 // =============================================================================
@@ -82,7 +89,7 @@ export class DynamicOrchestrator {
   private config: OrchestratorConfig
   private router: TaskRouter
   private executor: AgentExecutor
-  private registry: AgentRegistry | null = null
+  private registry: AgentRegistryLike | null = null
   private logger = getRoutingLogger()
   private runningTasks: Map<string, Promise<OrchestrationResult>> = new Map()
 
@@ -104,7 +111,7 @@ export class DynamicOrchestrator {
   /**
    * Set agent registry
    */
-  setRegistry(registry: AgentRegistry): void {
+  setRegistry(registry: AgentRegistryLike): void {
     this.registry = registry
   }
 
@@ -392,7 +399,7 @@ export class DynamicOrchestrator {
   // ===========================================================================
 
   /**
-   * Resolve agent from registry
+   * Resolve agent from registry using unified selectAgent method
    */
   private resolveAgent(
     agentId?: string,
@@ -402,34 +409,34 @@ export class DynamicOrchestrator {
       return undefined
     }
 
-    // Try specific agent
+    // Use unified selectAgent if available (AgentRegistry)
+    if (this.registry.selectAgent) {
+      return this.registry.selectAgent({
+        agentId,
+        skills: requiredSkills,
+        sortByConfidence: true
+      })
+    }
+
+    // Fallback for legacy registries without selectAgent
     if (agentId) {
-      const agent = this.registry.getAgent(agentId)
-      if (agent) return agent
+      const instance = this.registry.getAgentInstance?.(agentId)
+      if (instance) return instance
     }
 
-    // Try by skills
-    if (requiredSkills?.length) {
-      for (const skill of requiredSkills) {
-        const agents = this.registry.getAgentsBySkill(skill)
-        if (agents.length > 0) {
-          return agents[0]
-        }
-      }
-    }
-
-    // Return first available
-    const all = this.registry.getAllAgents()
-    return all[0]
+    const allInstances = this.registry.getAllAgentInstances?.()
+    return allInstances?.[0]
   }
 
   /**
    * Get agent ID from BaseAgent (uses agentId property)
+   * Returns constructor name as fallback to ensure non-null return
    */
-  private getAgentId(agent: BaseAgent): string | undefined {
+  private getAgentId(agent: BaseAgent): string {
     // BaseAgent has agentId as protected, but we can access via getMetadata
     const metadata = (agent as any).getMetadata?.()
-    return metadata?.id || (agent as any).agentId
+    const id = metadata?.id || (agent as any).agentId || agent.constructor.name
+    return id || 'UnknownAgent'
   }
 
   /**
