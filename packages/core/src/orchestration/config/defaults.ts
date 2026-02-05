@@ -192,8 +192,6 @@ export const DEFAULT_ORCHESTRATION_CONFIG: OrchestrationConfig = {
    * Source: complexity-analyzer.ts DEFAULT_CONFIG
    */
   complexityAnalyzer: {
-    model: 'claude-sonnet-3-5',
-    temperature: 0.2,
     maxTokens: 2000,
     thresholds: {
       trivial: 20,

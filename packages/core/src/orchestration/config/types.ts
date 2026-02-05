@@ -146,10 +146,6 @@ export interface MetricsOptimizerConfig {
  * ComplexityAnalyzer configuration (BMAD Phase 1.5)
  */
 export interface ComplexityAnalyzerConfig {
-  /** LLM model to use for analysis (default: 'claude-sonnet-3-5') */
-  model?: string
-  /** Temperature for LLM (0.0-1.0, default: 0.2) */
-  temperature?: number
   /** Maximum tokens for LLM response (default: 2000) */
   maxTokens?: number
   /** Complexity thresholds for level mapping */

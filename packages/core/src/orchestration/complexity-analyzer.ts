@@ -11,10 +11,14 @@
  * - Suggest required agents
  * - Provide confidence scores and reasoning
  *
- * Inspired by BMAD's Scale-Domain-Adaptive system
+ * Uses LLMProviderFactory for LLM access:
+ * - Session mode (default, $0) → `claude -p "prompt"`
+ * - API mode (fallback) → Anthropic SDK
+ * - Heuristics as final fallback if no provider available
  */
 
-import Anthropic from '@anthropic-ai/sdk'
+import { getLLMProvider } from '../llm/provider-factory'
+import type { ILLMProvider } from '../llm/types'
 import type {
   ComplexityScore,
   ComplexityLevel,
@@ -28,36 +32,10 @@ import type {
  */
 export interface ComplexityAnalyzerConfig {
   /**
-   * Enable LLM-based analysis (requires ANTHROPIC_API_KEY)
-   * When false, uses heuristic-based analysis
-   * @default false
-   */
-  useLLM?: boolean
-
-  /**
-   * LLM model to use for analysis
-   * @default 'claude-3-5-sonnet-20241022'
-   */
-  model?: string
-
-  /**
-   * Temperature for LLM (0.0-1.0)
-   * Lower = more consistent, Higher = more creative
-   * @default 0.2
-   */
-  temperature?: number
-
-  /**
    * Maximum tokens for LLM response
    * @default 2000
    */
   maxTokens?: number
-
-  /**
-   * Number of retries for LLM calls
-   * @default 3
-   */
-  maxRetries?: number
 
   /**
    * Complexity thresholds for level mapping
@@ -75,11 +53,7 @@ export interface ComplexityAnalyzerConfig {
  * Default configuration
  */
 const DEFAULT_CONFIG: Required<ComplexityAnalyzerConfig> = {
-  useLLM: false,
-  model: 'claude-3-5-sonnet-20241022',
-  temperature: 0.2,
   maxTokens: 2000,
-  maxRetries: 3,
   thresholds: {
     trivial: 20,
     simple: 40,
@@ -95,20 +69,9 @@ const DEFAULT_CONFIG: Required<ComplexityAnalyzerConfig> = {
 export class ComplexityAnalyzer {
   private config: Required<ComplexityAnalyzerConfig>
   private workflows: Map<string, Workflow> = new Map()
-  private anthropic: Anthropic | null = null
 
   constructor(config?: ComplexityAnalyzerConfig) {
     this.config = { ...DEFAULT_CONFIG, ...config }
-
-    // Initialize Anthropic client if LLM mode is enabled
-    if (this.config.useLLM) {
-      const apiKey = process.env.ANTHROPIC_API_KEY
-      if (apiKey) {
-        this.anthropic = new Anthropic({ apiKey })
-      } else {
-        console.warn('[ComplexityAnalyzer] useLLM enabled but ANTHROPIC_API_KEY not set, falling back to heuristics')
-      }
-    }
   }
 
   /**
@@ -231,14 +194,33 @@ Be objective and realistic in your assessment. Consider both the immediate task 
   /**
    * Call LLM for analysis with fallback to heuristics
    *
-   * When useLLM is enabled and Anthropic client is available, calls Claude API.
-   * Otherwise falls back to heuristic-based analysis.
+   * Uses LLMProviderFactory to get the best available provider:
+   * - Session mode ($0, via Claude CLI subscription)
+   * - API mode (pay-per-use, via ANTHROPIC_API_KEY)
+   * - Heuristics (final fallback if no provider available)
    */
   private async callLLM(prompt: string, taskDescription: string): Promise<string> {
-    // Try LLM analysis if enabled
-    if (this.config.useLLM && this.anthropic) {
+    let provider: ILLMProvider | null = null
+
+    try {
+      provider = getLLMProvider()
+    } catch {
+      // No provider available, will use heuristics
+    }
+
+    if (provider) {
       try {
-        return await this.callAnthropicWithRetry(prompt)
+        const response = await provider.generate(prompt, {
+          maxTokens: this.config.maxTokens,
+          temperature: 0.2
+        })
+
+        // Extract JSON from response (may be wrapped in markdown)
+        const jsonMatch = response.content.match(/\{[\s\S]*\}/)
+        if (jsonMatch) {
+          return jsonMatch[0]
+        }
+        return response.content
       } catch (error) {
         console.warn('[ComplexityAnalyzer] LLM call failed, falling back to heuristics:', error)
       }
@@ -246,57 +228,6 @@ Be objective and realistic in your assessment. Consider both the immediate task 
 
     // Fallback to heuristic-based analysis
     return this.analyzeWithHeuristics(taskDescription)
-  }
-
-  /**
-   * Call Anthropic API with retry logic
-   */
-  private async callAnthropicWithRetry(prompt: string): Promise<string> {
-    const { maxRetries, model, temperature, maxTokens } = this.config
-    let lastError: Error | null = null
-
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      try {
-        const response = await this.anthropic!.messages.create({
-          model,
-          max_tokens: maxTokens,
-          temperature,
-          messages: [{
-            role: 'user',
-            content: prompt
-          }]
-        })
-
-        const content = response.content[0]
-        if (content.type === 'text') {
-          // Extract JSON from response (may be wrapped in markdown)
-          const jsonMatch = content.text.match(/\{[\s\S]*\}/)
-          if (jsonMatch) {
-            return jsonMatch[0]
-          }
-          return content.text
-        }
-
-        throw new Error('Unexpected response format from Anthropic')
-      } catch (error) {
-        lastError = error as Error
-
-        // Don't retry on certain errors
-        if (error instanceof Error) {
-          const message = error.message.toLowerCase()
-          if (message.includes('invalid_api_key') || message.includes('authentication')) {
-            throw error // Don't retry auth errors
-          }
-        }
-
-        // Wait before retry (exponential backoff)
-        if (attempt < maxRetries - 1) {
-          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt)))
-        }
-      }
-    }
-
-    throw lastError || new Error('LLM call failed after retries')
   }
 
   /**
