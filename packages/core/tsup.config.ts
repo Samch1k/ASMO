@@ -8,8 +8,7 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   external: [
-    // Node built-ins
-    'process',
+    // Node built-ins (process omitted — it's a global, shims: true handles it)
     'path',
     'fs',
     'os',
@@ -32,15 +31,14 @@ export default defineConfig({
     'string_decoder',
     'querystring',
     'zlib',
-    // Dependencies that have CJS/ESM issues
+    // Runtime dependencies (externalized to avoid bundling issues)
     'yaml',
     'js-yaml',
-    'pg',
+    'ajv',
+    'pg',              // optional peer dependency for metrics persistence
     'lru-cache',
+    'better-sqlite3',  // native addon, must not be bundled
     '@anthropic-ai/sdk',
-    '@langchain/anthropic',
-    '@langchain/core',
-    '@langchain/langgraph',
     'zod',
   ],
   platform: 'node',
