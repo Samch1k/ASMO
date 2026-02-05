@@ -41,8 +41,6 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
     await engine.initialize()
 
     // Step 2: Adaptive Workflow Selection (uses BMAD + complexity analysis)
-    // Note: If task contains menu command ([IR], [DS], etc.), it will be detected
-    // and executed directly in engine.execute() below, bypassing this selection
     console.log('🔍 Analyzing task complexity...')
 
     const selection = await engine.selectWorkflowAdaptively(task)
@@ -65,7 +63,6 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
     }
 
     // Step 4: Execute workflow
-    // ✨ BMAD Phase 1.1: Menu commands ([IR], [DS], [ГР], etc.) detected here
     console.log('\n🚀 Executing workflow...\n')
 
     const result = await engine.execute(task)

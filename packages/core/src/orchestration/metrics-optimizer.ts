@@ -57,7 +57,6 @@ interface ParallelizationCandidate {
 export class MetricsOptimizer {
   private minHistoricalRuns: number
   private parallelizationSafetyThreshold: number
-  // ✨ Priority 2: Optimization thresholds from config
   private optimizationConfig: {
     phasePenalty: number
     deliverableDependencyPenalty: number
@@ -71,7 +70,6 @@ export class MetricsOptimizer {
   }
 
   constructor(private persister: MetricsPersister) {
-    // ✨ Priority 2: Load config from ConfigManager if available
     const configManager = getConfigManager()
     if (configManager.isInitialized()) {
       const metricsConfig = configManager.getMetricsOptimizerConfig()

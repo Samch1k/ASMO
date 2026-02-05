@@ -59,7 +59,7 @@ export const AgentOutputSchema = z.object({
   context: z.record(z.string(), z.unknown()).optional(),
   artifacts: z.array(z.object({
     type: z.string(),
-    name: z.string(),
+    name: z.string().optional(),
     content: z.any(),
     metadata: z.record(z.string(), z.unknown()).optional()
   })).optional(),

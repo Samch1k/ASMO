@@ -7,7 +7,6 @@ import {
   type LLMResponse,
   type ModelTier
 } from "../llm"
-// ✨ BMAD Phase 3: PersonalityPromptLoader for dynamic prompt enrichment
 import { PersonalityPromptLoader } from "../orchestration/personality-prompt-loader"
 
 // Optional RunnableConfig for future LangChain integration
@@ -43,11 +42,10 @@ export interface AgentMetadata {
  * Each specialized agent (Architect, Developer, Debugger, etc.) extends this class
  */
 export abstract class BaseAgent {
-  // ✨ NEW: Role and skills (optional for backward compatibility)
   protected role?: Role
   protected skills: Skill[] = []
 
-  // ✨ BMAD Phase 3: Current execution context (for personality prompt enrichment)
+  // Current execution context (for personality prompt enrichment)
   private currentTask?: string
   private currentContext?: Record<string, any>
 
@@ -77,8 +75,6 @@ export abstract class BaseAgent {
    * Request data from an MCP server
    * This provides a unified interface to all MCP servers
    *
-   * ✨ ENHANCED: Now checks role.allowed_mcps for access control
-   *
    * @param mcpName - Name of the MCP server (memory, supabase, filesystem, etc.)
    * @param query - Query parameters for the MCP
    * @returns Response from the MCP server
@@ -87,7 +83,7 @@ export abstract class BaseAgent {
     mcpName: string,
     query: any
   ): Promise<any> {
-    // ✨ Check MCP access control
+    // Check MCP access control
     if (this.role && !this.role.allowed_mcps.includes(mcpName)) {
       this.log(
         `❌ Access denied: Role ${this.role.id} cannot access MCP ${mcpName}`,
@@ -183,7 +179,7 @@ export abstract class BaseAgent {
   }
 
   /**
-   * ✨ Set role dynamically (called by AgentRegistry)
+   * Set role dynamically (called by AgentRegistry)
    *
    * @param role - Role to assign to this agent
    */
@@ -193,7 +189,7 @@ export abstract class BaseAgent {
   }
 
   /**
-   * ✨ Add skills dynamically
+   * Add skills dynamically
    *
    * @param skills - Skills to add to this agent
    */
@@ -202,7 +198,7 @@ export abstract class BaseAgent {
   }
 
   /**
-   * ✨ Check if this agent has a specific skill
+   * Check if this agent has a specific skill
    *
    * @param skillId - Skill ID to check
    * @returns true if agent has this skill
@@ -212,7 +208,7 @@ export abstract class BaseAgent {
   }
 
   /**
-   * ✨ Get confidence for a specific skill
+   * Get confidence for a specific skill
    *
    * @param skillId - Skill ID to get confidence for
    * @returns Confidence threshold (0-1) or 0 if skill not found
@@ -223,7 +219,7 @@ export abstract class BaseAgent {
   }
 
   /**
-   * ✨ Validate that agent has required skills from role
+   * Validate that agent has required skills from role
    * Logs warnings for missing required skills
    */
   private validateRoleSkills(): void {
@@ -242,7 +238,7 @@ export abstract class BaseAgent {
   }
 
   /**
-   * ✨ Get complete agent metadata
+   * Get complete agent metadata
    *
    * @returns Agent metadata including role, skills, and permissions
    */
@@ -297,7 +293,7 @@ export abstract class BaseAgent {
   }
 
   /**
-   * ✨ NEW: Call LLM with a prompt
+   * Call LLM with a prompt
    *
    * This is the primary method for agents to interact with LLMs.
    * Uses the session provider ($0) by default, falls back to API if needed.
@@ -327,7 +323,6 @@ export abstract class BaseAgent {
 
     this.log(`LLM call via ${provider.name} (${provider.cost})`)
 
-    // ✨ BMAD Phase 3: Await async getDefaultSystemPrompt()
     const systemPrompt = options?.systemPrompt ?? await this.getDefaultSystemPrompt(
       this.currentTask,
       this.currentContext
@@ -354,7 +349,7 @@ export abstract class BaseAgent {
   }
 
   /**
-   * ✨ NEW: Call LLM and parse response as JSON
+   * Call LLM and parse response as JSON
    *
    * Use this when you need structured data from the LLM.
    * The prompt should instruct the LLM to return valid JSON.
@@ -384,7 +379,6 @@ export abstract class BaseAgent {
 
     this.log(`LLM JSON call via ${provider.name}`)
 
-    // ✨ BMAD Phase 3: Await async getJSONSystemPrompt()
     const systemPrompt = options?.systemPrompt ?? await this.getJSONSystemPrompt()
 
     const llmOptions: LLMGenerateOptions = {
@@ -408,7 +402,7 @@ export abstract class BaseAgent {
   }
 
   /**
-   * ✨ BMAD Phase 3: Get default system prompt for this agent
+   * Get default system prompt for this agent
    *
    * If the agent has a personality defined, uses PersonalityPromptLoader
    * to enrich the prompt with personality traits, principles, and signatures.
@@ -424,7 +418,7 @@ export abstract class BaseAgent {
     task?: string,
     context?: Record<string, any>
   ): Promise<string> {
-    // ✨ BMAD Phase 3: Use PersonalityPromptLoader if personality defined
+    // Use PersonalityPromptLoader if personality defined
     if (this.role?.personality) {
       try {
         const loader = new PersonalityPromptLoader()
@@ -472,7 +466,7 @@ Focus on the task at hand and provide actionable insights.`.trim()
   }
 
   /**
-   * ✨ BMAD Phase 3: Get system prompt for JSON generation
+   * Get system prompt for JSON generation
    * Ensures valid JSON output
    */
   protected async getJSONSystemPrompt(): Promise<string> {
@@ -488,7 +482,7 @@ Ensure all strings are properly escaped and the JSON is well-formed.`
   }
 
   /**
-   * ✨ BMAD Phase 3: Set execution context for personality prompt enrichment
+   * Set execution context for personality prompt enrichment
    *
    * Call this at the beginning of execute() to enable personality-based prompts.
    *
@@ -498,5 +492,13 @@ Ensure all strings are properly escaped and the JSON is well-formed.`
     this.currentTask = state.task
     this.currentContext = state.context
   }
-}
 
+  /**
+   * Public wrapper to initialize execution context for external orchestrators.
+   *
+   * This enables personality prompt enrichment in callLLM().
+   */
+  initializeExecutionContext(state: AgentState): void {
+    this.setExecutionContext(state)
+  }
+}

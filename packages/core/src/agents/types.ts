@@ -2,10 +2,10 @@ import type { Message } from "../llm"
 
 /**
  * Context object shared between agents
- * ✨ Priority 2 Phase 2: Includes optional instructions field for agent guidance
+ * Includes optional instructions field for agent guidance
  */
 export interface AgentContext extends Record<string, any> {
-  /** ✨ Priority 2 Phase 2: Agent instructions loaded from markdown files */
+  /** Agent instructions loaded from markdown files */
   instructions?: string
 }
 
@@ -44,7 +44,6 @@ export interface AgentState {
   /** Whether human approval is required before proceeding */
   requiresApproval: boolean
 
-  // ✨ New fields for skill-based routing (optional for backward compatibility)
   /** Routing method used: skill-based or keyword-based */
   routing_method?: 'skill_based' | 'keyword_based'
 
@@ -176,7 +175,7 @@ export interface ActivationRules {
 }
 
 /**
- * ✨ BMAD Phase 2: Agent personality definition
+ * Agent personality definition
  */
 export interface AgentPersonality {
   /** BMAD persona name (e.g., Winston, Amelia, Bob, John) */
@@ -204,7 +203,7 @@ export interface AgentPersonality {
 }
 
 /**
- * ✨ BMAD Phase 2: Agent principle definition
+ * Agent principle definition
  */
 export interface AgentPrinciple {
   /** Principle name (e.g., 'test_enforcement', 'zero_ambiguity') */
@@ -272,10 +271,10 @@ export interface Role {
   /** TypeScript class name implementing this role (must end with 'Agent') */
   agent_class: string
 
-  /** ✨ BMAD Phase 2: Agent personality (optional) */
+  /** Agent personality (optional) */
   personality?: AgentPersonality
 
-  /** ✨ BMAD Phase 2: Agent principles (optional) */
+  /** Agent principles (optional) */
   principles?: AgentPrinciple[]
 
   /** Additional role-specific metadata */

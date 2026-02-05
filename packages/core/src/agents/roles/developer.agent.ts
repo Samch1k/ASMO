@@ -122,7 +122,7 @@ export class DeveloperAgent extends BaseAgent {
           ...state.context,
           implementation,
           tests,
-          test_results: testResults,  // ✨ BMAD Phase 1.2: Required for TestEnforcementValidator
+          test_results: testResults,
           codeArtifact,
           testArtifact
         },
@@ -251,7 +251,7 @@ export const handler = ...`
     coverage?: number
     duration?: number
   }> {
-    // ✨ BMAD Phase 1.2: Mock test results for MVP
+    // Mock test results for MVP
     // TODO: In production, integrate with actual test runner
     // Example: const result = await exec('pnpm test')
 

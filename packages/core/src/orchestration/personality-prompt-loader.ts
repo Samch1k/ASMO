@@ -1,7 +1,7 @@
 /**
  * PersonalityPromptLoader - Dynamic prompt enrichment with agent personalities
  *
- * ✨ BMAD Phase 3: Loads markdown prompts and enriches them with:
+ * Loads markdown prompts and enriches them with:
  * - Agent personality traits and communication style
  * - Core principles (strict and guidelines)
  * - Bilingual catchphrases and signatures

@@ -64,14 +64,12 @@ export class MetricsCollector {
   private phaseDurations: Map<string, number> = new Map()
   private stepMetrics: AgentStepMetrics[] = []
   private currentWorkflowName?: string
-  // ✨ Priority 2: Bottleneck thresholds from config
   private thresholds: {
     stepDurationMultiplier: number
     phaseDurationMultiplier: number
   }
 
   constructor() {
-    // ✨ Priority 2: Load thresholds from ConfigManager if available
     const configManager = getConfigManager()
     if (configManager.isInitialized()) {
       const metricsConfig = configManager.getMetricsCollectorConfig()

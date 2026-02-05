@@ -50,18 +50,6 @@ Returns JSON with `useAsmo: true/false` and reasoning.
 # Analyze and execute (main command)
 asmo run "<task>"
 
-# BMAD menu commands (bilingual shortcuts) - NEW in v3.0
-asmo run "[DS] implement feature"   # Dev Story (TDD with Amelia)
-asmo run "[CR] review code"         # Code Review
-asmo run "[CS] create story"        # Create Story (Bob's zero ambiguity)
-asmo run "[IR]"                     # Implementation Readiness
-
-# Russian menu commands also supported
-asmo run "[ИС] реализовать функцию"  # Dev Story
-asmo run "[КО] проверить код"        # Code Review
-asmo run "[СИ] создать историю"      # Create Story
-asmo run "[ГР]"                      # Implementation Readiness
-
 # Get ASMO recommendation (fast, for hooks)
 asmo suggest "<task>"
 
@@ -74,34 +62,6 @@ asmo workflow
 # Run specific workflow
 asmo workflow <name> --task "<task>"
 ```
-
-## BMAD Menu Commands (v3.0)
-
-ASMO now supports bilingual menu commands for rapid workflow execution:
-
-| EN | RU | Workflow | BMAD Agent | Principle Enforced |
-|----|----|----------|------------|--------------------|
-| `[DS]` | `[ИС]` | Dev Story (TDD) | Amelia | Test Enforcement - blocks if tests fail |
-| `[CS]` | `[СИ]` | Create Story | Bob + John | Zero Ambiguity + WHY First |
-| `[CR]` | `[КО]` | Code Review | Multiple | Comprehensive quality gates |
-| `[IR]` | `[ГР]` | Implementation Readiness | Bob | Requirement clarity check |
-| `[CC]` | `[КК]` | Course Correction | Winston | Risk assessment |
-
-**Example usage:**
-```bash
-# English: TDD implementation with strict test enforcement
-asmo run "[DS] implement OAuth2 authentication"
-
-# Russian: Story creation with zero ambiguity enforcement
-asmo run "[СИ] добавить систему уведомлений"
-```
-
-### BMAD Agent Personalities
-
-- **Amelia** (Developer): TDD evangelist - "I will not mark this complete until 100% of tests pass"
-- **Winston** (Architect): Boring tech advocate - Prefers PostgreSQL over MongoDB, REST over GraphQL
-- **Bob** (Scrum Master): Zero ambiguity guardian - Blocks vague terms like "fast", "many", "user-friendly"
-- **John** (Product Owner): WHY-first leader - Requires business value explanation in all stories
 
 ## Available Workflows
 

@@ -777,6 +777,58 @@
         ],
         "domain": "Adversarial Code Review"
       }
+    },
+    {
+      "id": "code-reviewer",
+      "name": "Code Reviewer",
+      "description": "Code quality and security review specialist. Performs code quality checks, security vulnerability scanning (OWASP patterns), best practices validation (SOLID principles), and test coverage verification.",
+      "category": "specialized",
+      "role_type": "reasoning",
+      "can_modify_code": false,
+      "requires_plan": false,
+      "required_skills": [
+        "code_review",
+        "security_analysis",
+        "best_practices"
+      ],
+      "optional_skills": [
+        "performance_analysis",
+        "test_coverage_analysis",
+        "architecture_review"
+      ],
+      "priority": 8,
+      "allowed_mcps": [
+        "filesystem",
+        "memory",
+        "github",
+        "context7"
+      ],
+      "activation_rules": {
+        "type": "auto_attached",
+        "trigger_keywords": [
+          "review",
+          "code review",
+          "quality check",
+          "security review",
+          "проверка кода",
+          "ревью"
+        ],
+        "task_types": [
+          "code_review",
+          "quality_assurance",
+          "security_review"
+        ]
+      },
+      "agent_class": "CodeReviewerAgent",
+      "metadata": {
+        "llm_temperature": 0.1,
+        "max_tokens": 6144,
+        "output_artifacts": [
+          "documentation",
+          "review_report"
+        ],
+        "domain": "Code Review & Quality"
+      }
     }
   ]
 }

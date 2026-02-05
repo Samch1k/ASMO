@@ -64,7 +64,6 @@ export class PhaseManager {
   }
 
   constructor() {
-    // ✨ Priority 2: Load config from ConfigManager if available
     const configManager = getConfigManager()
     if (configManager.isInitialized()) {
       const phaseConfig = configManager.getPhaseManagerConfig()

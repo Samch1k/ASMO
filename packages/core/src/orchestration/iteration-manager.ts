@@ -107,7 +107,6 @@ export class IterationManager {
   ]
 
   constructor(config: RetryConfig = {}) {
-    // ✨ Priority 2: Try to load config from ConfigManager if not explicitly provided
     const configManager = getConfigManager()
     let effectiveConfig = config
 
@@ -125,7 +124,7 @@ export class IterationManager {
       fatalErrors: effectiveConfig.fatalErrors ?? this.defaultFatalErrors
     }
 
-    console.log(`✨ IterationManager: Retry logic enabled (max ${this.config.maxRetries} retries)`)
+    console.log(`IterationManager: Retry logic enabled (max ${this.config.maxRetries} retries)`)
   }
 
   /**

@@ -93,7 +93,7 @@ export class TestEnforcementValidator {
       return { valid: false, errors, warnings }
     }
 
-    // ✨ BMAD: Amelia's Strict Rule - 100% passage
+    // Amelia's Strict Rule - 100% passage
     if (testResults.failed > 0) {
       errors.push(
         `🚫 Amelia says: ${testResults.failed} test(s) failing - I will not mark this complete until 100% of tests pass`

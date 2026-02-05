@@ -67,7 +67,6 @@ export class ApprovalCheckpoint {
   ]
 
   constructor(config: ApprovalCheckpointConfig = {}) {
-    // ✨ Priority 2: Try to load config from ConfigManager if not explicitly provided
     const configManager = getConfigManager()
     let effectiveConfig = config
 
@@ -83,7 +82,6 @@ export class ApprovalCheckpoint {
       skipCheckpoints: effectiveConfig.skipCheckpoints ?? false
     }
 
-    // ✨ Priority 2: Load checkpoint phases from config if available
     if (configManager.isInitialized()) {
       const approvalConfig = configManager.getApprovalCheckpointConfig()
       if (approvalConfig.checkpointPhases && approvalConfig.checkpointPhases.length > 0) {

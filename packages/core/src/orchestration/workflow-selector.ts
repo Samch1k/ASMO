@@ -370,7 +370,7 @@ export class WorkflowSelector {
       mergeStrategy
     }
 
-    console.log('   ✨ Hybrid analysis complete!\n')
+    console.log('   Hybrid analysis complete.\n')
 
     return result
   }

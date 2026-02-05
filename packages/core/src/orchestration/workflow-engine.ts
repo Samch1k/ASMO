@@ -9,8 +9,8 @@
  * - Exit criteria validation
  * - Timeout handling
  * - Graceful error handling
- * - ✨ Day 8: Phase tracking with PhaseManager
- * - ✨ Day 8: Approval checkpoints at phase boundaries
+ * - Phase tracking with PhaseManager
+ * - Approval checkpoints at phase boundaries
  */
 
 import type { AgentState, AgentWithRoleSkills } from '../agents/types'
@@ -22,21 +22,18 @@ import { IterationManager, RetryConfig } from './iteration-manager'
 import { MetricsCollector } from './metrics-collector'
 import { MetricsPersister } from './metrics-persister'
 import { LearningLoop } from './learning-loop'
-import { MetricsOptimizer } from './metrics-optimizer'
 import { RetrospectiveAgent } from './retrospective-agent'
 import { RetrospectiveReportGenerator } from './retrospective-report-generator'
 import { getTeamManager, type TeamManager } from './team-manager'
 import { getChecklistManager, type ChecklistManager } from './checklist-manager'
 import { getConfigManager, type ConfigManager } from './config/config-manager'
 import { getInstructionManager, type InstructionManager } from './instruction-manager'
-// ✨ BMAD Phase 1.5: Adaptive workflow selection
+// Adaptive workflow selection
 import { ComplexityAnalyzer } from './complexity-analyzer'
 import { WorkflowSelector } from './workflow-selector'
-// ✨ BMAD Phase 1.1: Menu-driven commands
-import { MenuCommandRouter } from './menu-command-router'
-// ✨ BMAD Phase 1.2: Test enforcement validator
+// Test enforcement validator
 import { TestEnforcementValidator } from './validators/test-enforcement-validator'
-// ✨ BMAD Phase 2.2: Principle validators (Bob, Winston, John)
+// Principle validators (Bob, Winston, John)
 import {
   ZeroAmbiguityValidator,
   BoringTechnologyValidator,
@@ -63,37 +60,34 @@ export class WorkflowEngine {
   private workflows: Map<string, Workflow> = new Map()
   private globalSettings: WorkflowConfig['global_settings']
   private initialized = false
-  private currentWorkflow: Workflow | null = null // ✨ Phase 3: Track current workflow for checklist access
+  private currentWorkflow: Workflow | null = null // Track current workflow for checklist access
 
-  // ✨ Day 8: Phase tracking and approval checkpoints
+  // Phase tracking and approval checkpoints
   private phaseManager: PhaseManager
   private approvalCheckpoint: ApprovalCheckpoint
-  // ✨ Day 9: Retry logic with exponential backoff
+  // Retry logic with exponential backoff
   private iterationManager: IterationManager
-  // ✨ BMad: Metrics collection and learning loop
+  // Metrics collection and learning loop
   private metricsCollector: MetricsCollector
   private metricsPersister: MetricsPersister
   private learningLoop: LearningLoop
-  private metricsOptimizer: MetricsOptimizer
-  // ✨ BMad Day 3: Retrospective analysis
+  // Retrospective analysis
   private retrospectiveAgent: RetrospectiveAgent
   private retrospectiveReportGenerator: RetrospectiveReportGenerator
-  // ✨ Phase 2: Team management
+  // Team management
   private teamManager: TeamManager
-  // ✨ Phase 3: Checklist management
+  // Checklist management
   private checklistManager: ChecklistManager
-  // ✨ Priority 2: Configuration management
+  // Configuration management
   private configManager: ConfigManager
-  // ✨ Priority 2 Phase 2: Instruction management
+  // Instruction management
   private instructionManager: InstructionManager
-  // ✨ BMAD Phase 1.5: Adaptive workflow selection
+  // Adaptive workflow selection
   private complexityAnalyzer: ComplexityAnalyzer
   private workflowSelector: WorkflowSelector
-  // ✨ BMAD Phase 1.1: Menu-driven commands
-  private menuRouter!: MenuCommandRouter  // Initialized after workflows loaded
-  // ✨ BMAD Phase 1.2: Test enforcement validator
+  // Test enforcement validator
   private testEnforcementValidator: TestEnforcementValidator
-  // ✨ BMAD Phase 2.2: Principle validators (Bob, Winston, John)
+  // Principle validators (Bob, Winston, John)
   private principleValidators: {
     zeroAmbiguity: ZeroAmbiguityValidator
     boringTechnology: BoringTechnologyValidator
@@ -107,7 +101,7 @@ export class WorkflowEngine {
     retryConfig?: RetryConfig,
     databaseUrl?: string
   ) {
-    // ✨ Priority 2: Get ConfigManager instance
+    // Get ConfigManager instance
     this.configManager = getConfigManager()
 
     // Default settings (will be overridden by ConfigManager if initialized)
@@ -119,36 +113,35 @@ export class WorkflowEngine {
       state_merge_strategy: 'namespace_isolation'
     }
 
-    // ✨ Initialize phase tracking and approval system
+    // Initialize phase tracking and approval system
     this.phaseManager = new PhaseManager()
-    // ✨ Priority 2: Pass configs from ConfigManager if initialized, otherwise use provided config
+    // Pass configs from ConfigManager if initialized, otherwise use provided config
     this.approvalCheckpoint = new ApprovalCheckpoint(
       approvalConfig || (this.configManager.isInitialized()
         ? this.configManager.getApprovalCheckpointConfig()
         : undefined)
     )
-    // ✨ Initialize retry logic
+    // Initialize retry logic
     this.iterationManager = new IterationManager(
       retryConfig || (this.configManager.isInitialized()
         ? this.configManager.getIterationManagerConfig()
         : undefined)
     )
-    // ✨ Initialize BMad metrics and learning loop
+    // Initialize BMad metrics and learning loop
     this.metricsCollector = new MetricsCollector()
     this.metricsPersister = new MetricsPersister(databaseUrl)
     this.learningLoop = new LearningLoop(this.metricsPersister)
-    this.metricsOptimizer = new MetricsOptimizer(this.metricsPersister)
-    // ✨ BMad Day 3: Initialize retrospective analysis
+    // Initialize retrospective analysis
     this.retrospectiveAgent = new RetrospectiveAgent(this.metricsPersister)
     this.retrospectiveReportGenerator = new RetrospectiveReportGenerator()
-    // ✨ Phase 2: Initialize team manager
+    // Initialize team manager
     this.teamManager = getTeamManager()
-    // ✨ Phase 3: Initialize checklist manager
+    // Initialize checklist manager
     this.checklistManager = getChecklistManager()
-    // ✨ Priority 2 Phase 2: Initialize instruction manager
+    // Initialize instruction manager
     this.instructionManager = getInstructionManager()
 
-    // ✨ BMAD Phase 1.5: Initialize adaptive workflow selection
+    // Initialize adaptive workflow selection
     const complexityConfig = this.configManager.isInitialized()
       ? this.configManager.getConfig().complexityAnalyzer
       : undefined
@@ -160,17 +153,17 @@ export class WorkflowEngine {
     this.complexityAnalyzer = new ComplexityAnalyzer(complexityConfig)
     this.workflowSelector = new WorkflowSelector(workflowSelectorConfig)
 
-    // ✨ BMAD Phase 1.2: Initialize test enforcement validator (Amelia's Principle)
+    // Initialize test enforcement validator (Amelia's Principle)
     this.testEnforcementValidator = new TestEnforcementValidator()
 
-    // ✨ BMAD Phase 2.2: Initialize principle validators (Bob, Winston, John)
+    // Initialize principle validators (Bob, Winston, John)
     this.principleValidators = {
       zeroAmbiguity: new ZeroAmbiguityValidator(),
       boringTechnology: new BoringTechnologyValidator(),
       whyFirst: new WhyFirstValidator()
     }
 
-    console.log('✨ WorkflowEngine: Phase tracking, approval checkpoints, retry logic, BMad metrics, test enforcement (Amelia), principle validators (Bob, Winston, John), and adaptive selection enabled')
+    console.log('[WorkflowEngine] Initialized with phase tracking, metrics, validators, and adaptive selection')
   }
 
   /**
@@ -184,7 +177,7 @@ export class WorkflowEngine {
    */
   async initialize(configPath?: string): Promise<void> {
     try {
-      // ✨ Priority 2: Initialize ConfigManager first (before everything else)
+      // Initialize ConfigManager first (before everything else)
       if (!this.configManager.isInitialized()) {
         await this.configManager.initialize()
 
@@ -198,7 +191,7 @@ export class WorkflowEngine {
             log_all_steps: workflowEngineConfig.log_all_steps,
             state_merge_strategy: workflowEngineConfig.state_merge_strategy
           }
-          console.log('✅ ConfigManager loaded: global settings updated from config')
+          console.log('[WorkflowEngine] ConfigManager loaded')
         }
       }
 
@@ -215,7 +208,7 @@ export class WorkflowEngine {
       let loadedFrom: string | null = null
       for (const workflowsDir of workflowPaths) {
         if (await this.directoryExists(workflowsDir)) {
-          console.log(`📂 Loading workflows from: ${workflowsDir}`)
+          console.log(`[WorkflowEngine] Loading workflows from: ${workflowsDir}`)
           const workflows = await this.loadPhaseBasedWorkflows(workflowsDir)
 
           this.workflows.clear()
@@ -225,20 +218,13 @@ export class WorkflowEngine {
 
           loadedFrom = workflowsDir
 
-          // ✨ BMAD Phase 1.5: Register workflows with complexity analyzer and selector
-          const workflowsToRegister = Array.from(this.workflows.values())
-          this.complexityAnalyzer.registerWorkflows(workflowsToRegister)
-          this.workflowSelector.registerWorkflows(workflowsToRegister)
+          // Register workflows with WorkflowSelector for adaptive selection
+          this.complexityAnalyzer.registerWorkflows(Array.from(this.workflows.values()))
+          this.workflowSelector.registerWorkflows(Array.from(this.workflows.values()))
+          console.log(`[WorkflowEngine] ${this.workflows.size} workflows loaded`)
 
-          console.log(`✅ WorkflowEngine initialized: ${this.workflows.size} workflows loaded from phase-based structure`)
-          console.log(`🎯 Adaptive selection: enabled`)
-
-          // ✨ Phase 2: Initialize team manager
+          // Initialize team manager
           await this.teamManager.initialize()
-
-          // ✨ BMAD Phase 1.1: Initialize MenuCommandRouter after workflows loaded
-          this.menuRouter = new MenuCommandRouter(this)
-          console.log('✨ MenuCommandRouter: Bilingual command support enabled ([IR]/[ГР], [DS]/[ИС], etc.)')
 
           // Set initialized flag AFTER all components are ready
           this.initialized = true
@@ -249,7 +235,7 @@ export class WorkflowEngine {
 
       // If phase-based loading failed, try legacy workflows.json fallback
       if (!loadedFrom) {
-        console.log('📂 Phase-based structure not found in any location, trying legacy workflows.json...')
+        console.log('[WorkflowEngine] Phase-based structure not found, trying legacy workflows.json...')
 
         const legacyPaths = [
           configPath,  // User-specified path (if provided)
@@ -271,27 +257,20 @@ export class WorkflowEngine {
             // Load global settings (legacy workflows.json overrides take precedence over config file)
             if (config.global_settings) {
               this.globalSettings = { ...this.globalSettings, ...config.global_settings }
-              console.log('💡 Note: Using global_settings from workflows.json (overrides orchestration.config.ts)')
+              console.log('[WorkflowEngine] Using global_settings from workflows.json')
             }
 
             loadedFrom = workflowPath
 
-            // ✨ BMAD Phase 1.5: Register workflows with complexity analyzer and selector
+            // Register workflows with complexity analyzer and selector
             const workflowsToRegister = Array.from(this.workflows.values())
             this.complexityAnalyzer.registerWorkflows(workflowsToRegister)
             this.workflowSelector.registerWorkflows(workflowsToRegister)
 
-            console.log(`✅ WorkflowEngine initialized: ${this.workflows.size} workflows loaded from legacy workflows.json`)
-            console.log(`   Source: ${workflowPath}`)
-            console.log(`🎯 Adaptive selection: enabled`)
-            console.log(`💡 Consider migrating to phase-based structure`)
+            console.log(`[WorkflowEngine] ${this.workflows.size} workflows loaded from legacy workflows.json (${workflowPath})`)
 
-            // ✨ Phase 2: Initialize team manager
+            // Initialize team manager
             await this.teamManager.initialize()
-
-            // ✨ BMAD Phase 1.1: Initialize MenuCommandRouter after workflows loaded
-            this.menuRouter = new MenuCommandRouter(this)
-            console.log('✨ MenuCommandRouter: Bilingual command support enabled ([IR]/[ГР], [DS]/[ИС], etc.)')
 
             // Set initialized flag AFTER all components are ready
             this.initialized = true
@@ -313,7 +292,7 @@ export class WorkflowEngine {
         )
       }
     } catch (error) {
-      console.error('❌ Failed to initialize WorkflowEngine:', error)
+      console.error('[WorkflowEngine] Failed to initialize:', error)
       throw error
     }
   }
@@ -453,122 +432,111 @@ export class WorkflowEngine {
     )
 
     // Log complexity analysis and recommendation
-    console.log(`\n🎯 ═══════════════════════════════════════════════════`)
-    console.log(`🎯 ADAPTIVE WORKFLOW SELECTION`)
-    console.log(`🎯 ═══════════════════════════════════════════════════`)
-    console.log(`📝 Task: ${taskDescription}`)
-    console.log(`📊 Complexity: ${selection.complexity.level} (score: ${selection.complexity.score}/100)`)
-    console.log(`🔍 Confidence: ${(selection.confidence * 100).toFixed(0)}%`)
-    console.log(`✅ Selected: ${selection.workflow.name} (${selection.workflow.id})`)
-    console.log(`💡 Reasoning: ${selection.reasoning}`)
-
-    if (selection.complexity.recommendedAgents.length > 0) {
-      console.log(`👥 Recommended Agents: ${selection.complexity.recommendedAgents.join(', ')}`)
-    }
+    console.log(`[WorkflowSelection] ${selection.workflow.name} (${selection.workflow.id}) | complexity: ${selection.complexity.level} (${selection.complexity.score}/100) | confidence: ${(selection.confidence * 100).toFixed(0)}%`)
 
     // If confidence is low, show alternatives
     if (!this.workflowSelector.shouldAutoSelect(selection.confidence)) {
-      console.log(`\n⚠️  Low confidence (${(selection.confidence * 100).toFixed(0)}%). Consider alternatives:`)
-      for (const alt of selection.alternatives) {
-        const altWorkflow = this.workflows.get(alt.workflowId)
-        console.log(`   - ${altWorkflow?.name || alt.workflowId}: ${alt.reasoning} (${(alt.confidence * 100).toFixed(0)}%)`)
-      }
+      console.log(`[WorkflowSelection] Low confidence. Alternatives: ${selection.alternatives.map(a => `${a.workflowId} (${(a.confidence * 100).toFixed(0)}%)`).join(', ')}`)
     }
-
-    console.log(`🎯 ═══════════════════════════════════════════════════\n`)
 
     return selection
   }
 
   /**
-   * Execute workflow with adaptive selection support
+   * Execute a workflow with adaptive input resolution
    *
-   * NEW: BMAD Phase 1.5 - Supports both workflow ID and task description
+   * Accepts 2 types of input (resolved in priority order):
+   * 1. Workflow ID: "bug_fix_workflow" → direct specification
+   * 2. Natural language: "Fix login bug" → adaptive selection
    *
-   * @param workflowIdOrDescription - Workflow ID or natural language task description
+   * @param workflowIdOrDescription - Workflow ID or task description
    * @param initialState - Initial agent state (optional)
    * @param context - Project context for adaptive selection (optional)
-   * @returns Workflow execution result
+   * @returns Workflow execution result with success status and outputs
    */
   async execute(
     workflowIdOrDescription: string,
     initialState?: Partial<AgentState>,
     context?: ProjectContext
   ): Promise<WorkflowExecutionResult> {
-    if (!this.initialized || !this.menuRouter) {
+    if (!this.initialized) {
       throw new Error('WorkflowEngine not initialized. Call initialize() first.')
     }
 
-    // ✨ BMAD Phase 1.1: Try menu command detection FIRST
-    const menuMatch = await this.menuRouter.detectAndRoute(workflowIdOrDescription)
+    // Resolve input → workflow + state
+    const { workflow, state } = await this.resolveInput(
+      workflowIdOrDescription,
+      initialState,
+      context
+    )
 
-    if (menuMatch) {
-      // Menu command detected!
-      if (!menuMatch.workflow) {
-        throw new Error(
-          `Menu command [${menuMatch.command.code}] maps to workflow "${menuMatch.command.workflowId}" which doesn't exist yet.\n` +
-          `Status: ${menuMatch.command.status}\n` +
-          `This workflow needs to be created before using this command.`
-        )
+    // Execute workflow
+    return this.executeWorkflow(workflow, state)
+  }
+
+  /**
+   * Resolve user input to workflow and initial state
+   *
+   * Resolution strategies (priority order):
+   * 1. Workflow ID (exact match) - direct lookup, no complexity analysis
+   * 2. Natural Language (adaptive) - delegates to WorkflowSelector + ComplexityAnalyzer
+   *
+   * @private
+   * @param input - User input string
+   * @param initialState - Optional initial state to merge
+   * @param context - Optional project context for adaptive selection
+   * @returns Resolved workflow and constructed AgentState
+   */
+  private async resolveInput(
+    input: string,
+    initialState?: Partial<AgentState>,
+    context?: ProjectContext
+  ): Promise<{ workflow: Workflow; state: AgentState }> {
+
+    // 1. Workflow ID (direct specification)
+    if (this.isWorkflowId(input)) {
+      const workflow = this.workflows.get(input)
+      
+      if (!workflow) {
+        throw new Error(`Workflow not found: ${input}`)
       }
 
-      console.log(`\n📋 ═══════════════════════════════════════════════════`)
-      console.log(`📋 MENU COMMAND: [${menuMatch.command.code}]`)
-      console.log(`📋 Name (EN): ${menuMatch.command.name_en}`)
-      console.log(`📋 Name (RU): ${menuMatch.command.name_ru}`)
-      console.log(`📋 Workflow: ${menuMatch.workflow.name}`)
-      if (menuMatch.taskContext) {
-        console.log(`📋 Task Context: ${menuMatch.taskContext}`)
-      }
-      console.log(`📋 ═══════════════════════════════════════════════════\n`)
+      console.log(`[Workflow] Using: ${workflow.name} (${workflow.id})`)
 
-      // Validate required context
-      if (menuMatch.command.requiredContext && initialState?.context) {
-        const missingContext = this.menuRouter.validateRequiredContext(
-          menuMatch.command,
-          initialState.context
-        )
-        if (missingContext.length > 0) {
-          throw new Error(
-            `Menu command [${menuMatch.command.code}] requires context: ${missingContext.join(', ')}`
-          )
-        }
+      return {
+        workflow,
+        state: this.buildState(initialState, input)
       }
-
-      // Enrich initial state with task context from command
-      const enrichedState = {
-        ...initialState,
-        task: menuMatch.taskContext || initialState?.task || menuMatch.command.name_en
-      }
-
-      // Execute the workflow
-      return this.executeWorkflow(menuMatch.workflow, enrichedState as AgentState)
     }
 
-    // ✨ BMAD: No menu command detected, fallback to existing logic
-
-    // Determine if input is workflow ID or task description
-    const isWorkflowId = this.workflows.has(workflowIdOrDescription)
-
-    let workflow: Workflow
-
-    if (isWorkflowId) {
-      // Traditional: lookup by ID
-      workflow = this.workflows.get(workflowIdOrDescription)!
-      console.log(`📌 Using workflow: ${workflow.name} (${workflow.id})`)
-    } else {
-      // NEW: Adaptive selection by task description
-      const selection = await this.selectWorkflowAdaptively(
-        workflowIdOrDescription,
-        context
-      )
-      workflow = selection.workflow
+    // 2. Natural Language (via WorkflowSelector - adaptive)
+    const selection = await this.selectWorkflowAdaptively(input, context)
+    
+    return {
+      workflow: selection.workflow,
+      state: this.buildState(initialState, input)
     }
+  }
 
-    // Initialize state with defaults
-    const state: AgentState = {
+  /**
+   * Check if input is a workflow ID
+   * @private
+   */
+  private isWorkflowId(input: string): boolean {
+    return this.workflows.has(input)
+  }
+
+  /**
+   * Build AgentState from initial state and task
+   * @private
+   */
+  private buildState(
+    initialState: Partial<AgentState> | undefined,
+    task: string
+  ): AgentState {
+    return {
       messages: initialState?.messages || [],
-      task: initialState?.task || workflowIdOrDescription,
+      task: initialState?.task || task,
       taskType: initialState?.taskType || 'feature',
       context: initialState?.context || {},
       currentAgent: initialState?.currentAgent || '',
@@ -578,9 +546,6 @@ export class WorkflowEngine {
       requiresApproval: initialState?.requiresApproval ?? false,
       ...initialState // Spread any additional optional fields
     }
-
-    // Execute workflow
-    return this.executeWorkflow(workflow, state)
   }
 
   /**
@@ -627,7 +592,7 @@ export class WorkflowEngine {
 
     // Log parallel steps info
     if (phaseSteps.length > 1) {
-      console.log(`🎯 Phase "${startPhase}" has ${phaseSteps.length} parallel steps:`)
+      console.log(`[Phase] "${startPhase}" has ${phaseSteps.length} parallel steps:`)
       phaseSteps.forEach(({ step }) => {
         console.log(`   - ${step.role_id} (order: ${step.order})`)
       })
@@ -639,7 +604,7 @@ export class WorkflowEngine {
       const prerequisites = targetStep.phase_join_criteria.prerequisites ||
                            targetStep.phase_join_criteria.requires || []
       if (prerequisites.length > 0) {
-        console.log(`\n⚠️  Phase "${startPhase}" has prerequisites:`)
+        console.log(`[Phase] Warning: Phase "${startPhase}" has prerequisites:`)
         prerequisites.forEach(p => console.log(`   - ${p}`))
         console.log(`   Assuming prerequisites are met. Proceeding...\n`)
       }
@@ -652,14 +617,7 @@ export class WorkflowEngine {
         .map(s => s.phase)
     )]
 
-    console.log(`\n🎯 ═══════════════════════════════════════════════════`)
-    console.log(`🎯 ADAPTIVE PHASE JOINING`)
-    console.log(`🎯 Workflow: ${workflow.name}`)
-    console.log(`🎯 Starting phase: ${startPhase}`)
-    if (skippedPhases.length > 0) {
-      console.log(`🎯 Skipping phases: ${skippedPhases.join(' → ')}`)
-    }
-    console.log(`🎯 ═══════════════════════════════════════════════════\n`)
+    console.log(`[PhaseJoin] ${workflow.name} | starting at: ${startPhase}${skippedPhases.length > 0 ? ` | skipping: ${skippedPhases.join(' → ')}` : ''}`)
 
     // Create modified workflow with only the remaining steps
     const modifiedWorkflow: Workflow = {
@@ -717,63 +675,48 @@ export class WorkflowEngine {
     const startTime = Date.now()
     const stepResults: StepResult[] = []
 
-    // ✨ Phase 3: Set current workflow for checklist access
+    // Set current workflow for checklist access
     this.currentWorkflow = workflow
 
-    console.log(`\n🔄 ═══════════════════════════════════════════════════`)
-    console.log(`🔄 WORKFLOW: ${workflow.name}`)
-    console.log(`🔄 ID: ${workflow.id}`)
-    console.log(`🔄 Steps: ${workflow.steps.length}`)
-    console.log(`🔄 Estimated: ${workflow.estimated_time}`)
-    console.log(`🔄 ═══════════════════════════════════════════════════\n`)
+    console.log(`[Workflow] ${workflow.name} (${workflow.id}) | ${workflow.steps.length} steps | est: ${workflow.estimated_time}`)
 
-    // ✨ Phase 2: Validate team reference if present
+    // Validate team reference if present
     if (workflow.team && this.teamManager.isInitialized()) {
       const validation = this.teamManager.validateWorkflowTeam(workflow)
       if (!validation.valid) {
         throw new Error(`Workflow team validation failed: ${validation.errors.join(', ')}`)
       }
-      console.log(`✅ Team validation passed: ${workflow.team}`)
+      console.log(`[Workflow] Team validated: ${workflow.team}`)
     }
 
-    // ✨ Phase 3: Load checklist if available
+    // Load checklist if available
     if (workflow.metadata?.source_file) {
       const checklist = await this.checklistManager.loadChecklist(
         workflow,
         workflow.metadata.source_file
       )
       if (checklist) {
-        console.log(`📋 Checklist loaded: ${checklist.items.length} items`)
+        console.log(`[Workflow] Checklist loaded: ${checklist.items.length} items`)
       }
     }
 
-    // ✨ Priority 2 Phase 2: Load workflow instructions if available
+    // Load workflow instructions if available
     if (workflow.metadata?.source_file) {
       const workflowInstructions = await this.instructionManager.loadWorkflowInstructions(
         workflow,
         workflow.metadata.source_file
       )
       if (workflowInstructions) {
-        console.log(`📝 Workflow instructions loaded for ${workflowInstructions.roleInstructions.size} roles`)
+        console.log(`[Workflow] Instructions loaded for ${workflowInstructions.roleInstructions.size} roles`)
       }
     }
 
-    // ✨ Day 8: Initialize phase tracking
+    // Initialize phase tracking
     let state = this.phaseManager.initializePhaseTracking({ ...initialState })
 
-    // ✨ BMad: Start metrics collection
+    // Start metrics collection
     const workflowMetricsId = this.metricsCollector.startWorkflowMetrics(workflow, state)
-    console.log(`📊 [BMad] Started metrics collection: ${workflowMetricsId}`)
-
-    // ✨ BMad Day 2: Optimize workflow based on historical data
-    const optimizedResult = await this.metricsOptimizer.analyzeWorkflow(workflow, true)
-    if (optimizedResult.appliedOptimizations.length > 0) {
-      console.log(`🚀 [MetricsOptimizer] Applied ${optimizedResult.appliedOptimizations.length} optimizations`)
-      console.log(`⏱️  [MetricsOptimizer] Estimated time reduction: ${optimizedResult.estimatedTimeReduction}%`)
-      workflow = optimizedResult.workflow
-    } else if (optimizedResult.recommendations.length > 0) {
-      console.log(`💡 [MetricsOptimizer] Generated ${optimizedResult.recommendations.length} recommendations (manual review required)`)
-    }
+    console.log(`[Metrics] Started collection: ${workflowMetricsId}`)
 
     try {
       // Group steps by order (same order = parallel execution)
@@ -783,11 +726,11 @@ export class WorkflowEngine {
         const stepGroup = stepGroups[i]
         const groupOrder = stepGroup[0].order
 
-        console.log(`\n📍 Step Group ${groupOrder} (${stepGroup.length} step${stepGroup.length > 1 ? 's' : ''})`)
+        console.log(`[Step] Group ${groupOrder} (${stepGroup.length} step${stepGroup.length > 1 ? 's' : ''})`)
 
         if (stepGroup.length > 1) {
-          // ✨ PARALLEL execution
-          console.log(`⚡ Executing ${stepGroup.length} agents in PARALLEL:`)
+          // PARALLEL execution
+          console.log(`[Step] Executing ${stepGroup.length} agents in PARALLEL:`)
           stepGroup.forEach(step => console.log(`   - ${step.role_id} (${step.phase})`))
 
           const { newState, results } = await this.executeParallelSteps(stepGroup, state)
@@ -815,22 +758,22 @@ export class WorkflowEngine {
           )
 
           if (stepResult?.success && !this.checkExitCriteria(step, state)) {
-            console.warn(`⚠️  Exit criteria not fully met for ${step.role_id}: "${step.exit_criteria}"`)
+            console.warn(`[Step] Exit criteria not fully met for ${step.role_id}: "${step.exit_criteria}"`)
           }
         }
 
-        console.log(`✅ Step Group ${groupOrder} completed`)
+        console.log(`[Step] Group ${groupOrder} completed`)
 
-        // ✨ Day 8: Phase transition and approval checkpoint logic
+        // Phase transition and approval checkpoint logic
         // Check if we should transition to a new phase
         const currentPhase = stepGroup[0].phase as WorkflowPhase
         const statePhase = (state.metadata?.currentPhase as WorkflowPhase) || null
 
         // Transition to new phase if this is the first step in that phase
         if (currentPhase !== statePhase) {
-          console.log(`\n🔄 Phase transition detected: ${statePhase} → ${currentPhase}`)
+          console.log(`[Phase] Transition: ${statePhase} → ${currentPhase}`)
 
-          // ✨ BMad: Record completion of previous phase
+          // Record completion of previous phase
           if (statePhase) {
             this.metricsCollector.recordPhaseCompletion(statePhase)
           }
@@ -842,7 +785,7 @@ export class WorkflowEngine {
         const requiresApproval = stepGroup.some(step => step.requires_approval === true)
 
         if (requiresApproval || this.approvalCheckpoint.requiresApproval(currentPhase)) {
-          console.log(`\n⏸️  Approval checkpoint required for phase: ${currentPhase}`)
+          console.log(`[Phase] Approval checkpoint required for phase: ${currentPhase}`)
 
           // Request approval
           const checkpointResult = await this.approvalCheckpoint.checkpointIfRequired(
@@ -852,7 +795,7 @@ export class WorkflowEngine {
 
           if (checkpointResult.shouldBlock) {
             if (!checkpointResult.approved) {
-              console.log(`\n❌ Phase ${currentPhase} rejected - rolling back workflow`)
+              console.log(`[Phase] Rejected: ${currentPhase} rejected - rolling back workflow`)
 
               // Store rejection reason in state
               if (checkpointResult.response?.feedback) {
@@ -876,7 +819,7 @@ export class WorkflowEngine {
                 `Reason: ${checkpointResult.response?.feedback || 'User rejection'}`
               )
             } else {
-              console.log(`✅ Phase ${currentPhase} approved - continuing workflow`)
+              console.log(`[Phase] Approved: ${currentPhase} approved - continuing workflow`)
             }
           }
         }
@@ -884,38 +827,21 @@ export class WorkflowEngine {
         // Check if we can exit the current phase
         const exitValidation = this.phaseManager.canExitPhase(state, currentPhase)
         if (!exitValidation.canProceed) {
-          console.warn(`⚠️  Phase ${currentPhase} exit criteria not fully met:`)
+          console.warn(`[Phase] ${currentPhase} exit criteria not fully met:`)
           exitValidation.issues.forEach(issue => console.warn(`   - ${issue}`))
         }
         if (exitValidation.warnings.length > 0) {
-          exitValidation.warnings.forEach(warning => console.warn(`⚠️  ${warning}`))
+          exitValidation.warnings.forEach(warning => console.warn(`[Phase] ${warning}`))
         }
       }
 
       const totalDuration = (Date.now() - startTime) / 1000
 
-      // ✨ Day 8: Display phase progress
       const phaseProgress = this.phaseManager.getPhaseProgress(state)
-      const isComplete = this.phaseManager.isWorkflowComplete(state)
+      const successCount = stepResults.filter(r => r.success).length
+      console.log(`[Workflow] Complete: ${workflow.name} | ${totalDuration.toFixed(1)}s | ${successCount}/${stepResults.length} steps OK | phases: ${phaseProgress.percentComplete}%`)
 
-      console.log(`\n✅ ═══════════════════════════════════════════════════`)
-      console.log(`✅ WORKFLOW COMPLETE: ${workflow.name}`)
-      console.log(`✅ Duration: ${totalDuration.toFixed(1)}s`)
-      console.log(`✅ Steps executed: ${stepResults.length}`)
-      console.log(`✅ Success: ${stepResults.filter(r => r.success).length}/${stepResults.length}`)
-      console.log(`✅ Phase Progress: ${phaseProgress.percentComplete}% (${phaseProgress.completedPhases.length}/${this.phaseManager.getAllPhases().length} phases)`)
-      console.log(`✅ Current Phase: ${phaseProgress.currentPhase || 'N/A'}`)
-      console.log(`✅ Workflow Complete: ${isComplete ? 'YES' : 'NO'}`)
-
-      // Display approval history
-      const approvalStats = this.approvalCheckpoint.getStatistics()
-      if (approvalStats.totalApprovals > 0) {
-        console.log(`✅ Approvals: ${approvalStats.approved}/${approvalStats.totalApprovals} approved`)
-      }
-
-      console.log(`✅ ═══════════════════════════════════════════════════\n`)
-
-      // ✨ BMad: Finalize and persist metrics
+      // Finalize and persist metrics
       await this.finalizeAndPersistMetrics(workflow, state, stepResults, true)
 
       return {
@@ -928,13 +854,9 @@ export class WorkflowEngine {
     } catch (error) {
       const totalDuration = (Date.now() - startTime) / 1000
 
-      console.error(`\n❌ ═══════════════════════════════════════════════════`)
-      console.error(`❌ WORKFLOW FAILED: ${workflow.name}`)
-      console.error(`❌ Duration: ${totalDuration.toFixed(1)}s`)
-      console.error(`❌ Error: ${error}`)
-      console.error(`❌ ═══════════════════════════════════════════════════\n`)
+      console.error(`[Workflow] Failed: ${workflow.name} | ${totalDuration.toFixed(1)}s | ${error}`)
 
-      // ✨ BMad: Finalize and persist metrics (failure case)
+      // Finalize and persist metrics (failure case)
       await this.finalizeAndPersistMetrics(workflow, state, stepResults, false)
 
       return {
@@ -973,13 +895,13 @@ export class WorkflowEngine {
 
       console.log(`   Starting: ${displayName} (${step.phase})...`)
 
-      // ✨ Phase 3: Display checklist before step execution
+      // Display checklist before step execution
       if (this.currentWorkflow && this.checklistManager.hasChecklist(this.currentWorkflow.id)) {
         const phaseName = step.description || `${step.phase}`
         await this.checklistManager.promptChecklist(this.currentWorkflow.id, phaseName)
       }
 
-      // ✨ Priority 2 Phase 2: Load and inject instructions into state
+      // Load and inject instructions into state
       const instructions = await this.instructionManager.getInstructionsForStep(
         step.role_id,
         step.phase,
@@ -995,7 +917,7 @@ export class WorkflowEngine {
         }
       }
 
-      // ✨ BMad: Record step start
+      // Record step start
       this.metricsCollector.recordStepStart(step, agent.agentId)
 
       // Execute with timeout (use enriched state with instructions)
@@ -1008,7 +930,7 @@ export class WorkflowEngine {
       const duration = (Date.now() - startTime) / 1000
       console.log(`   ✓ ${displayName} completed in ${duration.toFixed(1)}s`)
 
-      // ✨ Phase 3: Validate checklist completion criteria
+      // Validate checklist completion criteria
       if (this.currentWorkflow && this.checklistManager.hasChecklist(this.currentWorkflow.id)) {
         const phaseName = step.description || `${step.phase}`
         const validation = this.checklistManager.validatePhaseComplete(
@@ -1017,7 +939,7 @@ export class WorkflowEngine {
         )
 
         if (!validation.valid) {
-          console.warn(`   ⚠️  Checklist incomplete for ${phaseName}:`)
+          console.warn(`   [Checklist] Incomplete for ${phaseName}:`)
           for (const item of validation.missingItems) {
             console.warn(`      ☐ ${item}`)
           }
@@ -1034,7 +956,7 @@ export class WorkflowEngine {
         output
       }
 
-      // ✨ BMAD Phase 1.2: Validate test enforcement (Amelia's Principle) - STRICT BLOCKING
+      // Validate test enforcement (Amelia's Principle) - STRICT BLOCKING
       const testValidation = await this.testEnforcementValidator.validateTestPassage(
         state,
         step,
@@ -1053,7 +975,7 @@ export class WorkflowEngine {
         testValidation.warnings.forEach(warn => console.warn(`   ${warn}`))
       }
 
-      // ✨ BMAD Phase 2.2: Validate BMAD principles (Bob, Winston, John) - STRICT BLOCKING
+      // Validate BMAD principles (Bob, Winston, John) - STRICT BLOCKING
       const principleValidations = await this.validatePrinciples(step, agent, stepResult, state)
 
       // Check for principle violations
@@ -1064,7 +986,7 @@ export class WorkflowEngine {
         throw new Error(`Step blocked by principle violations (${violatedPrinciples}): ${allErrors}`)
       }
 
-      // ✨ BMad: Record step completion
+      // Record step completion
       this.metricsCollector.recordStepCompletion(step, agent.agentId, stepResult, state)
 
       return stepResult
@@ -1082,7 +1004,7 @@ export class WorkflowEngine {
         error: error instanceof Error ? error.message : String(error)
       }
 
-      // ✨ BMad: Record step completion (failure)
+      // Record step completion (failure)
       this.metricsCollector.recordStepCompletion(step, step.role_id, stepResult, state)
 
       return stepResult
@@ -1090,7 +1012,7 @@ export class WorkflowEngine {
   }
 
   /**
-   * ✨ BMAD Phase 2.2: Validate BMAD principles (Bob, Winston, John)
+   * Validate BMAD principles (Bob, Winston, John)
    *
    * Checks if the step result violates any strict principles defined for the agent.
    * Supports bilingual error messages (EN/RU).
@@ -1120,7 +1042,7 @@ export class WorkflowEngine {
     // Detect language from state context or task
     const language = this.detectLanguage(state)
 
-    console.log(`   🔍 Validating ${strictPrinciples.length} strict principle(s) for ${agent.agentId}...`)
+    console.log(`   [Validator] Checking ${strictPrinciples.length} strict principle(s) for ${agent.agentId}...`)
 
     // Validate each strict principle
     for (const principle of strictPrinciples) {
@@ -1167,7 +1089,7 @@ export class WorkflowEngine {
 
         default:
           // Unknown principle - skip validation
-          console.warn(`   ⚠️  Unknown principle: ${principle.name} - skipping validation`)
+          console.warn(`   [Validator] Unknown principle: ${principle.name} - skipping validation`)
           break
       }
 
@@ -1177,7 +1099,7 @@ export class WorkflowEngine {
 
         // Log errors (BLOCKING)
         if (!validation.valid) {
-          console.error(`\n   ❌ Principle Violation: ${validation.principle}`)
+          console.error(`   [Validator] Principle violation: ${validation.principle}`)
           console.error(`   Agent: ${validation.agent}`)
           validation.errors.forEach(err => console.error(`   ${err}`))
         }
@@ -1193,7 +1115,7 @@ export class WorkflowEngine {
   }
 
   /**
-   * ✨ BMAD Phase 2.2: Detect language from state
+   * Detect language from state
    *
    * Simple language detection based on Cyrillic characters in context.
    *
@@ -1250,7 +1172,7 @@ export class WorkflowEngine {
       return { newState: currentState, results: allResults }
     }
 
-    console.log('   ⚡ Starting parallel execution...')
+    console.log('[Step] Starting parallel execution...')
 
     // Execute all steps in parallel with Promise.allSettled
     const resultPromises = steps.map(step => this.executeStep(step, state))
@@ -1284,7 +1206,7 @@ export class WorkflowEngine {
 
     const failed = results.filter(r => !r.success)
     if (failed.length > 0) {
-      console.error(`   ⚠️  ${failed.length} agent(s) failed:`)
+      console.error(`   [Step] ${failed.length} agent(s) failed:`)
       failed.forEach(f => {
         console.error(`      - ${f.step.role_id}: ${f.error}`)
       })
@@ -1295,7 +1217,7 @@ export class WorkflowEngine {
     }
 
     const totalDuration = ((Date.now() - startTime) / 1000).toFixed(1)
-    console.log(`   ⚡ All parallel agents completed in ${totalDuration}s`)
+    console.log(`[Step] All parallel agents completed in ${totalDuration}s`)
 
     // Merge all successful outputs
     const newState = this.mergeParallelResults(state, successfulOutputs, results)
@@ -1533,42 +1455,42 @@ export class WorkflowEngine {
   }
 
   /**
-   * ✨ Day 8: Get PhaseManager instance
+   * Get PhaseManager instance
    */
   getPhaseManager(): PhaseManager {
     return this.phaseManager
   }
 
   /**
-   * ✨ Day 8: Get ApprovalCheckpoint instance
+   * Get ApprovalCheckpoint instance
    */
   getApprovalCheckpoint(): ApprovalCheckpoint {
     return this.approvalCheckpoint
   }
 
   /**
-   * ✨ Day 9: Get IterationManager instance
+   * Get IterationManager instance
    */
   getIterationManager(): IterationManager {
     return this.iterationManager
   }
 
   /**
-   * ✨ Day 8: Get current phase progress for a workflow state
+   * Get current phase progress for a workflow state
    */
   getPhaseProgress(state: AgentState) {
     return this.phaseManager.getPhaseProgress(state)
   }
 
   /**
-   * ✨ Day 8: Get approval history
+   * Get approval history
    */
   getApprovalHistory() {
     return this.approvalCheckpoint.getHistory()
   }
 
   /**
-   * ✨ Phase 2: Create workflow from team definition
+   * Create workflow from team definition
    *
    * Generates a workflow by converting team agents to workflow steps.
    * Useful for dynamic workflow creation based on team templates.
@@ -1620,94 +1542,54 @@ export class WorkflowEngine {
   }
 
   /**
-   * ✨ Phase 2: Get TeamManager instance
+   * Get TeamManager instance
    */
   getTeamManager(): TeamManager {
     return this.teamManager
   }
 
   /**
-   * ✨ Phase 3: Get ChecklistManager instance
+   * Get ChecklistManager instance
    */
   getChecklistManager(): ChecklistManager {
     return this.checklistManager
   }
 
   /**
-   * ✨ Priority 2: Get ConfigManager instance
+   * Get ConfigManager instance
    */
   getConfigManager(): ConfigManager {
     return this.configManager
   }
 
   /**
-   * ✨ Priority 2 Phase 2: Get InstructionManager instance
+   * Get InstructionManager instance
    */
   getInstructionManager(): InstructionManager {
     return this.instructionManager
   }
 
   /**
-   * ✨ Day 8: Display phase and approval summary
+   * Display phase and approval summary
    */
   displayWorkflowSummary(state: AgentState): void {
-    console.log('\n' + '='.repeat(80))
-    console.log('📊 WORKFLOW SUMMARY')
-    console.log('='.repeat(80))
-
-    // Phase progress
     const progress = this.phaseManager.getPhaseProgress(state)
-    console.log(`\n🔄 Phase Progress: ${progress.percentComplete}%`)
-    console.log(`   Current Phase: ${progress.currentPhase || 'Not started'}`)
-    console.log(`   Completed: ${progress.completedPhases.join(', ') || 'None'}`)
-    console.log(`   Remaining: ${progress.remainingPhases.join(', ') || 'None'}`)
-
-    // Phase history
-    const history = this.phaseManager.getPhaseHistory(state)
-    if (history.length > 0) {
-      console.log(`\n📜 Phase Transitions:`)
-      history.forEach((transition, index) => {
-        const status = transition.success ? '✅' : '❌'
-        console.log(`   ${index + 1}. ${status} ${transition.from || 'START'} → ${transition.to}`)
-        if (transition.reason) {
-          console.log(`      Reason: ${transition.reason}`)
-        }
-      })
-    }
-
-    // Approval history
-    const approvalHistory = this.approvalCheckpoint.formatHistory()
-    console.log(approvalHistory)
-
-    // Approval Statistics
     const stats = this.approvalCheckpoint.getStatistics()
-    console.log(`\n📈 Approval Statistics:`)
-    console.log(`   Total Checkpoints: ${stats.totalApprovals}`)
-    console.log(`   Approved: ${stats.approved}`)
-    console.log(`   Rejected: ${stats.rejected}`)
-    console.log(`   Auto-Approved: ${stats.autoApproved}`)
-    console.log(`   Timed Out: ${stats.timedOut}`)
-    if (stats.averageDurationMs > 0) {
-      console.log(`   Average Duration: ${(stats.averageDurationMs / 1000).toFixed(1)}s`)
-    }
-
-    // ✨ Day 9: Iteration/Retry Statistics
     const iterStats = this.iterationManager.getGlobalStatistics()
-    if (iterStats.totalExecutions > 0) {
-      console.log(`\n🔄 Retry Statistics:`)
-      console.log(`   Total Agents with Retries: ${iterStats.totalAgents}`)
-      console.log(`   Total Executions: ${iterStats.totalExecutions}`)
-      console.log(`   Successful: ${iterStats.successfulExecutions} (${iterStats.overallSuccessRate.toFixed(1)}%)`)
-      console.log(`   Failed: ${iterStats.failedExecutions}`)
-      console.log(`   Total Retries: ${iterStats.totalRetries}`)
-      console.log(`   Average Retries per Execution: ${iterStats.averageRetriesPerExecution.toFixed(2)}`)
+
+    console.log(`[Summary] Phases: ${progress.percentComplete}% (${progress.completedPhases.join(', ') || 'none'} done)`)
+
+    if (stats.totalApprovals > 0) {
+      console.log(`[Summary] Approvals: ${stats.approved}/${stats.totalApprovals} approved, ${stats.rejected} rejected`)
     }
 
-    console.log('='.repeat(80) + '\n')
+    if (iterStats.totalExecutions > 0) {
+      console.log(`[Summary] Retries: ${iterStats.totalRetries} across ${iterStats.totalExecutions} executions (${iterStats.overallSuccessRate.toFixed(1)}% success)`)
+    }
   }
 
   /**
-   * ✨ BMad: Finalize and persist metrics with learning loop analysis
+   * Finalize and persist metrics with learning loop analysis
    */
   private async finalizeAndPersistMetrics(
     workflow: Workflow,
@@ -1718,11 +1600,9 @@ export class WorkflowEngine {
     try {
       // Check if metrics collection is active
       if (!this.metricsCollector.isCollecting()) {
-        console.warn('⚠️  [BMad] Metrics collection not active, skipping finalization')
+        console.warn('[Metrics] Collection not active, skipping finalization')
         return
       }
-
-      console.log(`\n📊 [BMad] Finalizing workflow metrics...`)
 
       // 1. Finalize workflow metrics
       const workflowMetrics = this.metricsCollector.finalizeMetrics(workflow, state, success)
@@ -1730,7 +1610,7 @@ export class WorkflowEngine {
       // 2. Get step metrics
       const stepMetrics = this.metricsCollector.getStepMetrics()
 
-      console.log(`📊 [BMad] Collected ${stepMetrics.length} step metrics`)
+      console.log(`[Metrics] Collected ${stepMetrics.length} step metrics`)
 
       // 3. Persist metrics (SQLite auto-initializes in .asmo/metrics.db)
       await this.metricsPersister.persistWorkflowMetrics(workflowMetrics)
@@ -1742,11 +1622,11 @@ export class WorkflowEngine {
 
       // Log only if persistence is enabled
       if (this.metricsPersister.isEnabled()) {
-        console.log(`✅ [BMad] Metrics persisted to ${this.metricsPersister.getDatabasePath()}`)
+        console.log(`[Metrics] Persisted to ${this.metricsPersister.getDatabasePath()}`)
       }
 
       // 6. Run learning loop analysis (async, non-blocking)
-      console.log(`🔄 [BMad] Starting learning loop analysis...`)
+      console.log(`[Metrics] Running learning loop analysis...`)
 
       // Get historical metrics for comparison (last 10 executions of this workflow)
       const historicalMetrics = await this.metricsPersister.getWorkflowHistory(
@@ -1761,31 +1641,9 @@ export class WorkflowEngine {
         historicalMetrics
       )
 
-      console.log(`✅ [BMad] Learning loop analysis complete`)
-      console.log(`   Findings: ${learningSession.findings.length}`)
-      console.log(`   Recommendations: ${learningSession.recommendations.length}`)
-      console.log(`   Confidence: ${(learningSession.confidenceScore * 100).toFixed(0)}%`)
+      console.log(`[Metrics] Learning loop: ${learningSession.findings.length} findings, ${learningSession.recommendations.length} recommendations (${(learningSession.confidenceScore * 100).toFixed(0)}% confidence)`)
 
-      // Display high-priority findings
-      const highPriorityFindings = learningSession.findings.filter(f => f.priority === 'high')
-      if (highPriorityFindings.length > 0) {
-        console.log(`\n🔍 [BMad] High Priority Findings:`)
-        highPriorityFindings.forEach((finding, index) => {
-          console.log(`   ${index + 1}. [${finding.type}] ${finding.description}`)
-          console.log(`      → ${finding.recommendation}`)
-        })
-      }
-
-      // Display recommendations
-      if (learningSession.recommendations.length > 0) {
-        console.log(`\n💡 [BMad] Recommendations:`)
-        learningSession.recommendations.slice(0, 3).forEach((rec, index) => {
-          console.log(`   ${index + 1}. ${rec}`)
-        })
-      }
-
-      // ✨ BMad Day 3: Generate retrospective analysis
-      console.log(`\n🔍 [RetrospectiveAgent] Generating retrospective analysis...`)
+      // Generate retrospective analysis
 
       const retrospective = await this.retrospectiveAgent.generateRetrospective(
         workflowMetrics,
@@ -1802,9 +1660,9 @@ export class WorkflowEngine {
       // Reset collector for next workflow
       this.metricsCollector.reset()
 
-      console.log(`\n✅ [BMad] Workflow metrics finalization complete\n`)
+      console.log(`[Metrics] Finalization complete`)
     } catch (error) {
-      console.error(`❌ [BMad] Error finalizing metrics:`, error)
+      console.error(`[Metrics] Error finalizing:`, error)
       // Don't throw - metrics failure shouldn't break workflow execution
       // But reset collector to prevent state corruption
       this.metricsCollector.reset()

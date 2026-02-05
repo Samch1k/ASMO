@@ -18,7 +18,6 @@ The core orchestration engine for ASMO autonomous development teams.
 
 ### BMAD Integration Features
 - **Agent Personalities**: Amelia (TDD), Winston (Boring Tech), Bob (Zero Ambiguity), John (WHY-First)
-- **Menu Commands**: Bilingual shortcuts `[DS]`/`[ИС]`, `[CR]`/`[КО]`, `[CS]`/`[СИ]`
 - **Principle Validators**: Strict enforcement with blocking (test failures, ambiguity, missing business value)
 - **Personality Prompts**: Dynamic enrichment with traits and bilingual signatures
 - **Test Enforcement**: Amelia blocks completion if ANY tests fail
@@ -54,7 +53,7 @@ const result = await engine.execute('bug_fix_workflow')
 console.log('Workflow completed:', result.success)
 ```
 
-### Adaptive Workflow Selection (BMAD Phase 1.5)
+### Adaptive Workflow Selection
 
 ```typescript
 // Let the system choose the right workflow for you!
@@ -76,57 +75,24 @@ console.log('Reasoning:', selection.reasoning)
 console.log('Agents:', selection.complexity.recommendedAgents)
 ```
 
-### BMAD Menu Commands
-
-Execute workflows with short bilingual commands:
-
-```typescript
-// Dev Story - TDD implementation with Amelia
-await engine.execute('[DS] implement user authentication')
-// Amelia enforces: Red → Green → Refactor
-// Blocks if test_results.failed > 0
-
-// Create Story - Zero ambiguity with Bob
-await engine.execute('[CS] add email notifications')
-// Bob detects: "add" is ambiguous
-// ❌ Blocked: Use specific terms and numbers
-
-// Code Review - Comprehensive review
-await engine.execute('[CR] review payment integration')
-// 3-stage review: code-reviewer → adversarial-reviewer → security-specialist
-
-// Russian commands also supported
-await engine.execute('[ИС] реализовать авторизацию')  // Dev Story
-await engine.execute('[СИ] добавить уведомления')      // Create Story
-await engine.execute('[КО] проверить код оплаты')       // Code Review
-```
-
-**Menu Commands Reference:**
-
-| EN | RU | Workflow | BMAD Agent | Enforced Principle |
-|----|----|----------|------------|--------------------|
-| `[DS]` | `[ИС]` | Dev Story | Amelia | Test Enforcement (100% pass) |
-| `[CS]` | `[СИ]` | Create Story | Bob + John | Zero Ambiguity + WHY First |
-| `[CR]` | `[КО]` | Code Review | Multiple | Quality Gates |
-| `[IR]` | `[ГР]` | Implementation Readiness | Bob | Zero Ambiguity |
-
 ### BMAD Principles in Action
+
+The system uses agent personalities to enforce quality principles automatically.
 
 #### Test Enforcement (Amelia)
 
 ```typescript
-// Developer step returns test results
-const result = await engine.execute('[DS] implement login')
+const result = await engine.execute('Implement login form with validation')
 
 // If tests fail, workflow is BLOCKED:
-// 🚫 Amelia says: 2 test(s) failing
+// Amelia says: 2 test(s) failing
 // I will not mark this complete until 100% of tests pass
 //
 // Required format in step output:
 context: {
   test_results: {
     passed: 8,
-    failed: 2,  // ❌ Amelia blocks here
+    failed: 2,  // Amelia blocks here
     total: 10
   }
 }
@@ -135,36 +101,29 @@ context: {
 #### Zero Ambiguity (Bob)
 
 ```typescript
-// Vague requirement
-await engine.execute('[CS] improve performance')
+// Vague requirement — Bob detects ambiguity:
+await engine.execute('Improve performance')
+// Bob says: Ambiguous term "improve" - be specific
+// Bob says: Ambiguous term "performance" - what metric?
 
-// Bob detects ambiguity:
-// 🚫 Bob says: Ambiguous term "improve" - be specific
-// 🚫 Bob says: Ambiguous term "performance" - what metric?
-//
-// Fixed version:
+// Specific requirement — Bob approves:
 await engine.execute(
-  '[CS] reduce API response time from 500ms to <200ms (p95)'
+  'Reduce API response time from 500ms to <200ms (p95)'
 )
-// ✅ Bob approves - specific and measurable
 ```
 
 #### WHY First (John)
 
 ```typescript
-// Missing business value
-await engine.execute('[CS] add dark mode')
+// Missing business value — John blocks:
+await engine.execute('Add dark mode')
+// John says: Missing "WHY" - explain business value
 
-// John blocks:
-// 🚫 John says: Missing "WHY" - explain business value
-//
-// Fixed version:
+// With business value — John approves:
 await engine.execute(
-  '[CS] add dark mode toggle ' +
-  'So that night-shift users can use app without eye strain, ' +
-  'increasing session duration by 25%'
+  'Add dark mode toggle so that night-shift users can use app ' +
+  'without eye strain, increasing session duration by 25%'
 )
-// ✅ John approves - clear business value
 ```
 
 ### Complexity Levels
