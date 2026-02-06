@@ -21,6 +21,7 @@ import { ApprovalCheckpoint, ApprovalCheckpointConfig } from './approval-checkpo
 import { IterationManager, RetryConfig } from './iteration-manager'
 import { MetricsCollector } from './metrics-collector'
 import { MetricsPersister } from './metrics-persister'
+import { MetricsOptimizer } from './metrics-optimizer'
 import { LearningLoop } from './learning-loop'
 import { RetrospectiveAgent } from './retrospective-agent'
 import { RetrospectiveReportGenerator } from './retrospective-report-generator'
@@ -54,57 +55,191 @@ import path from 'path'
 import os from 'os'
 
 /**
+ * Options for WorkflowEngine constructor (dependency injection)
+ */
+export interface WorkflowEngineOptions {
+  agentRegistry: AgentRegistry
+  approvalConfig?: ApprovalCheckpointConfig
+  retryConfig?: RetryConfig
+  databaseUrl?: string
+  configManager?: ConfigManager
+  phaseManager?: PhaseManager
+  approvalCheckpoint?: ApprovalCheckpoint
+  iterationManager?: IterationManager
+  metricsCollector?: MetricsCollector
+  metricsPersister?: MetricsPersister
+  metricsOptimizer?: MetricsOptimizer
+  learningLoop?: LearningLoop
+  retrospectiveAgent?: RetrospectiveAgent
+  retrospectiveReportGenerator?: RetrospectiveReportGenerator
+  teamManager?: TeamManager
+  checklistManager?: ChecklistManager
+  instructionManager?: InstructionManager
+  complexityAnalyzer?: ComplexityAnalyzer
+  workflowSelector?: WorkflowSelector
+  testEnforcementValidator?: TestEnforcementValidator
+  principleValidators?: {
+    zeroAmbiguity: ZeroAmbiguityValidator
+    boringTechnology: BoringTechnologyValidator
+    whyFirst: WhyFirstValidator
+  }
+}
+
+/**
  * WorkflowEngine - Executes multi-agent workflows
  */
 export class WorkflowEngine {
   private workflows: Map<string, Workflow> = new Map()
-  private globalSettings: WorkflowConfig['global_settings']
+  private globalSettings!: WorkflowConfig['global_settings']
   private initialized = false
   private currentWorkflow: Workflow | null = null // Track current workflow for checklist access
 
-  // Phase tracking and approval checkpoints
-  private phaseManager: PhaseManager
-  private approvalCheckpoint: ApprovalCheckpoint
-  // Retry logic with exponential backoff
-  private iterationManager: IterationManager
-  // Metrics collection and learning loop
-  private metricsCollector: MetricsCollector
-  private metricsPersister: MetricsPersister
-  private learningLoop: LearningLoop
-  // Retrospective analysis
-  private retrospectiveAgent: RetrospectiveAgent
-  private retrospectiveReportGenerator: RetrospectiveReportGenerator
-  // Team management
-  private teamManager: TeamManager
-  // Checklist management
-  private checklistManager: ChecklistManager
-  // Configuration management
-  private configManager: ConfigManager
-  // Instruction management
-  private instructionManager: InstructionManager
-  // Adaptive workflow selection
-  private complexityAnalyzer: ComplexityAnalyzer
-  private workflowSelector: WorkflowSelector
-  // Test enforcement validator
-  private testEnforcementValidator: TestEnforcementValidator
-  // Principle validators (Bob, Winston, John)
-  private principleValidators: {
+  // All fields below are initialized in initializeComponents() called from constructor
+  private agentRegistry!: AgentRegistry
+  private phaseManager!: PhaseManager
+  private approvalCheckpoint!: ApprovalCheckpoint
+  private iterationManager!: IterationManager
+  private metricsCollector!: MetricsCollector
+  private metricsPersister!: MetricsPersister
+  private metricsOptimizer!: MetricsOptimizer
+  private learningLoop!: LearningLoop
+  private retrospectiveAgent!: RetrospectiveAgent
+  private retrospectiveReportGenerator!: RetrospectiveReportGenerator
+  private teamManager!: TeamManager
+  private checklistManager!: ChecklistManager
+  private configManager!: ConfigManager
+  private instructionManager!: InstructionManager
+  private complexityAnalyzer!: ComplexityAnalyzer
+  private workflowSelector!: WorkflowSelector
+  private testEnforcementValidator!: TestEnforcementValidator
+  private principleValidators!: {
     zeroAmbiguity: ZeroAmbiguityValidator
     boringTechnology: BoringTechnologyValidator
     whyFirst: WhyFirstValidator
   }
 
+  /**
+   * Create a WorkflowEngine with all dependencies auto-initialized.
+   * This is the recommended way to create a WorkflowEngine instance.
+   *
+   * @param agentRegistry - Agent registry for agent resolution
+   * @param approvalConfig - Optional approval checkpoint configuration
+   * @param retryConfig - Optional retry configuration
+   * @param databaseUrl - Optional database URL for metrics persistence
+   * @returns Fully initialized WorkflowEngine
+   */
+  static create(
+    agentRegistry: AgentRegistry,
+    approvalConfig?: ApprovalCheckpointConfig,
+    retryConfig?: RetryConfig,
+    databaseUrl?: string
+  ): WorkflowEngine {
+    const configManager = getConfigManager()
+
+    const complexityConfig = configManager.isInitialized()
+      ? configManager.getConfig().complexityAnalyzer
+      : undefined
+
+    const workflowSelectorConfig = configManager.isInitialized()
+      ? configManager.getConfig().workflowSelector
+      : undefined
+
+    const metricsPersister = new MetricsPersister(databaseUrl)
+
+    return new WorkflowEngine({
+      agentRegistry,
+      approvalConfig,
+      retryConfig,
+      databaseUrl,
+      configManager,
+      phaseManager: new PhaseManager(),
+      approvalCheckpoint: new ApprovalCheckpoint(
+        approvalConfig || (configManager.isInitialized()
+          ? configManager.getApprovalCheckpointConfig()
+          : undefined)
+      ),
+      iterationManager: new IterationManager(
+        retryConfig || (configManager.isInitialized()
+          ? configManager.getIterationManagerConfig()
+          : undefined)
+      ),
+      metricsCollector: new MetricsCollector(),
+      metricsPersister,
+      metricsOptimizer: new MetricsOptimizer(metricsPersister),
+      learningLoop: new LearningLoop(metricsPersister),
+      retrospectiveAgent: new RetrospectiveAgent(metricsPersister),
+      retrospectiveReportGenerator: new RetrospectiveReportGenerator(),
+      teamManager: getTeamManager(),
+      checklistManager: getChecklistManager(),
+      instructionManager: getInstructionManager(),
+      complexityAnalyzer: new ComplexityAnalyzer(complexityConfig),
+      workflowSelector: new WorkflowSelector(workflowSelectorConfig),
+      testEnforcementValidator: new TestEnforcementValidator(),
+      principleValidators: {
+        zeroAmbiguity: new ZeroAmbiguityValidator(),
+        boringTechnology: new BoringTechnologyValidator(),
+        whyFirst: new WhyFirstValidator()
+      }
+    })
+  }
+
+  constructor(options: WorkflowEngineOptions)
+  /**
+   * @deprecated Use WorkflowEngine.create() or new WorkflowEngine(options) instead
+   */
   constructor(
-    private agentRegistry: AgentRegistry,
+    agentRegistry: AgentRegistry,
+    _skillMatcher?: SkillMatcher,
+    approvalConfig?: ApprovalCheckpointConfig,
+    retryConfig?: RetryConfig,
+    databaseUrl?: string
+  )
+  constructor(
+    agentRegistryOrOptions: AgentRegistry | WorkflowEngineOptions,
     _skillMatcher?: SkillMatcher,
     approvalConfig?: ApprovalCheckpointConfig,
     retryConfig?: RetryConfig,
     databaseUrl?: string
   ) {
-    // Get ConfigManager instance
-    this.configManager = getConfigManager()
+    // Support both new options-based and legacy positional arguments
+    if (typeof agentRegistryOrOptions === 'object' && 'agentRegistry' in agentRegistryOrOptions) {
+      this.initializeComponents(agentRegistryOrOptions as WorkflowEngineOptions)
+    } else {
+      // Legacy constructor path — build options and delegate
+      const agentRegistry = agentRegistryOrOptions as AgentRegistry
+      const configManager = getConfigManager()
 
-    // Default settings (will be overridden by ConfigManager if initialized)
+      const legacyOpts: WorkflowEngineOptions = {
+        agentRegistry,
+        approvalConfig: approvalConfig || (configManager.isInitialized()
+          ? configManager.getApprovalCheckpointConfig()
+          : undefined),
+        retryConfig: retryConfig || (configManager.isInitialized()
+          ? configManager.getIterationManagerConfig()
+          : undefined),
+        databaseUrl,
+        configManager,
+        complexityAnalyzer: new ComplexityAnalyzer(
+          configManager.isInitialized() ? configManager.getConfig().complexityAnalyzer : undefined
+        ),
+        workflowSelector: new WorkflowSelector(
+          configManager.isInitialized() ? configManager.getConfig().workflowSelector : undefined
+        )
+      }
+
+      this.initializeComponents(legacyOpts)
+    }
+
+    console.log('[WorkflowEngine] Initialized with phase tracking, metrics, validators, and adaptive selection')
+  }
+
+  /**
+   * Shared initialization for both constructor paths
+   */
+  private initializeComponents(opts: WorkflowEngineOptions): void {
+    this.agentRegistry = opts.agentRegistry
+    this.configManager = opts.configManager || getConfigManager()
+
     this.globalSettings = {
       max_parallel_agents: 5,
       default_timeout: '30m',
@@ -113,57 +248,26 @@ export class WorkflowEngine {
       state_merge_strategy: 'namespace_isolation'
     }
 
-    // Initialize phase tracking and approval system
-    this.phaseManager = new PhaseManager()
-    // Pass configs from ConfigManager if initialized, otherwise use provided config
-    this.approvalCheckpoint = new ApprovalCheckpoint(
-      approvalConfig || (this.configManager.isInitialized()
-        ? this.configManager.getApprovalCheckpointConfig()
-        : undefined)
-    )
-    // Initialize retry logic
-    this.iterationManager = new IterationManager(
-      retryConfig || (this.configManager.isInitialized()
-        ? this.configManager.getIterationManagerConfig()
-        : undefined)
-    )
-    // Initialize BMad metrics and learning loop
-    this.metricsCollector = new MetricsCollector()
-    this.metricsPersister = new MetricsPersister(databaseUrl)
-    this.learningLoop = new LearningLoop(this.metricsPersister)
-    // Initialize retrospective analysis
-    this.retrospectiveAgent = new RetrospectiveAgent(this.metricsPersister)
-    this.retrospectiveReportGenerator = new RetrospectiveReportGenerator()
-    // Initialize team manager
-    this.teamManager = getTeamManager()
-    // Initialize checklist manager
-    this.checklistManager = getChecklistManager()
-    // Initialize instruction manager
-    this.instructionManager = getInstructionManager()
-
-    // Initialize adaptive workflow selection
-    const complexityConfig = this.configManager.isInitialized()
-      ? this.configManager.getConfig().complexityAnalyzer
-      : undefined
-
-    const workflowSelectorConfig = this.configManager.isInitialized()
-      ? this.configManager.getConfig().workflowSelector
-      : undefined
-
-    this.complexityAnalyzer = new ComplexityAnalyzer(complexityConfig)
-    this.workflowSelector = new WorkflowSelector(workflowSelectorConfig)
-
-    // Initialize test enforcement validator (Amelia's Principle)
-    this.testEnforcementValidator = new TestEnforcementValidator()
-
-    // Initialize principle validators (Bob, Winston, John)
-    this.principleValidators = {
+    this.phaseManager = opts.phaseManager || new PhaseManager()
+    this.approvalCheckpoint = opts.approvalCheckpoint || new ApprovalCheckpoint(opts.approvalConfig)
+    this.iterationManager = opts.iterationManager || new IterationManager(opts.retryConfig)
+    this.metricsCollector = opts.metricsCollector || new MetricsCollector()
+    this.metricsPersister = opts.metricsPersister || new MetricsPersister(opts.databaseUrl)
+    this.metricsOptimizer = opts.metricsOptimizer || new MetricsOptimizer(this.metricsPersister)
+    this.learningLoop = opts.learningLoop || new LearningLoop(this.metricsPersister)
+    this.retrospectiveAgent = opts.retrospectiveAgent || new RetrospectiveAgent(this.metricsPersister)
+    this.retrospectiveReportGenerator = opts.retrospectiveReportGenerator || new RetrospectiveReportGenerator()
+    this.teamManager = opts.teamManager || getTeamManager()
+    this.checklistManager = opts.checklistManager || getChecklistManager()
+    this.instructionManager = opts.instructionManager || getInstructionManager()
+    this.complexityAnalyzer = opts.complexityAnalyzer || new ComplexityAnalyzer()
+    this.workflowSelector = opts.workflowSelector || new WorkflowSelector()
+    this.testEnforcementValidator = opts.testEnforcementValidator || new TestEnforcementValidator()
+    this.principleValidators = opts.principleValidators || {
       zeroAmbiguity: new ZeroAmbiguityValidator(),
       boringTechnology: new BoringTechnologyValidator(),
       whyFirst: new WhyFirstValidator()
     }
-
-    console.log('[WorkflowEngine] Initialized with phase tracking, metrics, validators, and adaptive selection')
   }
 
   /**
@@ -291,9 +395,44 @@ export class WorkflowEngine {
           'Ensure workflows exist in one of these locations.'
         )
       }
+
+      // Apply learning feedback: optimize workflows based on historical metrics
+      await this.applyLearningOptimizations()
     } catch (error) {
       console.error('[WorkflowEngine] Failed to initialize:', error)
       throw error
+    }
+  }
+
+  /**
+   * Apply learning optimizations to loaded workflows
+   * Uses MetricsOptimizer to analyze historical data and apply safe optimizations
+   */
+  private async applyLearningOptimizations(): Promise<void> {
+    try {
+      let totalApplied = 0
+
+      for (const [workflowId, workflow] of this.workflows) {
+        const result = await this.metricsOptimizer.analyzeWorkflow(workflow, true)
+
+        if (result.appliedOptimizations.length > 0) {
+          // Replace workflow with optimized version
+          this.workflows.set(workflowId, result.workflow)
+          totalApplied += result.appliedOptimizations.length
+
+          console.log(
+            `[Learning] Applied ${result.appliedOptimizations.length} optimizations to "${workflow.name}": ` +
+            result.appliedOptimizations.map(o => o.type).join(', ')
+          )
+        }
+      }
+
+      if (totalApplied > 0) {
+        console.log(`[Learning] Total optimizations applied: ${totalApplied}`)
+      }
+    } catch (error) {
+      // Non-blocking: learning failure shouldn't prevent workflow engine from working
+      console.warn('[Learning] Failed to apply optimizations:', error)
     }
   }
 
@@ -1239,6 +1378,7 @@ export class WorkflowEngine {
 
     if (!instance || typeof instance.execute !== 'function') {
       // Fallback to mock result when no executable instance is available
+      console.warn(`[ASMO] Agent "${agent.agentId}" — no executable instance, returning mock result`)
       return {
         currentAgent: agent.agentId,
         context: {
@@ -1668,4 +1808,35 @@ export class WorkflowEngine {
       this.metricsCollector.reset()
     }
   }
+}
+
+// =============================================================================
+// SINGLETON
+// =============================================================================
+
+let workflowEngineInstance: WorkflowEngine | null = null
+
+/**
+ * Get singleton WorkflowEngine instance
+ */
+export function getWorkflowEngine(
+  agentRegistry?: AgentRegistry,
+  approvalConfig?: ApprovalCheckpointConfig,
+  retryConfig?: RetryConfig,
+  databaseUrl?: string
+): WorkflowEngine {
+  if (!workflowEngineInstance) {
+    if (!agentRegistry) {
+      throw new Error('AgentRegistry is required for first WorkflowEngine creation')
+    }
+    workflowEngineInstance = WorkflowEngine.create(agentRegistry, approvalConfig, retryConfig, databaseUrl)
+  }
+  return workflowEngineInstance
+}
+
+/**
+ * Reset singleton (for testing)
+ */
+export function resetWorkflowEngine(): void {
+  workflowEngineInstance = null
 }

@@ -13,6 +13,7 @@ import {
   withValidation,
   ValidationError,
   TaskInputSchema,
+  AgentStateSchema,
   AgentOutputSchema
 } from '../../src/orchestration/reliability/validation'
 
@@ -473,6 +474,73 @@ describe('Schemas', () => {
         deliverables: ['output.md']
       })
 
+      expect(result.success).toBe(true)
+    })
+  })
+
+  describe('AgentStateSchema', () => {
+    const validState = {
+      task: 'Test task',
+      taskType: 'feature',
+      context: { key: 'value' },
+      messages: [{ role: 'user', content: 'Hello' }],
+      currentAgent: 'developer',
+      agentResults: [],
+      mcpData: {},
+      nextAction: 'continue',
+      requiresApproval: false
+    }
+
+    it('should accept valid state', () => {
+      const result = AgentStateSchema.safeParse(validState)
+      expect(result.success).toBe(true)
+    })
+
+    it('should accept messages with string content', () => {
+      const result = AgentStateSchema.safeParse({
+        ...validState,
+        messages: [{ role: 'user', content: 'Hello world' }]
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('should accept messages with array content', () => {
+      const result = AgentStateSchema.safeParse({
+        ...validState,
+        messages: [{ role: 'user', content: [{ type: 'text', text: 'Hello' }] }]
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('should reject messages without role', () => {
+      const result = AgentStateSchema.safeParse({
+        ...validState,
+        messages: [{ content: 'No role here' }]
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('should accept agentResults with passthrough fields', () => {
+      const result = AgentStateSchema.safeParse({
+        ...validState,
+        agentResults: [{
+          agentId: 'dev',
+          status: 'success',
+          output: 'done',
+          extraField: 'allowed by passthrough'
+        }]
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('should accept mcpData as Record<string, unknown>', () => {
+      const result = AgentStateSchema.safeParse({
+        ...validState,
+        mcpData: {
+          memory: { key: 'value' },
+          filesystem: [1, 2, 3]
+        }
+      })
       expect(result.success).toBe(true)
     })
   })

@@ -40,5 +40,8 @@ yarn-error.log*
 .eslintcache
 .cache/
 
+# ASMO runtime data
+.asmo/
+
 # OS
 Thumbs.db

@@ -42,7 +42,7 @@ export {
 // ===================================
 // ORCHESTRATION
 // ===================================
-export { WorkflowEngine } from './orchestration/workflow-engine'
+export { WorkflowEngine, getWorkflowEngine, resetWorkflowEngine } from './orchestration/workflow-engine'
 export { AgentRegistry, type SelectAgentOptions } from './orchestration/agent-registry'
 export { SkillMatcher } from './orchestration/skill-matcher'
 export { PhaseManager } from './orchestration/phase-manager'

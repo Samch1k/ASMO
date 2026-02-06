@@ -53,14 +53,14 @@ export interface IterationResult {
   finalError?: Error
 }
 
-export enum ErrorCategory {
+export enum RetryClassification {
   RETRYABLE = 'retryable',
   FATAL = 'fatal',
   UNKNOWN = 'unknown'
 }
 
 export interface ErrorClassification {
-  category: ErrorCategory
+  category: RetryClassification
   reason: string
   suggestedAction: string
 }
@@ -203,12 +203,12 @@ export class IterationManager {
           error: {
             type: error.name || 'Error',
             message: error.message,
-            isRetryable: classification.category === ErrorCategory.RETRYABLE
+            isRetryable: classification.category === RetryClassification.RETRYABLE
           }
         })
 
         // Check if error is retryable
-        if (classification.category === ErrorCategory.FATAL) {
+        if (classification.category === RetryClassification.FATAL) {
           console.error(`   🛑 Fatal error - cannot retry: ${classification.reason}`)
           break
         }
@@ -262,7 +262,7 @@ export class IterationManager {
     for (const fatalPattern of this.config.fatalErrors) {
       if (errorString.includes(fatalPattern.toLowerCase())) {
         return {
-          category: ErrorCategory.FATAL,
+          category: RetryClassification.FATAL,
           reason: `Matches fatal pattern: "${fatalPattern}"`,
           suggestedAction: 'Fix underlying issue - retry will not help'
         }
@@ -273,7 +273,7 @@ export class IterationManager {
     for (const retryablePattern of this.config.retryableErrors) {
       if (errorString.includes(retryablePattern.toLowerCase())) {
         return {
-          category: ErrorCategory.RETRYABLE,
+          category: RetryClassification.RETRYABLE,
           reason: `Matches retryable pattern: "${retryablePattern}"`,
           suggestedAction: 'Retry with exponential backoff'
         }
@@ -282,7 +282,7 @@ export class IterationManager {
 
     // Unknown error - treat as retryable by default (conservative approach)
     return {
-      category: ErrorCategory.RETRYABLE,
+      category: RetryClassification.RETRYABLE,
       reason: 'Unknown error type - assuming transient',
       suggestedAction: 'Retry with exponential backoff (default behavior)'
     }
@@ -441,7 +441,7 @@ export class IterationManager {
    */
   isRetryable(error: Error): boolean {
     const classification = this.classifyError(error)
-    return classification.category === ErrorCategory.RETRYABLE
+    return classification.category === RetryClassification.RETRYABLE
   }
 
   /**
@@ -633,3 +633,6 @@ export class IterationManager {
  * Singleton instance for convenience
  */
 export const iterationManager = new IterationManager()
+
+/** @deprecated Use RetryClassification instead */
+export const ErrorCategory = RetryClassification
