@@ -91,7 +91,7 @@ const DEFAULT_CONFIG: Required<Omit<WorkflowSelectorConfig, 'complexityConfig' |
   confidenceThreshold: 0.7,
   maxAlternatives: 2,
   enableHybridAnalysis: false,
-  enablePhaseDetection: false
+  enablePhaseDetection: true
 }
 
 /**

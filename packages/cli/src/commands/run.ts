@@ -12,16 +12,33 @@
  *   asmo run "Refactor auth module" --dry-run
  */
 
+import * as readline from 'readline'
 import {
   WorkflowEngine,
+  WorkflowSelector,
   AgentRegistry,
   getConfigLoader
 } from '@asmo/core'
+
+function promptUser(question: string, timeoutMs: number): Promise<string> {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+    const timer = setTimeout(() => { rl.close(); resolve('y') }, timeoutMs)
+    rl.question(question, (answer) => {
+      clearTimeout(timer)
+      rl.close()
+      resolve(answer.toLowerCase().trim() || 'y')
+    })
+  })
+}
 
 interface RunOptions {
   verbose?: boolean
   dryRun?: boolean
   workflow?: string  // Override automatic workflow selection
+  useApi?: boolean   // Force API mode (requires ANTHROPIC_API_KEY)
+  noLlm?: boolean    // Disable LLM, use heuristics only
+  phaseDetection?: boolean  // commander --no-X pattern sets false
 }
 
 export async function runCommand(task: string, options: RunOptions): Promise<void> {
@@ -37,13 +54,26 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
     const agentRegistry = new AgentRegistry()
     await agentRegistry.autoDiscover(roles, configLoader)
 
-    const engine = new WorkflowEngine(agentRegistry)
+    const engine = options.phaseDetection === false
+      ? new WorkflowEngine({
+          agentRegistry,
+          workflowSelector: new WorkflowSelector({ enablePhaseDetection: false })
+        })
+      : new WorkflowEngine(agentRegistry)
     await engine.initialize()
 
     // Step 2: Adaptive Workflow Selection (uses BMAD + complexity analysis)
     console.log('🔍 Analyzing task complexity...')
 
-    const selection = await engine.selectWorkflowAdaptively(task)
+    // Determine LLM mode from CLI flags
+    const llmMode = options.noLlm ? 'heuristics' 
+                  : options.useApi ? 'api' 
+                  : 'auto'
+
+    // Pass llmMode via ProjectContext
+    const selection = await engine.selectWorkflowAdaptively(task, {
+      llmMode: llmMode as 'auto' | 'api' | 'heuristics'
+    })
 
     if (options.verbose) {
       console.log('\n📊 Analysis Results:')
@@ -55,14 +85,44 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
       console.log(`   Selected: ${selection.workflow.id} (confidence: ${(selection.confidence * 100).toFixed(1)}%)`)
     }
 
-    // Step 3: Check if dry-run
+    // Step 3: Confirm with user if confidence is low
+    if (selection.confidence < 0.5 && !options.dryRun) {
+      console.log(`\n⚠️  Low confidence (${(selection.confidence * 100).toFixed(0)}%)`)
+      console.log(`   Selected: ${selection.workflow.id}`)
+      if (selection.alternatives.length > 0) {
+        selection.alternatives.forEach((alt, i) => {
+          console.log(`   ${i + 1}. ${alt.workflowId} (${(alt.confidence * 100).toFixed(0)}%)`)
+        })
+      }
+      const altRange = selection.alternatives.length > 0 ? `1-${selection.alternatives.length}/` : ''
+      const answer = await promptUser(
+        `   Proceed with ${selection.workflow.id}? [Y/n/${altRange}]: `,
+        60000
+      )
+      if (answer === 'n' || answer === 'no') {
+        console.log('Aborted.')
+        return
+      }
+      const altIdx = parseInt(answer) - 1
+      if (!isNaN(altIdx) && altIdx >= 0 && altIdx < selection.alternatives.length) {
+        console.log(`\n🚀 Executing alternative workflow: ${selection.alternatives[altIdx].workflowId}...\n`)
+        const result = await engine.execute(selection.alternatives[altIdx].workflowId)
+        console.log('\n✅ Execution complete')
+        if (options.verbose && result.success) {
+          console.log('   Result: success')
+        }
+        return
+      }
+    }
+
+    // Step 4: Check if dry-run
     if (options.dryRun) {
       console.log('\n✅ Dry run complete (no execution)')
       console.log(`\nTo execute: asmo run "${task}"`)
       return
     }
 
-    // Step 4: Execute workflow
+    // Step 5: Execute workflow
     console.log('\n🚀 Executing workflow...\n')
 
     const result = await engine.execute(task)

@@ -41,6 +41,8 @@ import {
   WhyFirstValidator,
   type ValidationResult
 } from './validators/principle-validators'
+import { getCircuitBreakerManager, CircuitOpenError } from './reliability'
+import { ContextCascade } from './context-cascade'
 import type {
   Workflow,
   WorkflowStep,
@@ -77,6 +79,7 @@ export interface WorkflowEngineOptions {
   instructionManager?: InstructionManager
   complexityAnalyzer?: ComplexityAnalyzer
   workflowSelector?: WorkflowSelector
+  contextCascade?: ContextCascade
   testEnforcementValidator?: TestEnforcementValidator
   principleValidators?: {
     zeroAmbiguity: ZeroAmbiguityValidator
@@ -93,6 +96,8 @@ export class WorkflowEngine {
   private globalSettings!: WorkflowConfig['global_settings']
   private initialized = false
   private currentWorkflow: Workflow | null = null // Track current workflow for checklist access
+  private currentComplexityScore: number | undefined
+  private currentWorkflowName: string | undefined
 
   // All fields below are initialized in initializeComponents() called from constructor
   private agentRegistry!: AgentRegistry
@@ -111,6 +116,7 @@ export class WorkflowEngine {
   private instructionManager!: InstructionManager
   private complexityAnalyzer!: ComplexityAnalyzer
   private workflowSelector!: WorkflowSelector
+  private contextCascade!: ContextCascade
   private testEnforcementValidator!: TestEnforcementValidator
   private principleValidators!: {
     zeroAmbiguity: ZeroAmbiguityValidator
@@ -174,6 +180,7 @@ export class WorkflowEngine {
       instructionManager: getInstructionManager(),
       complexityAnalyzer: new ComplexityAnalyzer(complexityConfig),
       workflowSelector: new WorkflowSelector(workflowSelectorConfig),
+      contextCascade: new ContextCascade(),
       testEnforcementValidator: new TestEnforcementValidator(),
       principleValidators: {
         zeroAmbiguity: new ZeroAmbiguityValidator(),
@@ -262,6 +269,7 @@ export class WorkflowEngine {
     this.instructionManager = opts.instructionManager || getInstructionManager()
     this.complexityAnalyzer = opts.complexityAnalyzer || new ComplexityAnalyzer()
     this.workflowSelector = opts.workflowSelector || new WorkflowSelector()
+    this.contextCascade = opts.contextCascade || new ContextCascade()
     this.testEnforcementValidator = opts.testEnforcementValidator || new TestEnforcementValidator()
     this.principleValidators = opts.principleValidators || {
       zeroAmbiguity: new ZeroAmbiguityValidator(),
@@ -650,7 +658,9 @@ export class WorkflowEngine {
 
     // 2. Natural Language (via WorkflowSelector - adaptive)
     const selection = await this.selectWorkflowAdaptively(input, context)
-    
+    this.currentComplexityScore = selection.complexity.score
+    this.currentWorkflowName = selection.workflow.name
+
     return {
       workflow: selection.workflow,
       state: this.buildState(initialState, input)
@@ -920,6 +930,27 @@ export class WorkflowEngine {
           state = await this.phaseManager.transitionPhase(state, currentPhase)
         }
 
+        // Context Cascade: load dependent documents for this phase
+        try {
+          const contextResult = await this.contextCascade.loadContextForWorkflow(workflow.id)
+          if (contextResult.loaded.length > 0) {
+            state = {
+              ...state,
+              context: {
+                ...state.context,
+                cascadedContext: this.contextCascade.formatContextForAgent(contextResult.context),
+                cascadedDocuments: contextResult.loaded
+              }
+            }
+            console.log(`[ContextCascade] Loaded: ${contextResult.loaded.join(', ')}`)
+          }
+          if (contextResult.missing.length > 0) {
+            console.log(`[ContextCascade] Missing: ${contextResult.missing.join(', ')}`)
+          }
+        } catch (err) {
+          console.warn(`[ContextCascade] Failed:`, err)
+        }
+
         // Check if any step in this group requires approval
         const requiresApproval = stepGroup.some(step => step.requires_approval === true)
 
@@ -929,7 +960,9 @@ export class WorkflowEngine {
           // Request approval
           const checkpointResult = await this.approvalCheckpoint.checkpointIfRequired(
             state,
-            currentPhase
+            currentPhase,
+            this.currentComplexityScore,
+            this.currentWorkflowName
           )
 
           if (checkpointResult.shouldBlock) {
@@ -1059,12 +1092,48 @@ export class WorkflowEngine {
       // Record step start
       this.metricsCollector.recordStepStart(step, agent.agentId)
 
-      // Execute with timeout (use enriched state with instructions)
-      const output = await this.executeWithTimeout(
-        () => this.runAgent(agent, enrichedState),
-        step.timeout || this.globalSettings.default_timeout,
-        `${step.role_id}/${step.phase}`
-      )
+      // Resolve agent instance for retry support
+      const registry: any = this.agentRegistry as any
+      const instance = typeof registry.getAgentInstance === 'function'
+        ? registry.getAgentInstance(agent.agentId)
+        : undefined
+
+      // CircuitBreaker: fail fast if agent is repeatedly broken
+      const circuitBreaker = getCircuitBreakerManager().get(`workflow-${agent.agentId}`)
+
+      if (circuitBreaker.getState() === 'OPEN') {
+        throw new CircuitOpenError(`Circuit breaker open for ${agent.agentId}`)
+      }
+
+      // Layering: CircuitBreaker (outer) → Timeout → IterationManager retry (inner)
+      const output: Partial<AgentState> = await circuitBreaker.execute(async () => {
+        if (instance && typeof instance.execute === 'function') {
+          // Real agent: execute with retry via IterationManager
+          const executionState: AgentState = { ...enrichedState, currentAgent: agent.agentId }
+          if (typeof instance.initializeExecutionContext === 'function') {
+            instance.initializeExecutionContext(executionState)
+          }
+
+          return this.executeWithTimeout(
+            async () => {
+              const iterResult = await this.iterationManager.executeWithRetry(instance, executionState)
+              if (!iterResult.success) {
+                throw iterResult.finalError || new Error(`Agent ${agent.agentId} failed after retries`)
+              }
+              return iterResult.finalOutput!
+            },
+            step.timeout || this.globalSettings.default_timeout,
+            `${step.role_id}/${step.phase}`
+          )
+        } else {
+          // Mock agent: no retry needed
+          return this.executeWithTimeout(
+            () => this.runAgent(agent, enrichedState),
+            step.timeout || this.globalSettings.default_timeout,
+            `${step.role_id}/${step.phase}`
+          )
+        }
+      })
 
       const duration = (Date.now() - startTime) / 1000
       console.log(`   ✓ ${displayName} completed in ${duration.toFixed(1)}s`)

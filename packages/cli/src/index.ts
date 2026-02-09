@@ -34,6 +34,9 @@ program
   .option('-v, --verbose', 'Verbose output')
   .option('-d, --dry-run', 'Dry run without executing')
   .option('-w, --workflow <name>', 'Override automatic workflow selection')
+  .option('--use-api', 'Force API mode (requires ANTHROPIC_API_KEY)')
+  .option('--no-llm', 'Disable LLM, use heuristics only')
+  .option('--no-phase-detection', 'Disable adaptive phase detection')
   .action(runCommand)
 
 // Default command - same as run (allows: asmo "task")
