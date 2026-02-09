@@ -117,12 +117,9 @@
       "can_modify_code": true,
       "requires_plan": false,
       "required_skills": [
-        "bug_diagnosis",
-        "root_cause_analysis",
-        "error_investigation"
+        "debug_investigation"
       ],
       "optional_skills": [
-        "log_analysis",
         "performance_debugging",
         "hotfix_generation"
       ],
@@ -179,7 +176,6 @@
       ],
       "optional_skills": [
         "query_optimization",
-        "caching_strategy",
         "bundle_optimization"
       ],
       "priority": 7,
@@ -236,8 +232,7 @@
       ],
       "optional_skills": [
         "bug_reproduction",
-        "smoke_testing",
-        "acceptance_testing"
+        "system_testing"
       ],
       "priority": 8,
       "allowed_mcps": [

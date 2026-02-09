@@ -10,14 +10,11 @@
       "can_modify_code": true,
       "requires_plan": false,
       "required_skills": [
-        "component_styling",
-        "tailwind_css",
+        "ui_styling",
         "responsive_design"
       ],
       "optional_skills": [
-        "accessibility",
-        "animation",
-        "css_optimization"
+        "accessibility"
       ],
       "priority": 6,
       "allowed_mcps": [
@@ -127,7 +124,7 @@
       "optional_skills": [
         "kpis",
         "process_modeling",
-        "stakeholder_management"
+        "stakeholder_relations"
       ],
       "priority": 6,
       "allowed_mcps": [
@@ -181,7 +178,7 @@
       "optional_skills": [
         "risk_management",
         "resource_allocation",
-        "stakeholder_communication"
+        "stakeholder_relations"
       ],
       "priority": 5,
       "allowed_mcps": [
@@ -232,8 +229,7 @@
         "prioritization"
       ],
       "optional_skills": [
-        "market_analysis",
-        "competitive_analysis"
+        "market_research"
       ],
       "priority": 7,
       "allowed_mcps": [
@@ -280,17 +276,9 @@
       "can_modify_code": false,
       "requires_plan": false,
       "required_skills": [
-        "sprint_planning",
-        "backlog_management",
-        "agile_ceremonies"
+        "sprint_planning"
       ],
-      "optional_skills": [
-        "impediment_resolution",
-        "velocity_tracking",
-        "retrospective_facilitation",
-        "story_estimation",
-        "team_coaching"
-      ],
+      "optional_skills": [],
       "priority": 6,
       "allowed_mcps": [
         "github",
@@ -334,18 +322,9 @@
       "role_type": "reasoning",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": [
-        "security_audit",
-        "vulnerability_scanning",
-        "threat_modeling"
-      ],
+      "required_skills": [],
       "optional_skills": [
-        "auth_authorization_review",
-        "data_protection",
-        "dependency_audit",
-        "owasp_compliance",
-        "incident_response",
-        "security_testing"
+        "incident_response"
       ],
       "priority": 7,
       "allowed_mcps": [
@@ -392,19 +371,8 @@
       "role_type": "reasoning",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": [
-        "performance_profiling",
-        "optimization",
-        "load_testing"
-      ],
-      "optional_skills": [
-        "database_tuning",
-        "caching_strategy",
-        "frontend_performance",
-        "backend_performance",
-        "capacity_planning",
-        "monitoring_setup"
-      ],
+      "required_skills": [],
+      "optional_skills": [],
       "priority": 6,
       "allowed_mcps": [
         "sentry",
@@ -451,19 +419,8 @@
       "role_type": "reasoning",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": [
-        "database_design",
-        "schema_modeling",
-        "data_migration"
-      ],
-      "optional_skills": [
-        "database_normalization",
-        "index_optimization",
-        "data_integrity",
-        "backup_recovery",
-        "data_lifecycle",
-        "relationship_design"
-      ],
+      "required_skills": [],
+      "optional_skills": [],
       "priority": 7,
       "allowed_mcps": [
         "supabase",
@@ -509,20 +466,8 @@
       "role_type": "reasoning",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": [
-        "api_design",
-        "rest_api",
-        "openapi_spec"
-      ],
-      "optional_skills": [
-        "graphql_design",
-        "api_versioning",
-        "request_validation",
-        "response_design",
-        "error_handling",
-        "api_security",
-        "rate_limiting"
-      ],
+      "required_skills": [],
+      "optional_skills": [],
       "priority": 6,
       "allowed_mcps": [
         "github",
@@ -568,17 +513,9 @@
       "role_type": "reasoning",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": [
-        "analysis",
-        "research",
-        "brainstorming"
-      ],
+      "required_skills": [],
       "optional_skills": [
-        "market_analysis",
-        "competitive_analysis",
-        "strategic_planning",
-        "trend_analysis",
-        "product_brief_creation"
+        "market_research"
       ],
       "priority": 6,
       "allowed_mcps": [
@@ -624,18 +561,8 @@
       "role_type": "execution",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": [
-        "documentation",
-        "technical_writing",
-        "api_documentation"
-      ],
-      "optional_skills": [
-        "user_guides",
-        "readme_creation",
-        "release_notes",
-        "architecture_docs",
-        "tutorial_creation"
-      ],
+      "required_skills": [],
+      "optional_skills": [],
       "priority": 5,
       "allowed_mcps": [
         "filesystem",
@@ -679,18 +606,8 @@
       "role_type": "reasoning",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": [
-        "test_strategy",
-        "risk_based_testing",
-        "quality_gates"
-      ],
-      "optional_skills": [
-        "test_automation",
-        "release_readiness",
-        "regression_analysis",
-        "test_maintenance",
-        "coverage_analysis"
-      ],
+      "required_skills": [],
+      "optional_skills": [],
       "priority": 7,
       "allowed_mcps": [
         "filesystem",
@@ -735,17 +652,8 @@
       "role_type": "reasoning",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": [
-        "adversarial_review",
-        "code_review",
-        "security_review"
-      ],
-      "optional_skills": [
-        "design_review",
-        "performance_review",
-        "issue_detection",
-        "critical_analysis"
-      ],
+      "required_skills": [],
+      "optional_skills": [],
       "priority": 8,
       "allowed_mcps": [
         "filesystem",
@@ -786,14 +694,9 @@
       "role_type": "reasoning",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": [
-        "code_review",
-        "security_analysis",
-        "best_practices"
-      ],
+      "required_skills": [],
       "optional_skills": [
         "performance_analysis",
-        "test_coverage_analysis",
         "architecture_review"
       ],
       "priority": 8,

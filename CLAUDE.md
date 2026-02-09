@@ -8,7 +8,7 @@ This project uses ASMO multi-agent orchestration system. ASMO automatically rout
 |----------|-------|
 | Agents | 25 |
 | Workflows | 27 |
-| Skills | 92 |
+| Skills | 55 (optimized from 85, -35%) |
 | Roles | 21 (6 core + 15 specialized) |
 
 **Key architecture features:**

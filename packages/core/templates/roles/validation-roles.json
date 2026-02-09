@@ -9,8 +9,8 @@
       "role_type": "reasoning",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": ["design_review", "architecture_validation"],
-      "optional_skills": ["api_design", "database_design"],
+      "required_skills": ["architecture_review", "system_design"],
+      "optional_skills": ["data_modeling", "technology_evaluation"],
       "priority": 7,
       "allowed_mcps": ["memory", "supabase", "context7", "filesystem"],
       "activation_rules": {
@@ -35,8 +35,8 @@
       "role_type": "hybrid",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": ["conflict_resolution", "data_consolidation"],
-      "optional_skills": ["decision_making"],
+      "required_skills": ["coordination", "tracking"],
+      "optional_skills": ["sprint_planning"],
       "priority": 8,
       "allowed_mcps": ["memory"],
       "activation_rules": {
@@ -61,8 +61,8 @@
       "role_type": "reasoning",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": ["health_monitoring", "performance_validation"],
-      "optional_skills": ["smoke_testing", "incident_response"],
+      "required_skills": ["monitoring", "deployment"],
+      "optional_skills": ["system_testing", "incident_response"],
       "priority": 9,
       "allowed_mcps": ["memory", "supabase", "render", "vercel"],
       "activation_rules": {
@@ -87,8 +87,8 @@
       "role_type": "reasoning",
       "can_modify_code": false,
       "requires_plan": false,
-      "required_skills": ["requirements_validation", "quality_assurance"],
-      "optional_skills": ["completeness_checking"],
+      "required_skills": ["requirements", "user_stories"],
+      "optional_skills": ["business_logic"],
       "priority": 7,
       "allowed_mcps": ["memory", "filesystem"],
       "activation_rules": {

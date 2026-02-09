@@ -2,8 +2,12 @@
   "version": "1.0.0",
   "dependencies": {
     "code_writing": {
-      "requires": ["typescript_expert"],
-      "recommended": ["unit_testing"],
+      "requires": [
+        "typescript_expert"
+      ],
+      "recommended": [
+        "unit_testing"
+      ],
       "conflicts_with": []
     },
     "typescript_expert": {
@@ -12,368 +16,385 @@
       "conflicts_with": []
     },
     "feature_implementation": {
-      "requires": ["code_writing", "typescript_expert"],
-      "recommended": ["unit_testing", "integration"],
+      "requires": [
+        "code_writing",
+        "typescript_expert"
+      ],
+      "recommended": [
+        "unit_testing",
+        "integration"
+      ],
       "conflicts_with": []
     },
     "refactoring": {
-      "requires": ["typescript_expert"],
-      "recommended": ["unit_testing"],
+      "requires": [
+        "typescript_expert"
+      ],
+      "recommended": [
+        "unit_testing"
+      ],
       "conflicts_with": []
     },
     "integration": {
-      "requires": ["code_writing"],
-      "recommended": ["unit_testing"],
+      "requires": [
+        "code_writing"
+      ],
+      "recommended": [
+        "unit_testing"
+      ],
       "conflicts_with": []
     },
     "unit_testing": {
       "requires": [],
-      "recommended": ["code_writing"],
+      "recommended": [
+        "code_writing"
+      ],
       "conflicts_with": []
     },
     "e2e_testing": {
       "requires": [],
-      "recommended": ["unit_testing"],
+      "recommended": [
+        "unit_testing"
+      ],
       "conflicts_with": []
     },
     "test_coverage": {
-      "requires": ["unit_testing"],
-      "recommended": ["e2e_testing"],
+      "requires": [
+        "unit_testing"
+      ],
+      "recommended": [
+        "e2e_testing"
+      ],
       "conflicts_with": []
     },
     "bug_reproduction": {
       "requires": [],
-      "recommended": ["bug_diagnosis"],
-      "conflicts_with": []
-    },
-    "smoke_testing": {
-      "requires": [],
-      "recommended": ["e2e_testing"],
-      "conflicts_with": []
-    },
-    "acceptance_testing": {
-      "requires": [],
-      "recommended": ["e2e_testing"],
+      "recommended": [],
       "conflicts_with": []
     },
     "deployment": {
-      "requires": ["ci_cd", "infrastructure"],
-      "recommended": ["monitoring", "smoke_testing"],
+      "requires": [
+        "ci_cd",
+        "infrastructure"
+      ],
+      "recommended": [
+        "monitoring"
+      ],
       "conflicts_with": []
     },
     "ci_cd": {
       "requires": [],
-      "recommended": ["unit_testing", "e2e_testing"],
+      "recommended": [
+        "unit_testing",
+        "e2e_testing"
+      ],
       "conflicts_with": []
     },
     "infrastructure": {
       "requires": [],
-      "recommended": ["monitoring"],
+      "recommended": [
+        "monitoring"
+      ],
       "conflicts_with": []
     },
     "monitoring": {
       "requires": [],
-      "recommended": ["infrastructure"],
+      "recommended": [
+        "infrastructure"
+      ],
       "conflicts_with": []
     },
     "incident_response": {
-      "requires": ["monitoring", "bug_diagnosis"],
-      "recommended": ["hotfix_generation"],
+      "requires": [
+        "monitoring"
+      ],
+      "recommended": [
+        "hotfix_generation"
+      ],
       "conflicts_with": []
     },
     "system_design": {
       "requires": [],
-      "recommended": ["data_modeling", "architecture_decisions"],
+      "recommended": [
+        "data_modeling",
+        "architecture_decisions"
+      ],
       "conflicts_with": []
     },
     "architecture_decisions": {
-      "requires": ["system_design"],
-      "recommended": ["adr_creation", "technology_evaluation"],
+      "requires": [
+        "system_design"
+      ],
+      "recommended": [
+        "adr_creation",
+        "technology_evaluation"
+      ],
       "conflicts_with": []
     },
     "adr_creation": {
-      "requires": ["architecture_decisions"],
+      "requires": [
+        "architecture_decisions"
+      ],
       "recommended": [],
       "conflicts_with": []
     },
     "technology_evaluation": {
       "requires": [],
-      "recommended": ["architecture_decisions"],
+      "recommended": [
+        "architecture_decisions"
+      ],
       "conflicts_with": []
     },
     "data_modeling": {
       "requires": [],
-      "recommended": ["system_design"],
+      "recommended": [
+        "system_design"
+      ],
       "conflicts_with": []
     },
     "scalability_planning": {
-      "requires": ["system_design"],
-      "recommended": ["performance_analysis", "infrastructure"],
-      "conflicts_with": []
-    },
-    "bug_diagnosis": {
-      "requires": [],
-      "recommended": ["error_investigation", "log_analysis"],
-      "conflicts_with": []
-    },
-    "root_cause_analysis": {
-      "requires": ["bug_diagnosis"],
-      "recommended": ["error_investigation"],
-      "conflicts_with": []
-    },
-    "error_investigation": {
-      "requires": [],
-      "recommended": ["log_analysis"],
-      "conflicts_with": []
-    },
-    "log_analysis": {
-      "requires": [],
-      "recommended": ["error_investigation"],
+      "requires": [
+        "system_design"
+      ],
+      "recommended": [
+        "performance_analysis",
+        "infrastructure"
+      ],
       "conflicts_with": []
     },
     "performance_debugging": {
-      "requires": ["profiling"],
-      "recommended": ["performance_analysis"],
+      "requires": [
+        "profiling"
+      ],
+      "recommended": [
+        "performance_analysis"
+      ],
       "conflicts_with": []
     },
     "hotfix_generation": {
-      "requires": ["code_writing", "bug_diagnosis"],
-      "recommended": ["unit_testing"],
+      "requires": [
+        "code_writing"
+      ],
+      "recommended": [
+        "unit_testing"
+      ],
       "conflicts_with": []
     },
     "performance_analysis": {
-      "requires": ["profiling"],
-      "recommended": ["query_optimization", "code_optimization"],
+      "requires": [
+        "profiling"
+      ],
+      "recommended": [
+        "query_optimization",
+        "code_optimization"
+      ],
       "conflicts_with": []
     },
     "query_optimization": {
       "requires": [],
-      "recommended": ["performance_analysis", "data_modeling"],
+      "recommended": [
+        "performance_analysis",
+        "data_modeling"
+      ],
       "conflicts_with": []
     },
     "code_optimization": {
-      "requires": ["typescript_expert"],
-      "recommended": ["performance_analysis", "refactoring"],
+      "requires": [
+        "typescript_expert"
+      ],
+      "recommended": [
+        "performance_analysis",
+        "refactoring"
+      ],
       "conflicts_with": []
     },
     "profiling": {
       "requires": [],
-      "recommended": ["performance_analysis"],
+      "recommended": [
+        "performance_analysis"
+      ],
       "conflicts_with": []
     },
     "caching_strategy": {
       "requires": [],
-      "recommended": ["performance_analysis", "system_design"],
+      "recommended": [
+        "performance_analysis",
+        "system_design"
+      ],
       "conflicts_with": []
     },
     "bundle_optimization": {
       "requires": [],
-      "recommended": ["code_optimization"],
-      "conflicts_with": []
-    },
-    "component_styling": {
-      "requires": ["tailwind_css"],
-      "recommended": ["responsive_design", "accessibility"],
-      "conflicts_with": []
-    },
-    "tailwind_css": {
-      "requires": [],
-      "recommended": ["responsive_design"],
+      "recommended": [
+        "code_optimization"
+      ],
       "conflicts_with": []
     },
     "responsive_design": {
-      "requires": ["tailwind_css"],
-      "recommended": ["accessibility"],
+      "requires": [],
+      "recommended": [
+        "accessibility"
+      ],
       "conflicts_with": []
     },
     "accessibility": {
       "requires": [],
-      "recommended": ["component_styling", "responsive_design"],
-      "conflicts_with": []
-    },
-    "animation": {
-      "requires": [],
-      "recommended": ["component_styling"],
-      "conflicts_with": []
-    },
-    "css_optimization": {
-      "requires": ["tailwind_css"],
-      "recommended": ["bundle_optimization"],
+      "recommended": [
+        "responsive_design"
+      ],
       "conflicts_with": []
     },
     "user_flows": {
       "requires": [],
-      "recommended": ["wireframes", "usability"],
+      "recommended": [
+        "wireframes",
+        "usability"
+      ],
       "conflicts_with": []
     },
     "wireframes": {
       "requires": [],
-      "recommended": ["user_flows", "prototyping"],
+      "recommended": [
+        "user_flows",
+        "prototyping"
+      ],
       "conflicts_with": []
     },
     "usability": {
       "requires": [],
-      "recommended": ["user_research", "user_testing"],
+      "recommended": [
+        "user_research",
+        "user_testing"
+      ],
       "conflicts_with": []
     },
     "user_research": {
       "requires": [],
-      "recommended": ["usability", "user_testing"],
+      "recommended": [
+        "usability",
+        "user_testing"
+      ],
       "conflicts_with": []
     },
     "prototyping": {
-      "requires": ["wireframes"],
-      "recommended": ["user_testing"],
+      "requires": [
+        "wireframes"
+      ],
+      "recommended": [
+        "user_testing"
+      ],
       "conflicts_with": []
     },
     "user_testing": {
       "requires": [],
-      "recommended": ["usability", "user_research"],
+      "recommended": [
+        "usability",
+        "user_research"
+      ],
       "conflicts_with": []
     },
     "requirements": {
       "requires": [],
-      "recommended": ["user_stories", "business_logic"],
+      "recommended": [
+        "user_stories",
+        "business_logic"
+      ],
       "conflicts_with": []
     },
     "user_stories": {
       "requires": [],
-      "recommended": ["requirements", "sprint_planning"],
+      "recommended": [
+        "requirements",
+        "sprint_planning"
+      ],
       "conflicts_with": []
     },
     "kpis": {
       "requires": [],
-      "recommended": ["business_logic"],
+      "recommended": [
+        "business_logic"
+      ],
       "conflicts_with": []
     },
     "business_logic": {
       "requires": [],
-      "recommended": ["requirements", "code_writing"],
+      "recommended": [
+        "requirements",
+        "code_writing"
+      ],
       "conflicts_with": []
     },
     "process_modeling": {
       "requires": [],
-      "recommended": ["business_logic"],
-      "conflicts_with": []
-    },
-    "stakeholder_management": {
-      "requires": [],
-      "recommended": ["requirements", "prioritization"],
+      "recommended": [
+        "business_logic"
+      ],
       "conflicts_with": []
     },
     "strategy": {
       "requires": [],
-      "recommended": ["roadmap", "prioritization"],
+      "recommended": [
+        "roadmap",
+        "prioritization"
+      ],
       "conflicts_with": []
     },
     "roadmap": {
-      "requires": ["strategy", "prioritization"],
-      "recommended": ["sprint_planning"],
+      "requires": [
+        "strategy",
+        "prioritization"
+      ],
+      "recommended": [
+        "sprint_planning"
+      ],
       "conflicts_with": []
     },
     "prioritization": {
       "requires": [],
-      "recommended": ["roadmap", "sprint_planning"],
-      "conflicts_with": []
-    },
-    "market_analysis": {
-      "requires": [],
-      "recommended": ["competitive_analysis", "strategy"],
-      "conflicts_with": []
-    },
-    "competitive_analysis": {
-      "requires": [],
-      "recommended": ["market_analysis", "strategy"],
+      "recommended": [
+        "roadmap",
+        "sprint_planning"
+      ],
       "conflicts_with": []
     },
     "sprint_planning": {
       "requires": [],
-      "recommended": ["coordination", "user_stories"],
+      "recommended": [
+        "coordination",
+        "user_stories"
+      ],
       "conflicts_with": []
     },
     "coordination": {
       "requires": [],
-      "recommended": ["sprint_planning", "tracking"],
+      "recommended": [
+        "sprint_planning",
+        "tracking"
+      ],
       "conflicts_with": []
     },
     "tracking": {
       "requires": [],
-      "recommended": ["coordination", "risk_management"],
+      "recommended": [
+        "coordination",
+        "risk_management"
+      ],
       "conflicts_with": []
     },
     "risk_management": {
       "requires": [],
-      "recommended": ["tracking", "sprint_planning"],
+      "recommended": [
+        "tracking",
+        "sprint_planning"
+      ],
       "conflicts_with": []
     },
     "resource_allocation": {
       "requires": [],
-      "recommended": ["sprint_planning", "coordination"],
-      "conflicts_with": []
-    },
-    "stakeholder_communication": {
-      "requires": [],
-      "recommended": ["stakeholder_management", "tracking"],
-      "conflicts_with": []
-    },
-    "rfq_workflow": {
-      "requires": ["business_logic"],
-      "recommended": ["bid_management", "award_process"],
-      "conflicts_with": []
-    },
-    "bid_management": {
-      "requires": ["business_logic"],
-      "recommended": ["rfq_workflow", "award_process"],
-      "conflicts_with": []
-    },
-    "award_process": {
-      "requires": ["business_logic", "compliance"],
-      "recommended": ["bid_management", "rfq_workflow"],
-      "conflicts_with": []
-    },
-    "rfq_validation": {
-      "requires": ["business_logic"],
-      "recommended": ["rfq_workflow"],
-      "conflicts_with": []
-    },
-    "supplier_matching": {
-      "requires": ["business_logic"],
-      "recommended": ["rfq_workflow", "ratings"],
-      "conflicts_with": []
-    },
-    "procurement_optimization": {
-      "requires": ["business_logic", "kpis"],
-      "recommended": ["rfq_workflow", "supplier_matching"],
-      "conflicts_with": []
-    },
-    "verification": {
-      "requires": ["compliance"],
-      "recommended": ["onboarding", "compliance"],
-      "conflicts_with": []
-    },
-    "ratings": {
-      "requires": ["business_logic"],
-      "recommended": ["supplier_matching", "verification"],
-      "conflicts_with": []
-    },
-    "onboarding": {
-      "requires": ["business_logic", "verification"],
-      "recommended": ["verification", "compliance"],
-      "conflicts_with": []
-    },
-    "compliance": {
-      "requires": ["business_logic"],
-      "recommended": ["verification", "onboarding"],
-      "conflicts_with": []
-    },
-    "supplier_analytics": {
-      "requires": ["kpis"],
-      "recommended": ["ratings", "supplier_matching"],
-      "conflicts_with": []
-    },
-    "relationship_management": {
-      "requires": ["stakeholder_management"],
-      "recommended": ["ratings", "supplier_analytics"],
+      "recommended": [
+        "sprint_planning",
+        "coordination"
+      ],
       "conflicts_with": []
     }
   }
