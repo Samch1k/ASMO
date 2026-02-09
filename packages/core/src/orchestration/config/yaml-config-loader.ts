@@ -9,7 +9,7 @@
 
 import * as fs from 'fs'
 import * as path from 'path'
-import { load as yamlLoad } from 'js-yaml'
+import { parse as yamlParse } from 'yaml'
 import type { ModelTier } from '../routing-logger'
 
 // =============================================================================
@@ -351,7 +351,7 @@ export class YamlConfigLoader {
     }
 
     const content = fs.readFileSync(filePath, 'utf-8')
-    const config = yamlLoad(content) as T
+    const config = yamlParse(content) as T
 
     if (!config) {
       throw new Error(`Failed to parse YAML: ${filePath}`)

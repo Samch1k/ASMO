@@ -8,8 +8,8 @@ This project uses ASMO multi-agent orchestration system. ASMO automatically rout
 |----------|-------|
 | Agents | 25 |
 | Workflows | 27 |
-| Skills | 55 (optimized from 85, -35%) |
-| Roles | 21 (6 core + 15 specialized) |
+| Skills | 55 |
+| Roles | 25 (6 core + 15 specialized + 4 validation) |
 
 **Key architecture features:**
 - Dual LLM provider: Session ($0 via Claude CLI) / API (pay-per-use) -- see `packages/core/docs/llm-provider-factory.md`

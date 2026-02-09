@@ -33,7 +33,6 @@ export default defineConfig({
     'zlib',
     // Runtime dependencies (externalized to avoid bundling issues)
     'yaml',
-    'js-yaml',
     'ajv',
     'pg',              // optional peer dependency for metrics persistence
     'lru-cache',
