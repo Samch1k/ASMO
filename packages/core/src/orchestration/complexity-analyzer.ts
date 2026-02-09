@@ -26,11 +26,22 @@ import type {
   ProjectContext,
   Workflow
 } from './types'
+import { PromptValidator } from './prompt-validator'
 
 /**
  * Complexity analysis configuration
  */
 export interface ComplexityAnalyzerConfig {
+  /**
+   * LLM provider mode
+   * - 'auto' (default): Session → API → Heuristics
+   * - 'api': Force API mode (requires ANTHROPIC_API_KEY)
+   * - 'session': Force Session mode (requires Claude CLI)
+   * - 'heuristics': Force heuristics only (no LLM)
+   * @default 'auto'
+   */
+  llmMode?: 'auto' | 'api' | 'session' | 'heuristics'
+
   /**
    * Maximum tokens for LLM response
    * @default 2000
@@ -53,6 +64,7 @@ export interface ComplexityAnalyzerConfig {
  * Default configuration
  */
 const DEFAULT_CONFIG: Required<ComplexityAnalyzerConfig> = {
+  llmMode: 'auto',
   maxTokens: 2000,
   thresholds: {
     trivial: 20,
@@ -72,9 +84,12 @@ export class ComplexityAnalyzer {
   /** Tracks which mode was used for the last analysis */
   private lastAnalysisMode: 'session' | 'api' | 'heuristics' = 'heuristics'
   private lastProvider: string = 'heuristics'
+  /** Prompt validator for input sanitization */
+  private promptValidator: PromptValidator
 
   constructor(config?: ComplexityAnalyzerConfig) {
     this.config = { ...DEFAULT_CONFIG, ...config }
+    this.promptValidator = new PromptValidator()
   }
 
   /**
@@ -98,22 +113,26 @@ export class ComplexityAnalyzer {
     taskDescription: string,
     context?: ProjectContext
   ): Promise<ComplexityScore> {
-    // Validate input
-    if (!taskDescription || taskDescription.trim().length === 0) {
-      throw new Error('Task description cannot be empty')
-    }
+    // Validate and sanitize prompt
+    const sanitizedPrompt = this.promptValidator.validateOrThrow(taskDescription)
 
-    // Build analysis prompt
-    const prompt = this.buildAnalysisPrompt(taskDescription, context)
+    // Override llmMode from context if provided (from CLI flags)
+    // No mutation of this.config — safe for concurrent calls
+    const effectiveConfig = context?.llmMode
+      ? { ...this.config, llmMode: context.llmMode }
+      : this.config
+
+    // Build analysis prompt with sanitized input
+    const prompt = this.buildAnalysisPrompt(sanitizedPrompt, context)
 
     // Call LLM for analysis (or use heuristics if LLM not available)
-    const analysisResult = await this.callLLM(prompt, taskDescription)
+    const analysisResult = await this.callLLM(prompt, sanitizedPrompt, effectiveConfig)
 
     // Parse LLM response
     const complexity = this.parseComplexityResponse(analysisResult)
 
     // Map score to level
-    complexity.level = this.scoreToLevel(complexity.score)
+    complexity.level = this.scoreToLevel(complexity.score, effectiveConfig)
 
     // Recommend workflow based on complexity
     complexity.recommendedWorkflow = this.recommendWorkflow(complexity)
@@ -208,14 +227,48 @@ Be objective and realistic in your assessment. Consider both the immediate task 
    * - Session mode ($0, via Claude CLI subscription)
    * - API mode (pay-per-use, via ANTHROPIC_API_KEY)
    * - Heuristics (final fallback if no provider available)
+   * 
+   * Respects config.llmMode for forced modes:
+   * - 'auto': Session → API → Heuristics (default)
+   * - 'api': Force API mode only
+   * - 'session': Force Session mode only
+   * - 'heuristics': Skip LLM entirely
    */
-  private async callLLM(prompt: string, taskDescription: string): Promise<string> {
+  private async callLLM(prompt: string, taskDescription: string, config: Required<ComplexityAnalyzerConfig>): Promise<string> {
+    const { llmMode } = config
+
+    // Force heuristics mode (--no-llm flag)
+    if (llmMode === 'heuristics') {
+      console.warn('[ComplexityAnalyzer] LLM disabled via config, using heuristics')
+      this.lastAnalysisMode = 'heuristics'
+      this.lastProvider = 'heuristics'
+      return this.analyzeWithHeuristics(taskDescription)
+    }
+
     let provider: ILLMProvider | null = null
 
     try {
-      provider = getLLMProvider()
+      // Get provider based on mode
+      if (llmMode === 'api') {
+        // Force API mode (--use-api flag)
+        provider = getLLMProvider('anthropic')
+      } else if (llmMode === 'session') {
+        // Force Session mode
+        provider = getLLMProvider('session')
+      } else {
+        // Auto mode: Session → API
+        provider = getLLMProvider()
+      }
     } catch {
-      // No provider available, will use heuristics
+      // Provider not available
+      if (llmMode === 'api') {
+        console.error('[ComplexityAnalyzer] API mode requested but ANTHROPIC_API_KEY not set')
+        throw new Error('API mode requires ANTHROPIC_API_KEY environment variable')
+      } else if (llmMode === 'session') {
+        console.error('[ComplexityAnalyzer] Session mode requested but Claude CLI not available')
+        throw new Error('Session mode requires Claude CLI to be installed and authenticated')
+      }
+      // Auto mode: fall through to heuristics
     }
 
     if (provider) {
@@ -225,7 +278,7 @@ Be objective and realistic in your assessment. Consider both the immediate task 
         this.lastProvider = provider.name
 
         const response = await provider.generate(prompt, {
-          maxTokens: this.config.maxTokens,
+          maxTokens: config.maxTokens,
           temperature: 0.2
         })
 
@@ -236,11 +289,20 @@ Be objective and realistic in your assessment. Consider both the immediate task 
         }
         return response.content
       } catch (error) {
-        console.warn('[ComplexityAnalyzer] LLM call failed, falling back to heuristics:', error)
+        console.warn('[ComplexityAnalyzer] LLM call failed:', error)
+        
+        // In forced modes, throw error instead of falling back
+        if (llmMode === 'api' || llmMode === 'session') {
+          throw new Error(`${llmMode} mode failed: ${error instanceof Error ? error.message : String(error)}`)
+        }
+        
+        // Auto mode: fall through to heuristics
       }
     }
 
-    // Fallback to heuristic-based analysis
+    // Fallback to heuristic-based analysis (only in auto mode)
+    console.warn('[ComplexityAnalyzer] ⚠️  No LLM provider available, falling back to heuristics (lower accuracy ~60-75%)')
+    console.warn('[ComplexityAnalyzer]   Tip: Install Claude CLI for free Session mode ($0) or set ANTHROPIC_API_KEY')
     this.lastAnalysisMode = 'heuristics'
     this.lastProvider = 'heuristics'
     return this.analyzeWithHeuristics(taskDescription)
@@ -470,8 +532,8 @@ Be objective and realistic in your assessment. Consider both the immediate task 
   /**
    * Map complexity score to level
    */
-  private scoreToLevel(score: number): ComplexityLevel {
-    const { thresholds } = this.config
+  private scoreToLevel(score: number, config?: Required<ComplexityAnalyzerConfig>): ComplexityLevel {
+    const { thresholds } = config || this.config
 
     if (score <= thresholds.trivial) return 'trivial'
     if (score <= thresholds.simple) return 'simple'

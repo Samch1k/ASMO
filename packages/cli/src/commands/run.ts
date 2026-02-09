@@ -62,6 +62,25 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
       : new WorkflowEngine(agentRegistry)
     await engine.initialize()
 
+    // If --workflow specified, execute directly (bypass adaptive selection)
+    if (options.workflow) {
+      console.log(`🔧 Using workflow override: ${options.workflow}`)
+
+      if (options.dryRun) {
+        console.log('\n✅ Dry run complete (no execution)')
+        return
+      }
+
+      console.log('\n🚀 Executing workflow...\n')
+      const result = await engine.execute(options.workflow, { task })
+
+      console.log('\n✅ Execution complete')
+      if (options.verbose && result.success) {
+        console.log('   Result: success')
+      }
+      return
+    }
+
     // Step 2: Adaptive Workflow Selection (uses BMAD + complexity analysis)
     console.log('🔍 Analyzing task complexity...')
 

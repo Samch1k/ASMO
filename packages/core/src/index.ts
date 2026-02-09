@@ -63,6 +63,8 @@ export { SkillMDLoader, createSkillMDLoader } from './orchestration/skillmd-load
 
 // BMAD Phase 1: Complexity Analysis & Adaptive Selection
 export { ComplexityAnalyzer } from './orchestration/complexity-analyzer'
+export { PromptValidator, type PromptValidationResult, type PromptValidatorConfig } from './orchestration/prompt-validator'
+export { TaskKeywordAnalyzer, type KeywordMatch, type KeywordCategory, type KeywordAnalysisResult } from './orchestration/task-keyword-analyzer'
 export { WorkflowSelector } from './orchestration/workflow-selector'
 
 // Adaptive Workflow System: Phase Detection

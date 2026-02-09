@@ -233,6 +233,8 @@ export interface ProjectContext {
   existingWorkflows?: string[]
   techStack?: string[]
   projectSize?: 'small' | 'medium' | 'large' | 'enterprise'
+  /** LLM provider mode override (from CLI flags) */
+  llmMode?: 'auto' | 'api' | 'session' | 'heuristics'
 }
 
 /**

@@ -50,7 +50,7 @@ import type {
   StepResult,
   WorkflowExecutionResult,
   ProjectContext,
-  WorkflowSelection
+  WorkflowSelectionWithPhase
 } from './types'
 import fs from 'fs/promises'
 import path from 'path'
@@ -556,13 +556,13 @@ export class WorkflowEngine {
    * @param taskDescription - Natural language task description
    * @param context - Optional project context for better analysis
    * @param userPreference - Optional user-specified workflow ID (overrides auto-selection)
-   * @returns WorkflowSelection with workflow, complexity analysis, and reasoning
+   * @returns WorkflowSelectionWithPhase with workflow, complexity, phase detection, and reasoning
    */
   async selectWorkflowAdaptively(
     taskDescription: string,
     context?: ProjectContext,
     userPreference?: string
-  ): Promise<WorkflowSelection> {
+  ): Promise<WorkflowSelectionWithPhase> {
     if (!this.initialized) {
       throw new Error('WorkflowEngine not initialized. Call initialize() first.')
     }
@@ -571,8 +571,8 @@ export class WorkflowEngine {
     const workflows = Array.from(this.workflows.values())
     this.workflowSelector.registerWorkflows(workflows)
 
-    // Select workflow based on complexity
-    const selection = await this.workflowSelector.selectWorkflow(
+    // Select workflow with phase detection (gracefully degrades when PhaseDetector unavailable)
+    const selection = await this.workflowSelector.selectWorkflowWithPhase(
       taskDescription,
       context,
       userPreference
@@ -580,6 +580,10 @@ export class WorkflowEngine {
 
     // Log complexity analysis and recommendation
     console.log(`[WorkflowSelection] ${selection.workflow.name} (${selection.workflow.id}) | complexity: ${selection.complexity.level} (${selection.complexity.score}/100) | confidence: ${(selection.confidence * 100).toFixed(0)}%`)
+
+    if (selection.joinPoint && selection.joinPoint > 0) {
+      console.log(`[WorkflowSelection] Phase detection: join at "${selection.phase}" (step ${selection.joinPoint}), skipping: ${selection.skipPhases?.join(' → ') || 'none'}`)
+    }
 
     // If confidence is low, show alternatives
     if (!this.workflowSelector.shouldAutoSelect(selection.confidence)) {
@@ -610,14 +614,19 @@ export class WorkflowEngine {
       throw new Error('WorkflowEngine not initialized. Call initialize() first.')
     }
 
-    // Resolve input → workflow + state
-    const { workflow, state } = await this.resolveInput(
+    // Resolve input → workflow + state + optional phase join point
+    const { workflow, state, startPhase } = await this.resolveInput(
       workflowIdOrDescription,
       initialState,
       context
     )
 
-    // Execute workflow
+    // Phase-aware execution when join point detected
+    if (startPhase) {
+      return this.executeFromPhase(workflow, startPhase, state, context)
+    }
+
+    // Execute workflow from the beginning
     return this.executeWorkflow(workflow, state)
   }
 
@@ -625,30 +634,39 @@ export class WorkflowEngine {
    * Resolve user input to workflow and initial state
    *
    * Resolution strategies (priority order):
-   * 1. Workflow ID (exact match) - direct lookup, no complexity analysis
-   * 2. Natural Language (adaptive) - delegates to WorkflowSelector + ComplexityAnalyzer
+   * 1. Workflow ID (exact match) - direct lookup + complexity analysis for YOLO
+   * 2. Natural Language (adaptive) - delegates to WorkflowSelector + ComplexityAnalyzer + PhaseDetector
    *
    * @private
    * @param input - User input string
    * @param initialState - Optional initial state to merge
    * @param context - Optional project context for adaptive selection
-   * @returns Resolved workflow and constructed AgentState
+   * @returns Resolved workflow, constructed AgentState, and optional startPhase for phase joining
    */
   private async resolveInput(
     input: string,
     initialState?: Partial<AgentState>,
     context?: ProjectContext
-  ): Promise<{ workflow: Workflow; state: AgentState }> {
+  ): Promise<{ workflow: Workflow; state: AgentState; startPhase?: string }> {
 
     // 1. Workflow ID (direct specification)
     if (this.isWorkflowId(input)) {
       const workflow = this.workflows.get(input)
-      
+
       if (!workflow) {
         throw new Error(`Workflow not found: ${input}`)
       }
 
       console.log(`[Workflow] Using: ${workflow.name} (${workflow.id})`)
+
+      // Run complexity analysis for YOLO mode,
+      // but only if score not already computed (e.g., from prior selectWorkflowAdaptively)
+      if (this.currentComplexityScore === undefined) {
+        const taskDescription = initialState?.task || input
+        const complexity = await this.complexityAnalyzer.analyzeTask(taskDescription, context)
+        this.currentComplexityScore = complexity.score
+      }
+      this.currentWorkflowName = workflow.name
 
       return {
         workflow,
@@ -663,7 +681,8 @@ export class WorkflowEngine {
 
     return {
       workflow: selection.workflow,
-      state: this.buildState(initialState, input)
+      state: this.buildState(initialState, input),
+      startPhase: (selection.joinPoint && selection.joinPoint > 0) ? selection.phase : undefined
     }
   }
 
