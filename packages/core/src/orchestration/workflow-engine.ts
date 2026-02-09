@@ -679,10 +679,27 @@ export class WorkflowEngine {
     this.currentComplexityScore = selection.complexity.score
     this.currentWorkflowName = selection.workflow.name
 
+    const hasPhaseJoin = selection.joinPoint && selection.joinPoint > 0
+    const state = this.buildState(initialState, input)
+
+    // Record phase detection info in metadata for logs/reports
+    if (hasPhaseJoin) {
+      state.metadata = {
+        ...state.metadata,
+        phaseDetection: {
+          phase: selection.phase,
+          confidence: selection.phaseConfidence,
+          reasoning: selection.phaseReasoning,
+          skipPhases: selection.skipPhases,
+          joinPoint: selection.joinPoint
+        }
+      }
+    }
+
     return {
       workflow: selection.workflow,
-      state: this.buildState(initialState, input),
-      startPhase: (selection.joinPoint && selection.joinPoint > 0) ? selection.phase : undefined
+      state,
+      startPhase: hasPhaseJoin ? selection.phase : undefined
     }
   }
 
