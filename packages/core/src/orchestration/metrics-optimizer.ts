@@ -437,7 +437,6 @@ export class MetricsOptimizer {
     // Analyze timeout for each step
     for (const step of workflow.steps) {
       const currentTimeout = this.parseTimeout(step.timeout || '30m')
-      // const avgDuration = this.getAverageDuration(step, allStepMetrics.flat())
       const maxDuration = this.getMaxDuration(step, allStepMetrics.flat())
 
       // Recommend timeout adjustment if current timeout is too high or too low
@@ -510,6 +509,8 @@ export class MetricsOptimizer {
 
   /**
    * Identify step reordering opportunities
+   *
+   * // TODO: Day 2 - implement dependency analysis for step reordering
    */
   private async identifyReorderingOpportunities(
     _workflow: Workflow,
@@ -517,8 +518,9 @@ export class MetricsOptimizer {
   ): Promise<OptimizationRecommendation[]> {
     const recommendations: OptimizationRecommendation[] = []
 
-    // Placeholder: Complex dependency analysis needed
-    // For now, skip reordering recommendations
+    // TODO: Day 2 - implement dependency analysis for step reordering
+    // Requires analyzing step dependencies and historical execution order
+    // to identify safe reordering opportunities
 
     return recommendations
   }

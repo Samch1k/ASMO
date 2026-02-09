@@ -251,6 +251,15 @@ export interface ComplexityScore {
     confidence: number
     reasoning: string
   }>
+  /** Analysis metadata for transparency and debugging */
+  metadata?: {
+    /** LLM mode used: 'session' ($0), 'api' (pay-per-use), or 'heuristics' (fallback) */
+    analysisMode: 'session' | 'api' | 'heuristics'
+    /** Provider/model identifier */
+    provider: string
+    /** Timestamp of analysis */
+    timestamp: Date
+  }
 }
 
 /**

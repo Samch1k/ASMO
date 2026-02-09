@@ -28,7 +28,6 @@ describe('ComplexityAnalyzer', () => {
 
     it('should instantiate with custom config', () => {
       const analyzer = new ComplexityAnalyzer({
-        temperature: 0.5,
         maxTokens: 1000,
         thresholds: {
           trivial: 15,

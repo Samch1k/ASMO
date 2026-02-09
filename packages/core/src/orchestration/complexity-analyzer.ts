@@ -69,6 +69,9 @@ const DEFAULT_CONFIG: Required<ComplexityAnalyzerConfig> = {
 export class ComplexityAnalyzer {
   private config: Required<ComplexityAnalyzerConfig>
   private workflows: Map<string, Workflow> = new Map()
+  /** Tracks which mode was used for the last analysis */
+  private lastAnalysisMode: 'session' | 'api' | 'heuristics' = 'heuristics'
+  private lastProvider: string = 'heuristics'
 
   constructor(config?: ComplexityAnalyzerConfig) {
     this.config = { ...DEFAULT_CONFIG, ...config }
@@ -114,6 +117,13 @@ export class ComplexityAnalyzer {
 
     // Recommend workflow based on complexity
     complexity.recommendedWorkflow = this.recommendWorkflow(complexity)
+
+    // Add metadata for transparency
+    complexity.metadata = {
+      analysisMode: this.lastAnalysisMode,
+      provider: this.lastProvider,
+      timestamp: new Date()
+    }
 
     return complexity
   }
@@ -210,6 +220,10 @@ Be objective and realistic in your assessment. Consider both the immediate task 
 
     if (provider) {
       try {
+        // Track which mode we're using
+        this.lastAnalysisMode = provider.id === 'session' ? 'session' : 'api'
+        this.lastProvider = provider.name
+
         const response = await provider.generate(prompt, {
           maxTokens: this.config.maxTokens,
           temperature: 0.2
@@ -227,6 +241,8 @@ Be objective and realistic in your assessment. Consider both the immediate task 
     }
 
     // Fallback to heuristic-based analysis
+    this.lastAnalysisMode = 'heuristics'
+    this.lastProvider = 'heuristics'
     return this.analyzeWithHeuristics(taskDescription)
   }
 

@@ -2,12 +2,12 @@ import { ConfigLoader } from './config-loader'
 import { Role } from '../agents/types'
 
 /**
- * RoleManager - управление ролями агентов
+ * RoleManager - Agent role management
  *
- * Предоставляет CRUD операции для ролей:
- * - Загрузка ролей из конфигурационных файлов
- * - Поиск ролей по различным критериям
- * - Валидация и кэширование
+ * Provides CRUD operations for roles:
+ * - Loading roles from configuration files
+ * - Searching roles by various criteria
+ * - Validation and caching
  */
 export class RoleManager {
   private roles: Map<string, Role> = new Map()
@@ -16,8 +16,8 @@ export class RoleManager {
   constructor(private configLoader: ConfigLoader) {}
 
   /**
-   * Загрузить все роли из конфигурационных файлов
-   * Использует ConfigLoader для загрузки и валидации
+   * Load all roles from configuration files
+   * Uses ConfigLoader for loading and validation
    */
   async loadRoles(): Promise<void> {
     if (!this.configLoader) {
@@ -26,10 +26,10 @@ export class RoleManager {
 
     const roles = await this.configLoader.loadRoles()
 
-    // Очистить существующий кэш
+    // Clear existing cache
     this.roles.clear()
 
-    // Добавить все роли в Map для быстрого доступа
+    // Add all roles to Map for fast access
     for (const role of roles) {
       this.roles.set(role.id, role)
     }
@@ -40,9 +40,9 @@ export class RoleManager {
   }
 
   /**
-   * Получить роль по ID
-   * @param roleId - Уникальный идентификатор роли (kebab-case)
-   * @returns Role или undefined если не найдена
+   * Get role by ID
+   * @param roleId - Unique role identifier (kebab-case)
+   * @returns Role or undefined if not found
    */
   getRole(roleId: string): Role | undefined {
     this.checkInitialized()
@@ -50,9 +50,9 @@ export class RoleManager {
   }
 
   /**
-   * Найти роли, которые имеют указанный скил
-   * @param skillId - ID скила
-   * @returns Массив ролей со скилом (required или optional)
+   * Find roles that have the specified skill
+   * @param skillId - Skill ID
+   * @returns Array of roles with the skill (required or optional)
    */
   findRolesBySkill(skillId: string): Role[] {
     this.checkInitialized()
@@ -65,9 +65,9 @@ export class RoleManager {
   }
 
   /**
-   * Найти роли по категории
-   * @param category - Категория роли
-   * @returns Массив ролей в категории
+   * Find roles by category
+   * @param category - Role category
+   * @returns Array of roles in the category
    */
   findRolesByCategory(category: Role['category']): Role[] {
     this.checkInitialized()
@@ -78,9 +78,9 @@ export class RoleManager {
   }
 
   /**
-   * Найти роли по типу (reasoning/execution/hybrid)
-   * @param roleType - Тип роли
-   * @returns Массив ролей указанного типа
+   * Find roles by type (reasoning/execution/hybrid)
+   * @param roleType - Role type
+   * @returns Array of roles of the specified type
    */
   findRolesByType(roleType: Role['role_type']): Role[] {
     this.checkInitialized()
@@ -91,8 +91,8 @@ export class RoleManager {
   }
 
   /**
-   * Получить все роли
-   * @returns Массив всех загруженных ролей
+   * Get all roles
+   * @returns Array of all loaded roles
    */
   getAllRoles(): Role[] {
     this.checkInitialized()
@@ -100,10 +100,10 @@ export class RoleManager {
   }
 
   /**
-   * Найти роли по ключевым словам
-   * Проверяет trigger_keywords в activation_rules
-   * @param keywords - Массив ключевых слов для поиска
-   * @returns Массив ролей, у которых есть хотя бы одно совпадение
+   * Find roles by keywords
+   * Checks trigger_keywords in activation_rules
+   * @param keywords - Array of keywords to search
+   * @returns Array of roles that have at least one match
    */
   findRolesByKeywords(keywords: string[]): Role[] {
     this.checkInitialized()
@@ -127,10 +127,10 @@ export class RoleManager {
   }
 
   /**
-   * Найти роли по типу задачи
-   * Проверяет task_types в activation_rules
-   * @param taskType - Тип задачи
-   * @returns Массив ролей, которые активируются для этого типа задачи
+   * Find roles by task type
+   * Checks task_types in activation_rules
+   * @param taskType - Task type
+   * @returns Array of roles that activate for this task type
    */
   findRolesByTaskType(taskType: string): Role[] {
     this.checkInitialized()
@@ -146,9 +146,9 @@ export class RoleManager {
   }
 
   /**
-   * Получить роли с наивысшим приоритетом
-   * @param limit - Максимальное количество ролей для возврата (по умолчанию 5)
-   * @returns Массив ролей, отсортированных по приоритету (высший первым)
+   * Get roles with highest priority
+   * @param limit - Maximum number of roles to return (default 5)
+   * @returns Array of roles sorted by priority (highest first)
    */
   getTopPriorityRoles(limit: number = 5): Role[] {
     this.checkInitialized()
@@ -159,9 +159,9 @@ export class RoleManager {
   }
 
   /**
-   * Найти роли с указанными разрешениями
-   * @param permissions - Объект с флагами разрешений
-   * @returns Массив ролей с соответствующими разрешениями
+   * Find roles with specified permissions
+   * @param permissions - Object with permission flags
+   * @returns Array of roles with matching permissions
    */
   findRolesByPermissions(permissions: {
     can_modify_code?: boolean
@@ -191,9 +191,9 @@ export class RoleManager {
   }
 
   /**
-   * Найти роли, которые могут использовать указанный MCP сервер
-   * @param mcpName - Название MCP сервера
-   * @returns Массив ролей с доступом к MCP
+   * Find roles that can use the specified MCP server
+   * @param mcpName - MCP server name
+   * @returns Array of roles with MCP access
    */
   findRolesByMCP(mcpName: string): Role[] {
     this.checkInitialized()
@@ -204,8 +204,8 @@ export class RoleManager {
   }
 
   /**
-   * Получить статистику по ролям
-   * @returns Объект со статистикой
+   * Get role statistics
+   * @returns Statistics object
    */
   getStatistics(): {
     total: number
@@ -238,8 +238,8 @@ export class RoleManager {
   }
 
   /**
-   * Проверить, что RoleManager инициализирован
-   * @throws Error если не инициализирован
+   * Check that RoleManager is initialized
+   * @throws Error if not initialized
    */
   private checkInitialized(): void {
     if (!this.initialized) {
@@ -250,9 +250,9 @@ export class RoleManager {
   }
 
   /**
-   * Проверить, что роль существует
-   * @param roleId - ID роли
-   * @returns true если роль существует
+   * Check if a role exists
+   * @param roleId - Role ID
+   * @returns true if role exists
    */
   hasRole(roleId: string): boolean {
     this.checkInitialized()
@@ -260,8 +260,8 @@ export class RoleManager {
   }
 
   /**
-   * Получить количество загруженных ролей
-   * @returns Количество ролей
+   * Get the number of loaded roles
+   * @returns Number of roles
    */
   getRoleCount(): number {
     this.checkInitialized()

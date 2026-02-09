@@ -1,0 +1,688 @@
+{
+  "id": "tea_execution_workflow",
+  "name": "TEA Execution Workflow (Automation → Regression → Maintenance)",
+  "description": "Comprehensive test execution workflow combining test automation, regression analysis, and test maintenance. Adaptive complexity-based framework design skipping for simple projects.",
+  "category": "tea",
+  "complexity": "medium",
+  "metadata": {
+    "version": "2.0.0",
+    "created": "2026-02-09",
+    "consolidated_from": [
+      "tea_test_automation_workflow",
+      "tea_regression_analysis_workflow",
+      "tea_test_maintenance_workflow"
+    ],
+    "adaptive_phase_detection": true,
+    "complexity_aware": true,
+    "complexity_thresholds": {
+      "simple": "0-39",
+      "medium": "40-69",
+      "complex": "70-100"
+    },
+    "time_estimates": {
+      "simple": "3h 30m",
+      "medium": "4h 45m",
+      "complex": "6h 0m"
+    }
+  },
+  "phases": [
+    {
+      "id": "automation_scope",
+      "name": "Automation Scope Definition",
+      "description": "Define automation scope and ROI analysis",
+      "order": 1,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "automation_scope"
+      ]
+    },
+    {
+      "id": "tool_selection",
+      "name": "Test Tool Selection",
+      "description": "Select test frameworks, libraries, and CI tools",
+      "order": 2,
+      "estimated_duration": "25m",
+      "deliverables": [
+        "tool_recommendations"
+      ]
+    },
+    {
+      "id": "framework_design",
+      "name": "Test Framework Design",
+      "description": "Design test framework architecture (page objects, fixtures, utilities)",
+      "order": 3,
+      "estimated_duration": "30m",
+      "deliverables": [
+        "framework_design"
+      ]
+    },
+    {
+      "id": "implementation",
+      "name": "Test Implementation",
+      "description": "Implement automated tests",
+      "order": 4,
+      "estimated_duration": "45m",
+      "deliverables": [
+        "automated_tests"
+      ]
+    },
+    {
+      "id": "ci_integration",
+      "name": "CI/CD Integration",
+      "description": "Integrate automated tests with CI/CD pipeline",
+      "order": 5,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "ci_configuration"
+      ]
+    },
+    {
+      "id": "change_analysis",
+      "name": "Change Impact Analysis",
+      "description": "Analyze code changes and affected modules",
+      "order": 6,
+      "estimated_duration": "25m",
+      "deliverables": [
+        "change_impact"
+      ]
+    },
+    {
+      "id": "test_selection",
+      "name": "Regression Test Selection",
+      "description": "Select regression suite based on change impact",
+      "order": 7,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "selected_tests"
+      ]
+    },
+    {
+      "id": "risk_assessment",
+      "name": "Regression Risk Assessment",
+      "description": "Assess regression risk for high/medium/low risk areas",
+      "order": 8,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "regression_risk"
+      ]
+    },
+    {
+      "id": "execution",
+      "name": "Test Execution",
+      "description": "Execute regression test suite",
+      "order": 9,
+      "estimated_duration": "30m",
+      "deliverables": [
+        "test_results"
+      ]
+    },
+    {
+      "id": "analysis",
+      "name": "Regression Analysis",
+      "description": "Analyze test results and trends",
+      "order": 10,
+      "estimated_duration": "15m",
+      "deliverables": [
+        "regression_report"
+      ]
+    },
+    {
+      "id": "health_assessment",
+      "name": "Test Suite Health Assessment",
+      "description": "Assess test suite health (pass rate, duration, flakiness)",
+      "order": 11,
+      "estimated_duration": "25m",
+      "deliverables": [
+        "health_report"
+      ]
+    },
+    {
+      "id": "flaky_analysis",
+      "name": "Flaky Test Analysis",
+      "description": "Identify and analyze flaky tests",
+      "order": 12,
+      "estimated_duration": "25m",
+      "deliverables": [
+        "flaky_test_list"
+      ]
+    },
+    {
+      "id": "cleanup",
+      "name": "Test Suite Cleanup",
+      "description": "Remove obsolete tests, merge duplicates",
+      "order": 13,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "cleanup_report"
+      ]
+    },
+    {
+      "id": "optimization",
+      "name": "Test Suite Optimization",
+      "description": "Optimize test suite (parallelization, performance)",
+      "order": 14,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "optimization_changes"
+      ]
+    },
+    {
+      "id": "maintenance_plan",
+      "name": "Test Maintenance Plan",
+      "description": "Create ongoing test maintenance plan",
+      "order": 15,
+      "estimated_duration": "15m",
+      "deliverables": [
+        "maintenance_plan"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "step_1_automation_scope",
+      "order": 1,
+      "role_id": "test-architect",
+      "phase_id": "automation_scope",
+      "name": "Define Automation Scope",
+      "objective": "Define what to automate and ROI analysis",
+      "instructions": [
+        "Review test cases from tea-planning workflow",
+        "Identify candidates for automation (repetitive, stable, high-value)",
+        "Exclude tests unsuitable for automation (visual, exploratory, one-off)",
+        "Calculate automation ROI (cost vs manual execution savings)",
+        "Prioritize automation by ROI and risk",
+        "Create automation backlog with effort estimates"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "automation_scope",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_2_tool_selection",
+      "order": 2,
+      "role_id": "test-architect",
+      "phase_id": "tool_selection",
+      "name": "Select Test Tools",
+      "objective": "Select test frameworks, libraries, and CI tools",
+      "instructions": [
+        "Evaluate test frameworks (Jest, Playwright, Cypress, etc.)",
+        "Select assertion libraries and test runners",
+        "Choose reporting tools (HTML reports, dashboards)",
+        "Select CI/CD tools (GitHub Actions, Jenkins, CircleCI)",
+        "Document tool selection rationale (pros/cons, licensing)",
+        "Create tool setup and installation guide"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "tool_recommendations",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "25m"
+    },
+    {
+      "id": "step_3_framework_design",
+      "order": 3,
+      "role_id": "test-architect",
+      "phase_id": "framework_design",
+      "name": "Design Test Framework",
+      "objective": "Design test framework architecture (page objects, fixtures, utilities)",
+      "instructions": [
+        "Design framework structure (folders, namespaces, modules)",
+        "Define design patterns (page objects, page components, helpers)",
+        "Create fixture and factory patterns for test data",
+        "Design utility modules (assertions, waits, retries)",
+        "Plan configuration management (env vars, profiles)",
+        "Document framework architecture and conventions"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "framework_design",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "30m",
+      "skip_if_complexity": "simple"
+    },
+    {
+      "id": "step_4_implementation",
+      "order": 4,
+      "role_id": "tester",
+      "phase_id": "implementation",
+      "name": "Implement Automated Tests",
+      "objective": "Implement automated tests based on test cases",
+      "instructions": [
+        "Set up test framework and dependencies",
+        "Implement test utilities and helpers",
+        "Create test data fixtures and factories",
+        "Implement automated tests from test_cases artifact",
+        "Add assertions for expected results",
+        "Tag tests (smoke, regression, sanity, etc.)",
+        "Run tests locally and verify pass rate"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "automated_tests",
+          "format": "code",
+          "required": true
+        }
+      ],
+      "estimated_duration": "45m"
+    },
+    {
+      "id": "step_5_ci_integration",
+      "order": 5,
+      "role_id": "devops",
+      "phase_id": "ci_integration",
+      "name": "Integrate with CI/CD",
+      "objective": "Integrate automated tests with CI/CD pipeline",
+      "instructions": [
+        "Create CI/CD configuration file (e.g., .github/workflows/tests.yml)",
+        "Configure test triggers (PR, commit, scheduled)",
+        "Set up test parallelization and sharding",
+        "Configure test reporting and artifacts",
+        "Add status checks and quality gates",
+        "Document CI/CD setup and troubleshooting"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "ci_configuration",
+          "format": "code",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_6_change_analysis",
+      "order": 6,
+      "role_id": "test-architect",
+      "phase_id": "change_analysis",
+      "name": "Analyze Change Impact",
+      "objective": "Analyze code changes and affected modules",
+      "instructions": [
+        "Review recent commits and PRs",
+        "Identify changed files and modules",
+        "Map changes to affected features/components",
+        "Analyze dependency graph for cascading impacts",
+        "Identify high-risk changes (architecture, API, database)",
+        "Create change impact report with risk ratings"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "change_impact",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "25m"
+    },
+    {
+      "id": "step_7_test_selection",
+      "order": 7,
+      "role_id": "test-architect",
+      "phase_id": "test_selection",
+      "name": "Select Regression Tests",
+      "objective": "Select regression suite based on change impact",
+      "instructions": [
+        "Map changed modules to affected tests",
+        "Select tests covering high-risk changes",
+        "Include smoke tests and critical path tests",
+        "Add tests for previously failed areas",
+        "Exclude low-risk, unaffected tests",
+        "Create regression test suite configuration"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "selected_tests",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_8_risk_assessment",
+      "order": 8,
+      "role_id": "test-architect",
+      "phase_id": "risk_assessment",
+      "name": "Assess Regression Risk",
+      "objective": "Assess regression risk for high/medium/low risk areas",
+      "instructions": [
+        "Rate risk for each changed module (high/medium/low)",
+        "Consider historical defect data",
+        "Assess test coverage in changed areas",
+        "Identify untested or under-tested areas",
+        "Create risk heat map by module",
+        "Recommend additional testing for high-risk areas"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "regression_risk",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_9_execution",
+      "order": 9,
+      "role_id": "tester",
+      "phase_id": "execution",
+      "name": "Execute Regression Tests",
+      "objective": "Execute regression test suite",
+      "instructions": [
+        "Run regression test suite (automated + manual if needed)",
+        "Monitor test execution and capture failures",
+        "Investigate and triage test failures",
+        "Distinguish between product bugs and test issues",
+        "Re-run flaky tests to confirm failures",
+        "Collect test results and logs"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "test_results",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "30m"
+    },
+    {
+      "id": "step_10_analysis",
+      "order": 10,
+      "role_id": "test-architect",
+      "phase_id": "analysis",
+      "name": "Analyze Regression Results",
+      "objective": "Analyze test results and trends",
+      "instructions": [
+        "Analyze test pass/fail rates",
+        "Identify regression trends (improving/degrading)",
+        "Compare with baseline metrics",
+        "Identify newly introduced defects",
+        "Assess overall regression risk",
+        "Create regression analysis report with recommendations"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "regression_report",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "15m"
+    },
+    {
+      "id": "step_11_health_assessment",
+      "order": 11,
+      "role_id": "test-architect",
+      "phase_id": "health_assessment",
+      "name": "Assess Test Suite Health",
+      "objective": "Assess test suite health (pass rate, duration, flakiness)",
+      "instructions": [
+        "Calculate test suite pass rate (last 7 days, 30 days)",
+        "Measure average test suite duration",
+        "Identify slow tests (>5s, >30s, >1min)",
+        "Calculate flakiness rate (% of flaky tests)",
+        "Assess test coverage trends",
+        "Create test suite health dashboard"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "health_report",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "25m"
+    },
+    {
+      "id": "step_12_flaky_analysis",
+      "order": 12,
+      "role_id": "test-architect",
+      "phase_id": "flaky_analysis",
+      "name": "Analyze Flaky Tests",
+      "objective": "Identify and analyze flaky tests",
+      "instructions": [
+        "Identify tests with intermittent failures",
+        "Analyze flaky test patterns (timing, race conditions, dependencies)",
+        "Categorize flaky tests by root cause",
+        "Estimate impact of flakiness on CI/CD",
+        "Prioritize flaky tests for fixing",
+        "Create flaky test remediation plan"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "flaky_test_list",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "25m"
+    },
+    {
+      "id": "step_13_cleanup",
+      "order": 13,
+      "role_id": "tester",
+      "phase_id": "cleanup",
+      "name": "Clean Up Test Suite",
+      "objective": "Remove obsolete tests, merge duplicates",
+      "instructions": [
+        "Identify obsolete tests (testing removed features)",
+        "Find duplicate tests (same coverage, different implementation)",
+        "Remove tests with no assertions",
+        "Consolidate similar tests",
+        "Update test names for clarity",
+        "Document cleanup actions and rationale"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "cleanup_report",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_14_optimization",
+      "order": 14,
+      "role_id": "tester",
+      "phase_id": "optimization",
+      "name": "Optimize Test Suite",
+      "objective": "Optimize test suite (parallelization, performance)",
+      "instructions": [
+        "Enable test parallelization (workers, sharding)",
+        "Optimize slow tests (reduce waits, mock expensive operations)",
+        "Cache test data and fixtures",
+        "Reduce test setup/teardown time",
+        "Optimize CI/CD pipeline (caching, incremental builds)",
+        "Measure optimization impact (before/after duration)"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "optimization_changes",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_15_maintenance_plan",
+      "order": 15,
+      "role_id": "test-architect",
+      "phase_id": "maintenance_plan",
+      "name": "Create Maintenance Plan",
+      "objective": "Create ongoing test maintenance plan",
+      "instructions": [
+        "Define maintenance cadence (weekly, bi-weekly, monthly)",
+        "Assign maintenance owners and responsibilities",
+        "Create maintenance checklist (health check, flaky fix, cleanup)",
+        "Set up automated maintenance alerts",
+        "Plan test suite refactoring (if needed)",
+        "Document maintenance procedures and escalation"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "maintenance_plan",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "15m"
+    }
+  ],
+  "execution_plan": {
+    "total_estimated_time": "5h 15m",
+    "required_agents": [
+      "test-architect",
+      "tester",
+      "devops"
+    ],
+    "critical_path": [
+      "step_1_automation_scope",
+      "step_2_tool_selection",
+      "step_4_implementation",
+      "step_5_ci_integration",
+      "step_6_change_analysis",
+      "step_7_test_selection",
+      "step_9_execution",
+      "step_10_analysis",
+      "step_11_health_assessment",
+      "step_15_maintenance_plan"
+    ],
+    "parallel_opportunities": [
+      {
+        "group": "framework_and_tools",
+        "steps": ["step_2_tool_selection", "step_3_framework_design"]
+      },
+      {
+        "group": "maintenance_analysis",
+        "steps": ["step_11_health_assessment", "step_12_flaky_analysis"]
+      },
+      {
+        "group": "optimization",
+        "steps": ["step_13_cleanup", "step_14_optimization"]
+      }
+    ],
+    "dependencies": {
+      "step_2_tool_selection": ["step_1_automation_scope"],
+      "step_3_framework_design": ["step_2_tool_selection"],
+      "step_4_implementation": ["step_3_framework_design"],
+      "step_5_ci_integration": ["step_4_implementation"],
+      "step_7_test_selection": ["step_6_change_analysis"],
+      "step_8_risk_assessment": ["step_6_change_analysis"],
+      "step_9_execution": ["step_7_test_selection"],
+      "step_10_analysis": ["step_9_execution"],
+      "step_12_flaky_analysis": ["step_11_health_assessment"],
+      "step_13_cleanup": ["step_11_health_assessment"],
+      "step_14_optimization": ["step_13_cleanup"],
+      "step_15_maintenance_plan": ["step_14_optimization"]
+    }
+  },
+  "phase_join_criteria": {
+    "automation_scope": {
+      "required_artifacts": ["test_cases"],
+      "optional_context": ["test_strategy_document"]
+    },
+    "tool_selection": {
+      "required_artifacts": ["automation_scope"],
+      "optional_context": ["framework_preferences"]
+    },
+    "framework_design": {
+      "required_artifacts": ["tool_recommendations"],
+      "optional_context": [],
+      "skip_if_complexity": "simple"
+    },
+    "implementation": {
+      "required_artifacts": ["test_cases"],
+      "optional_context": ["framework_design"]
+    },
+    "ci_integration": {
+      "required_artifacts": ["automated_tests"],
+      "optional_context": []
+    },
+    "change_analysis": {
+      "required_artifacts": [],
+      "optional_context": ["git_history", "recent_commits"]
+    },
+    "test_selection": {
+      "required_artifacts": ["change_impact"],
+      "optional_context": ["automated_tests"]
+    },
+    "risk_assessment": {
+      "required_artifacts": ["change_impact"],
+      "optional_context": []
+    },
+    "execution": {
+      "required_artifacts": ["selected_tests"],
+      "optional_context": []
+    },
+    "analysis": {
+      "required_artifacts": ["test_results"],
+      "optional_context": []
+    },
+    "health_assessment": {
+      "required_artifacts": ["test_results"],
+      "optional_context": ["ci_history"]
+    },
+    "flaky_analysis": {
+      "required_artifacts": ["health_report"],
+      "optional_context": []
+    },
+    "cleanup": {
+      "required_artifacts": ["health_report"],
+      "optional_context": []
+    },
+    "optimization": {
+      "required_artifacts": ["cleanup_report"],
+      "optional_context": []
+    },
+    "maintenance_plan": {
+      "required_artifacts": ["optimization_changes"],
+      "optional_context": []
+    }
+  },
+  "adaptive_timeouts": {
+    "simple": {
+      "total_time": "3h 30m",
+      "per_phase_multiplier": 0.7
+    },
+    "medium": {
+      "total_time": "4h 45m",
+      "per_phase_multiplier": 0.9
+    },
+    "complex": {
+      "total_time": "6h 0m",
+      "per_phase_multiplier": 1.0
+    }
+  },
+  "success_criteria": [
+    "Automated test suite implemented and passing",
+    "Tests integrated with CI/CD pipeline",
+    "Regression risk assessed and mitigated",
+    "Test suite health >90% pass rate",
+    "Flaky tests identified and fixed",
+    "Test suite optimized for performance",
+    "Ongoing maintenance plan in place"
+  ],
+  "tags": [
+    "tea",
+    "execution",
+    "automation",
+    "regression",
+    "maintenance",
+    "ci-cd",
+    "adaptive",
+    "consolidated"
+  ]
+}

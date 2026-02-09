@@ -199,6 +199,12 @@ export class ConfigLoader {
           }
         }
 
+        // Skip empty role files (e.g. project-roles.json used for user customization)
+        if (!data.roles || data.roles.length === 0) {
+          console.log(`ℹ️  ${filename} has no roles, skipping`)
+          continue
+        }
+
         // Add to cache and result
         for (const role of data.roles) {
           this.rolesCache.set(role.id, role)
@@ -322,8 +328,10 @@ export class ConfigLoader {
         for (const skillId of skillIds) {
           const metadata = await this.skillMDLoader.loadMetadata(skillId)
           if (metadata) {
-            // Extract category from description or default to 'general'
-            const category = 'general' // TODO: Could parse from SKILL.md metadata section
+            // Extract category and complexity from frontmatter if available
+            const metadataAny = metadata as Record<string, any>
+            const category = metadataAny.category || 'general'
+            const complexity = metadataAny.complexity || 'intermediate'
 
             if (!categories[category]) {
               categories[category] = { count: 0, skills: [] }
@@ -332,9 +340,9 @@ export class ConfigLoader {
             categories[category].skills.push({
               id: skillId,
               name: metadata.name,
-              complexity: 'intermediate', // TODO: Parse from SKILL.md
+              complexity,
               category,
-              requires_skills: [],
+              requires_skills: metadataAny.requires_skills || [],
               file: `${skillId}/SKILL.md`
             })
             categories[category].count++
@@ -343,9 +351,9 @@ export class ConfigLoader {
             this.skillMetadataCache.set(skillId, {
               id: skillId,
               name: metadata.name,
-              complexity: 'intermediate',
+              complexity,
               category,
-              requires_skills: [],
+              requires_skills: metadataAny.requires_skills || [],
               file: `${skillId}/SKILL.md`
             })
           }
@@ -613,8 +621,11 @@ export class ConfigLoader {
    *
    * This is the original loadSkills() implementation for backward compatibility.
    * Loads all 75 skills at once (~875k tokens).
+   *
+   * @deprecated Use SKILL.md format (default). Set USE_SKILLMD=false only for legacy compatibility.
    */
   async loadSkillsLegacy(): Promise<Skill[]> {
+    console.warn('[ASMO] Legacy skill loading is deprecated. Migrate to SKILL.md format.')
     if (!this.skillValidator) {
       throw new Error('ConfigLoader not initialized. Call initialize() first.')
     }

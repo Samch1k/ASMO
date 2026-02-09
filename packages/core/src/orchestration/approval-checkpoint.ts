@@ -23,6 +23,7 @@ import * as readline from 'readline'
 import { AgentState } from '../agents/types'
 import { WorkflowPhase } from './phase-manager'
 import { getConfigManager } from './config/config-manager'
+import { getYoloModeManager, type YoloModeManager } from './yolo-mode-manager'
 
 export interface ApprovalRequest {
   phase: WorkflowPhase
@@ -58,6 +59,7 @@ export interface ApprovalCheckpointConfig {
 export class ApprovalCheckpoint {
   private config: Required<ApprovalCheckpointConfig>
   private history: ApprovalHistory[] = []
+  private yoloManager: YoloModeManager
 
   // Phases that require approval (will be overridden by config if available)
   private checkpointPhases: WorkflowPhase[] = [
@@ -88,6 +90,9 @@ export class ApprovalCheckpoint {
         this.checkpointPhases = approvalConfig.checkpointPhases as WorkflowPhase[]
       }
     }
+
+    // Initialize YOLO mode manager for automatic checkpoint bypass
+    this.yoloManager = getYoloModeManager()
 
     if (this.config.autoApprove) {
       console.log('⚙️  ApprovalCheckpoint: Auto-approval mode enabled')
@@ -452,7 +457,9 @@ export class ApprovalCheckpoint {
    */
   async checkpointIfRequired(
     state: AgentState,
-    phase: WorkflowPhase
+    phase: WorkflowPhase,
+    complexityScore?: number,
+    workflowName?: string
   ): Promise<{
     shouldBlock: boolean
     approved?: boolean
@@ -460,6 +467,43 @@ export class ApprovalCheckpoint {
   }> {
     if (!this.requiresApproval(phase)) {
       return { shouldBlock: false }
+    }
+
+    // YOLO mode: bypass approval for trivial tasks
+    if (complexityScore !== undefined && this.yoloManager.shouldEnableYolo(complexityScore, workflowName)) {
+      console.log(`[YOLO] Bypassing approval for phase "${phase}" (complexity: ${complexityScore})`)
+
+      const taskId = state.task || 'unknown'
+      this.yoloManager.recordYoloExecution({
+        taskId,
+        taskDescription: state.task,
+        complexityScore,
+        workflowName,
+        bypassedCheckpoints: [phase],
+        outcome: 'pending'
+      })
+
+      const response: ApprovalResponse = {
+        approved: true,
+        timestamp: new Date().toISOString(),
+        approver: 'yolo-mode',
+        autoApproved: true,
+        timedOut: false,
+        feedback: `YOLO mode: auto-approved (complexity ${complexityScore} < threshold)`
+      }
+
+      this.recordApproval(phase, {
+        phase,
+        timestamp: new Date().toISOString(),
+        output: {},
+        exitCriteria: ''
+      }, response, 0)
+
+      return {
+        shouldBlock: true,
+        approved: true,
+        response
+      }
     }
 
     // Extract phase output from state

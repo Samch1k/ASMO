@@ -3,6 +3,8 @@ import type { AgentRegistry } from './agent-registry'
 import type { ConfigLoader } from './config-loader'
 import type { SessionTypeDecision } from './types'
 import { getLLMProvider, type ILLMProvider } from '../llm'
+import * as fs from 'fs'
+import * as path from 'path'
 
 /**
  * SkillMatcher - LLM-based skill extraction and agent matching
@@ -363,10 +365,19 @@ OUTPUT FORMAT (JSON only):
   /**
    * Check skill dependencies
    *
+   * Uses the extended dependency system from skill-dependencies.json
+   * when available, falls back to requires_skills from individual skills.
+   *
    * @param skillId - Skill ID to check
    * @returns Array of prerequisite skill IDs
    */
   checkSkillDependencies(skillId: string): string[] {
+    // Check extended dependency system first
+    const extDep = this._skillDependencies.get(skillId)
+    if (extDep && extDep.requires.length > 0) {
+      return extDep.requires
+    }
+
     if (!this.skillCatalog) {
       // In ConfigLoader mode, dependencies are handled via loadSkill
       return []
@@ -375,6 +386,54 @@ OUTPUT FORMAT (JSON only):
     if (!skill) return []
 
     return skill.requires_skills || []
+  }
+
+  /**
+   * Check for skill conflicts
+   *
+   * @param skillIds - Array of skill IDs to check for conflicts
+   * @returns Array of conflict descriptions
+   */
+  checkSkillConflicts(skillIds: string[]): string[] {
+    const conflicts: string[] = []
+    const skillSet = new Set(skillIds)
+
+    for (const skillId of skillIds) {
+      const dep = this._skillDependencies.get(skillId)
+      if (dep && dep.conflicts_with.length > 0) {
+        for (const conflictId of dep.conflicts_with) {
+          if (skillSet.has(conflictId)) {
+            conflicts.push(`Skill "${skillId}" conflicts with "${conflictId}"`)
+          }
+        }
+      }
+    }
+
+    return conflicts
+  }
+
+  /**
+   * Get recommended skills for a given set of skills
+   *
+   * @param skillIds - Current skill IDs
+   * @returns Array of recommended skill IDs not already included
+   */
+  getRecommendedSkills(skillIds: string[]): string[] {
+    const current = new Set(skillIds)
+    const recommended = new Set<string>()
+
+    for (const skillId of skillIds) {
+      const dep = this._skillDependencies.get(skillId)
+      if (dep) {
+        for (const recId of dep.recommended) {
+          if (!current.has(recId)) {
+            recommended.add(recId)
+          }
+        }
+      }
+    }
+
+    return Array.from(recommended)
   }
 
   /**
@@ -546,14 +605,49 @@ OUTPUT FORMAT (JSON only):
   }
 
   /**
-   * Load skill dependencies from config file
+   * Load skill dependencies from template file
+   *
+   * Loads from templates/skills/skill-dependencies.json which provides
+   * an extended dependency system with requires, recommended, and conflicts_with.
    *
    * @private
    */
   private loadSkillDependencies(): Map<string, SkillDependency> {
-    // In production, this would load from .cursor/config/skills/skill-dependencies.json
-    // For now, we'll return an empty map since dependencies are also in the skill catalog
-    return new Map()
+    const deps = new Map<string, SkillDependency>()
+
+    // Try multiple paths in fallback order
+    const candidatePaths = [
+      path.join(process.cwd(), '.cursor/config/skills/skill-dependencies.json'),
+      path.join(process.cwd(), 'packages/core/templates/skills/skill-dependencies.json'),
+      path.join(__dirname, '../templates/skills/skill-dependencies.json'),
+      path.join(__dirname, '../../templates/skills/skill-dependencies.json')
+    ]
+
+    for (const depPath of candidatePaths) {
+      try {
+        if (fs.existsSync(depPath)) {
+          const content = fs.readFileSync(depPath, 'utf-8')
+          const data = JSON.parse(content)
+
+          if (data.dependencies && typeof data.dependencies === 'object') {
+            for (const [skillId, dep] of Object.entries(data.dependencies)) {
+              const typedDep = dep as SkillDependency
+              deps.set(skillId, {
+                requires: typedDep.requires || [],
+                recommended: typedDep.recommended || [],
+                conflicts_with: typedDep.conflicts_with || []
+              })
+            }
+            console.log(`[SkillMatcher] Loaded ${deps.size} skill dependencies from ${depPath}`)
+          }
+          break
+        }
+      } catch (error) {
+        console.warn(`[SkillMatcher] Failed to load skill dependencies from ${depPath}:`, error)
+      }
+    }
+
+    return deps
   }
 
   /**

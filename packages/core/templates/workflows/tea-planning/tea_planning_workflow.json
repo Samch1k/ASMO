@@ -1,0 +1,664 @@
+{
+  "id": "tea_planning_workflow",
+  "name": "TEA Planning Workflow (Risk → Strategy → Design)",
+  "description": "Comprehensive test planning workflow combining risk assessment, test strategy, and test design phases. Adaptive complexity-based skipping for simple projects.",
+  "category": "tea",
+  "complexity": "medium",
+  "metadata": {
+    "version": "2.0.0",
+    "created": "2026-02-09",
+    "consolidated_from": [
+      "tea_risk_assessment_workflow",
+      "tea_test_strategy_workflow",
+      "tea_test_design_workflow"
+    ],
+    "adaptive_phase_detection": true,
+    "complexity_aware": true,
+    "complexity_thresholds": {
+      "simple": "0-39",
+      "medium": "40-69",
+      "complex": "70-100"
+    },
+    "time_estimates": {
+      "simple": "3h 0m",
+      "medium": "4h 0m",
+      "complex": "5h 0m"
+    }
+  },
+  "phases": [
+    {
+      "id": "business_risk",
+      "name": "Business Risk Assessment",
+      "description": "Identify and analyze business risks (probability × impact)",
+      "order": 1,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "business_risk_matrix"
+      ]
+    },
+    {
+      "id": "technical_risk",
+      "name": "Technical Risk Assessment",
+      "description": "Analyze technical risks (complexity, dependencies, unknowns)",
+      "order": 2,
+      "estimated_duration": "25m",
+      "deliverables": [
+        "technical_risk_matrix"
+      ]
+    },
+    {
+      "id": "risk_prioritization",
+      "name": "Risk Prioritization",
+      "description": "Combine and prioritize all identified risks",
+      "order": 3,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "combined_risk_matrix",
+        "test_priorities"
+      ]
+    },
+    {
+      "id": "mitigation_strategies",
+      "name": "Risk Mitigation Strategies",
+      "description": "Define strategies to mitigate identified risks",
+      "order": 4,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "mitigation_strategies"
+      ]
+    },
+    {
+      "id": "scope_definition",
+      "name": "Test Scope Definition",
+      "description": "Define what to test and what NOT to test",
+      "order": 5,
+      "estimated_duration": "15m",
+      "deliverables": [
+        "test_scope"
+      ]
+    },
+    {
+      "id": "test_types",
+      "name": "Test Type Selection",
+      "description": "Select appropriate test types (unit, integration, E2E, performance, security)",
+      "order": 6,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "test_type_matrix"
+      ]
+    },
+    {
+      "id": "environment",
+      "name": "Test Environment Planning",
+      "description": "Define test environment requirements (dev, staging, prod)",
+      "order": 7,
+      "estimated_duration": "15m",
+      "deliverables": [
+        "environment_requirements"
+      ]
+    },
+    {
+      "id": "data_strategy",
+      "name": "Test Data Strategy",
+      "description": "Plan test data generation, mocking, and privacy",
+      "order": 8,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "test_data_strategy"
+      ]
+    },
+    {
+      "id": "metrics",
+      "name": "Quality Metrics Definition",
+      "description": "Define quality metrics (coverage, defect density, velocity)",
+      "order": 9,
+      "estimated_duration": "15m",
+      "deliverables": [
+        "quality_metrics"
+      ]
+    },
+    {
+      "id": "scenario_identification",
+      "name": "Test Scenario Identification",
+      "description": "Identify test scenarios (happy path, edge cases)",
+      "order": 10,
+      "estimated_duration": "25m",
+      "deliverables": [
+        "test_scenarios"
+      ]
+    },
+    {
+      "id": "boundary_analysis",
+      "name": "Boundary Value Analysis",
+      "description": "Design boundary tests (min/max, off-by-one)",
+      "order": 11,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "boundary_tests"
+      ],
+      "skip_if_complexity": "simple"
+    },
+    {
+      "id": "equivalence_partitioning",
+      "name": "Equivalence Partitioning",
+      "description": "Design equivalence partition tests (valid/invalid classes)",
+      "order": 12,
+      "estimated_duration": "25m",
+      "deliverables": [
+        "partition_tests"
+      ],
+      "skip_if_complexity": "simple"
+    },
+    {
+      "id": "negative_testing",
+      "name": "Negative Testing Design",
+      "description": "Design negative tests (error handling, invalid input)",
+      "order": 13,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "negative_tests"
+      ]
+    },
+    {
+      "id": "test_case_creation",
+      "name": "Test Case Creation",
+      "description": "Create detailed test cases (preconditions, steps, expected results)",
+      "order": 14,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "test_cases"
+      ]
+    },
+    {
+      "id": "documentation",
+      "name": "Test Strategy Documentation",
+      "description": "Create comprehensive test strategy document",
+      "order": 15,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "test_strategy_document"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "step_1_business_risk",
+      "order": 1,
+      "role_id": "test-architect",
+      "phase_id": "business_risk",
+      "name": "Assess Business Risk",
+      "objective": "Create business risk matrix (5×5: probability × impact)",
+      "instructions": [
+        "Identify business-critical features and user journeys",
+        "Assess probability of failure (1-5 scale)",
+        "Assess business impact of failure (1-5 scale)",
+        "Create 5×5 risk matrix with color coding (green/yellow/red)",
+        "Document top 5 business risks"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "business_risk_matrix",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_2_technical_risk",
+      "order": 2,
+      "role_id": "test-architect",
+      "phase_id": "technical_risk",
+      "name": "Assess Technical Risk",
+      "objective": "Create technical risk matrix (complexity, dependencies, unknowns)",
+      "instructions": [
+        "Analyze technical complexity (algorithms, architecture)",
+        "Map external dependencies (APIs, databases, services)",
+        "Identify technical unknowns (new tech, legacy code)",
+        "Create technical risk matrix with severity ratings",
+        "Document top 5 technical risks"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "technical_risk_matrix",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "25m"
+    },
+    {
+      "id": "step_3_risk_prioritization",
+      "order": 3,
+      "role_id": "test-architect",
+      "phase_id": "risk_prioritization",
+      "name": "Prioritize All Risks",
+      "objective": "Combine business and technical risks, prioritize testing focus",
+      "instructions": [
+        "Merge business_risk_matrix and technical_risk_matrix",
+        "Calculate combined risk score (business_impact × technical_complexity)",
+        "Rank all risks by combined score",
+        "Define test priorities (P0/P1/P2/P3)",
+        "Allocate testing effort based on risk ranking"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "combined_risk_matrix",
+          "format": "markdown",
+          "required": true
+        },
+        {
+          "artifact_id": "test_priorities",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_4_mitigation",
+      "order": 4,
+      "role_id": "test-architect",
+      "phase_id": "mitigation_strategies",
+      "name": "Define Mitigation Strategies",
+      "objective": "Create risk mitigation strategies for top risks",
+      "instructions": [
+        "For each high-priority risk, define mitigation strategy",
+        "Specify testing techniques (unit, integration, E2E, etc.)",
+        "Define acceptance criteria for risk mitigation",
+        "Estimate effort required for each mitigation",
+        "Create action plan with owners and deadlines"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "mitigation_strategies",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_5_scope",
+      "order": 5,
+      "role_id": "test-architect",
+      "phase_id": "scope_definition",
+      "name": "Define Test Scope",
+      "objective": "Define what to test and what NOT to test",
+      "instructions": [
+        "List all features/modules in scope for testing",
+        "Explicitly list out-of-scope items (3rd party libs, mocks, etc.)",
+        "Define test boundaries (where testing starts/stops)",
+        "Identify assumptions and dependencies",
+        "Document scope limitations and constraints"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "test_scope",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "15m"
+    },
+    {
+      "id": "step_6_test_types",
+      "order": 6,
+      "role_id": "test-architect",
+      "phase_id": "test_types",
+      "name": "Select Test Types",
+      "objective": "Select appropriate test types and their coverage targets",
+      "instructions": [
+        "Define test pyramid (unit → integration → E2E ratios)",
+        "Specify coverage targets for each test type",
+        "Select specialized tests (performance, security, accessibility)",
+        "Create test type matrix with rationale for each type",
+        "Document tool/framework recommendations per type"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "test_type_matrix",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_7_environment",
+      "order": 7,
+      "role_id": "test-architect",
+      "phase_id": "environment",
+      "name": "Plan Test Environments",
+      "objective": "Define test environment requirements (dev, staging, prod)",
+      "instructions": [
+        "Define environment topology (local, CI, staging, prod-like)",
+        "Specify infrastructure requirements (CPU, memory, storage)",
+        "Document environment configuration (env vars, secrets, configs)",
+        "Define data refresh and reset strategies",
+        "Create environment provisioning checklist"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "environment_requirements",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "15m"
+    },
+    {
+      "id": "step_8_data_strategy",
+      "order": 8,
+      "role_id": "test-architect",
+      "phase_id": "data_strategy",
+      "name": "Plan Test Data Strategy",
+      "objective": "Plan test data generation, mocking, and privacy",
+      "instructions": [
+        "Define test data sources (production snapshots, synthetic, mocks)",
+        "Create data generation strategy (factories, fixtures, randomization)",
+        "Plan data privacy and anonymization (GDPR, PII handling)",
+        "Define data versioning and reset procedures",
+        "Document data dependencies and prerequisites"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "test_data_strategy",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_9_metrics",
+      "order": 9,
+      "role_id": "test-architect",
+      "phase_id": "metrics",
+      "name": "Define Quality Metrics",
+      "objective": "Define quality metrics (coverage, defect density, velocity)",
+      "instructions": [
+        "Define code coverage targets (line, branch, function)",
+        "Specify defect density targets (bugs per 1000 LOC)",
+        "Define velocity metrics (tests per sprint, automation rate)",
+        "Set quality gates (min coverage, max critical bugs)",
+        "Create metrics dashboard specification"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "quality_metrics",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "15m"
+    },
+    {
+      "id": "step_10_scenarios",
+      "order": 10,
+      "role_id": "test-architect",
+      "phase_id": "scenario_identification",
+      "name": "Identify Test Scenarios",
+      "objective": "Identify test scenarios (happy path, edge cases)",
+      "instructions": [
+        "List all happy path scenarios (expected user flows)",
+        "Identify edge cases (boundary conditions, rare inputs)",
+        "Document error scenarios (invalid input, network failures)",
+        "Create scenario-to-requirement traceability matrix",
+        "Prioritize scenarios by risk and business value"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "test_scenarios",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "25m"
+    },
+    {
+      "id": "step_11_boundary",
+      "order": 11,
+      "role_id": "test-architect",
+      "phase_id": "boundary_analysis",
+      "name": "Design Boundary Tests",
+      "objective": "Design boundary value tests (min/max, off-by-one)",
+      "instructions": [
+        "Identify all input boundaries (min, max, empty, null)",
+        "Design tests for boundary-1, boundary, boundary+1",
+        "Test numeric ranges (0, 1, MAX_INT, negative)",
+        "Test string lengths (empty, 1 char, max length, overflow)",
+        "Create boundary test matrix with expected results"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "boundary_tests",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m",
+      "skip_if_complexity": "simple"
+    },
+    {
+      "id": "step_12_partitioning",
+      "order": 12,
+      "role_id": "tester",
+      "phase_id": "equivalence_partitioning",
+      "name": "Design Equivalence Partition Tests",
+      "objective": "Design equivalence partition tests (valid/invalid classes)",
+      "instructions": [
+        "Identify input domains (ranges, categories, states)",
+        "Partition each domain into equivalence classes",
+        "Select representative value from each partition",
+        "Design tests for valid and invalid partitions",
+        "Create partition-to-test-case mapping"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "partition_tests",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "25m",
+      "skip_if_complexity": "simple"
+    },
+    {
+      "id": "step_13_negative",
+      "order": 13,
+      "role_id": "tester",
+      "phase_id": "negative_testing",
+      "name": "Design Negative Tests",
+      "objective": "Design negative tests (error handling, invalid input)",
+      "instructions": [
+        "Identify all error conditions (invalid input, network failures)",
+        "Design tests for each error path",
+        "Verify error messages are user-friendly and actionable",
+        "Test error recovery and rollback mechanisms",
+        "Document expected error codes and messages"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "negative_tests",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_14_test_cases",
+      "order": 14,
+      "role_id": "tester",
+      "phase_id": "test_case_creation",
+      "name": "Create Test Cases",
+      "objective": "Create detailed test cases (preconditions, steps, expected results)",
+      "instructions": [
+        "For each test scenario, create detailed test case",
+        "Specify preconditions (setup, prerequisites)",
+        "Document step-by-step test procedure",
+        "Define expected results and acceptance criteria",
+        "Tag test cases (smoke, regression, sanity, etc.)"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "test_cases",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_15_documentation",
+      "order": 15,
+      "role_id": "tech-writer",
+      "phase_id": "documentation",
+      "name": "Create Test Strategy Document",
+      "objective": "Create comprehensive test strategy document",
+      "instructions": [
+        "Consolidate all planning artifacts into single document",
+        "Structure document: scope, approach, resources, schedule, risks",
+        "Add executive summary and recommendations",
+        "Include all matrices, checklists, and diagrams",
+        "Format for stakeholder review and sign-off"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "test_strategy_document",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    }
+  ],
+  "execution_plan": {
+    "total_estimated_time": "4h 30m",
+    "required_agents": [
+      "test-architect",
+      "tester",
+      "tech-writer"
+    ],
+    "critical_path": [
+      "step_1_business_risk",
+      "step_2_technical_risk",
+      "step_3_risk_prioritization",
+      "step_4_mitigation",
+      "step_5_scope",
+      "step_6_test_types",
+      "step_7_environment",
+      "step_8_data_strategy",
+      "step_9_metrics",
+      "step_10_scenarios",
+      "step_13_negative",
+      "step_14_test_cases",
+      "step_15_documentation"
+    ],
+    "parallel_opportunities": [],
+    "dependencies": {
+      "step_3_risk_prioritization": ["step_1_business_risk", "step_2_technical_risk"],
+      "step_4_mitigation": ["step_3_risk_prioritization"],
+      "step_6_test_types": ["step_5_scope"],
+      "step_10_scenarios": ["step_5_scope", "step_9_metrics"],
+      "step_14_test_cases": ["step_10_scenarios", "step_13_negative"],
+      "step_15_documentation": ["step_14_test_cases"]
+    }
+  },
+  "phase_join_criteria": {
+    "business_risk": {
+      "required_artifacts": [],
+      "optional_context": ["requirements", "user_stories"]
+    },
+    "technical_risk": {
+      "required_artifacts": ["business_risk_matrix"],
+      "optional_context": ["architecture_diagram"]
+    },
+    "risk_prioritization": {
+      "required_artifacts": ["business_risk_matrix", "technical_risk_matrix"],
+      "optional_context": []
+    },
+    "mitigation_strategies": {
+      "required_artifacts": ["combined_risk_matrix", "test_priorities"],
+      "optional_context": []
+    },
+    "scope_definition": {
+      "required_artifacts": ["mitigation_strategies"],
+      "optional_context": ["requirements"]
+    },
+    "test_types": {
+      "required_artifacts": ["test_scope"],
+      "optional_context": []
+    },
+    "environment": {
+      "required_artifacts": ["test_type_matrix"],
+      "optional_context": []
+    },
+    "data_strategy": {
+      "required_artifacts": ["environment_requirements"],
+      "optional_context": []
+    },
+    "metrics": {
+      "required_artifacts": ["test_data_strategy"],
+      "optional_context": []
+    },
+    "scenario_identification": {
+      "required_artifacts": ["test_scope", "quality_metrics"],
+      "optional_context": ["requirements"]
+    },
+    "boundary_analysis": {
+      "required_artifacts": ["test_scenarios"],
+      "optional_context": [],
+      "skip_if_complexity": "simple"
+    },
+    "equivalence_partitioning": {
+      "required_artifacts": ["test_scenarios"],
+      "optional_context": [],
+      "skip_if_complexity": "simple"
+    },
+    "negative_testing": {
+      "required_artifacts": ["test_scenarios"],
+      "optional_context": []
+    },
+    "test_case_creation": {
+      "required_artifacts": ["test_scenarios", "negative_tests"],
+      "optional_context": ["boundary_tests", "partition_tests"]
+    },
+    "documentation": {
+      "required_artifacts": ["test_cases"],
+      "optional_context": []
+    }
+  },
+  "adaptive_timeouts": {
+    "simple": {
+      "total_time": "3h 0m",
+      "per_phase_multiplier": 0.7
+    },
+    "medium": {
+      "total_time": "4h 0m",
+      "per_phase_multiplier": 0.9
+    },
+    "complex": {
+      "total_time": "5h 0m",
+      "per_phase_multiplier": 1.0
+    }
+  },
+  "success_criteria": [
+    "All high-priority risks identified and mitigated",
+    "Test scope clearly defined with explicit exclusions",
+    "Test strategy approved by stakeholders",
+    "Quality metrics and gates defined",
+    "All test cases traceable to requirements",
+    "Test strategy document complete and reviewed"
+  ],
+  "tags": [
+    "tea",
+    "planning",
+    "test-strategy",
+    "risk-assessment",
+    "test-design",
+    "adaptive",
+    "consolidated"
+  ]
+}

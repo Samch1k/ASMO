@@ -221,11 +221,6 @@ export { PerformanceEngineerAgent } from './agents/roles/performance-engineer.ag
 export { ScrumMasterAgent } from './agents/roles/scrum-master.agent'
 export { SecuritySpecialistAgent } from './agents/roles/security-specialist.agent'
 
-// BMAD New Agents
-export { ProductManagerAgent } from './agents/roles/product-manager.agent'
-export { RFQSpecialistAgent } from './agents/roles/rfq-specialist.agent'
-export { SupplierOpsAgent } from './agents/roles/supplier-ops.agent'
-
 // BMAD Integration: New Agents
 export { AnalystAgent } from './agents/roles/analyst.agent'
 export { TechWriterAgent } from './agents/roles/tech-writer.agent'

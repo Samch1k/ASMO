@@ -31,6 +31,26 @@ export const TaskInputSchema = z.object({
 export type ValidatedTaskInput = z.infer<typeof TaskInputSchema>
 
 /**
+ * Message schema for agent communication
+ */
+const MessageSchema = z.object({
+  role: z.string(),
+  content: z.union([z.string(), z.array(z.unknown())])
+}).passthrough()
+
+/**
+ * Agent result schema
+ */
+const AgentResultSchema = z.object({
+  agentId: z.string(),
+  status: z.enum(['success', 'failed', 'skipped']),
+  output: z.unknown(),
+  artifacts: z.array(z.unknown()).optional(),
+  confidence: z.number().optional(),
+  timestamp: z.unknown().optional()
+}).passthrough()
+
+/**
  * Agent state schema
  */
 export const AgentStateSchema = z.object({
@@ -40,10 +60,10 @@ export const AgentStateSchema = z.object({
     'deployment', 'testing', 'documentation', 'review'
   ]),
   context: z.record(z.string(), z.unknown()),
-  messages: z.array(z.any()),  // BaseMessage is complex
+  messages: z.array(MessageSchema),
   currentAgent: z.string(),
-  agentResults: z.array(z.any()),
-  mcpData: z.record(z.string(), z.any()),
+  agentResults: z.array(AgentResultSchema),
+  mcpData: z.record(z.string(), z.unknown()),
   nextAction: z.string(),
   requiresApproval: z.boolean()
 })

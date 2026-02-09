@@ -8,6 +8,7 @@
  * - run <task>: Adaptive analysis and execution (uses WorkflowEngine)
  * - suggest <task>: Fast analysis for hooks (returns JSON)
  * - analyze <task>: Analyze task complexity
+ * - stats: Show usage statistics for agents, workflows, and skills
  * - workflow <name>: Run a workflow
  * - task: Task management commands
  */
@@ -18,6 +19,7 @@ import { workflowCommand } from './commands/workflow.js'
 import { taskCommand } from './commands/task.js'
 import { runCommand } from './commands/run.js'
 import { suggestCommand } from './commands/suggest.js'
+import { statsCommand } from './commands/stats.js'
 import { version as VERSION } from '@asmo/core'
 
 program
@@ -60,6 +62,14 @@ program
   .option('-c, --context <path>', 'Path to project context file')
   .option('-j, --json', 'Output as JSON')
   .action(analyzeCommand)
+
+// Stats command
+program
+  .command('stats')
+  .description('Show usage statistics for agents, workflows, and skills')
+  .option('-t, --type <type>', 'Type to analyze: agents, workflows, skills, or all', 'all')
+  .option('-f, --format <format>', 'Output format: table, json, or csv', 'table')
+  .action(statsCommand)
 
 // Workflow command
 program

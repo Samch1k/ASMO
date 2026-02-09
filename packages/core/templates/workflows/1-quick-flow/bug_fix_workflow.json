@@ -1,7 +1,7 @@
 {
   "id": "bug_fix_workflow",
-  "name": "Bug Fix Workflow",
-  "description": "Debug → Fix → Test pipeline for bug fixes",
+  "name": "Bug Fix Workflow (Adaptive)",
+  "description": "Adaptive bug resolution workflow that scales from simple to complex bugs based on complexity analysis. Simple bugs skip architect and code review steps for efficiency.",
   "trigger_condition": {
     "keywords": [
       "bug",
@@ -10,55 +10,227 @@
       "fail",
       "crash",
       "fix",
+      "complex bug",
+      "system bug",
+      "critical bug",
+      "production issue",
+      "outage",
       "исправ",
       "ошибка",
-      "баг"
+      "баг",
+      "критический баг",
+      "системная ошибка"
     ],
     "task_types": [
-      "bug_fix"
+      "bug_fix",
+      "incident_response"
     ],
     "required_skills": [
       "debugging",
       "code_writing"
     ]
   },
+  "phases": {
+    "investigation": {
+      "description": "Investigate bug and identify root cause",
+      "description_ru": "Исследование бага и выявление первопричины",
+      "order": 1,
+      "intent_keywords": ["investigate", "analyze", "debug", "find cause", "исследовать", "проанализировать"]
+    },
+    "solution_design": {
+      "description": "Design fix approach and prevention strategy (complex bugs only)",
+      "description_ru": "Проектирование решения и стратегии предотвращения (только для сложных багов)",
+      "order": 2,
+      "intent_keywords": ["design fix", "plan solution", "спроектировать решение"],
+      "complexity_required": "medium"
+    },
+    "implementation": {
+      "description": "Implement fix with tests",
+      "description_ru": "Реализация исправления с тестами",
+      "order": 3,
+      "intent_keywords": ["fix", "implement", "code", "исправить", "реализовать"]
+    },
+    "verification": {
+      "description": "Test and verify bug is resolved",
+      "description_ru": "Тестирование и проверка устранения бага",
+      "order": 4,
+      "intent_keywords": ["test", "verify", "validate", "regression", "тестировать", "проверить"]
+    },
+    "review": {
+      "description": "Code review for quality (complex bugs only)",
+      "description_ru": "Ревью кода на качество (только для сложных багов)",
+      "order": 5,
+      "intent_keywords": ["review", "check code", "ревью", "проверить код"],
+      "complexity_required": "medium"
+    }
+  },
   "steps": [
     {
       "order": 1,
       "role_id": "debugger",
       "phase": "investigation",
-      "description": "Investigate root cause of the bug",
+      "description": "Investigate the bug and identify root cause",
       "deliverables": [
         "bug_report",
         "root_cause_analysis"
       ],
+      "conditional_deliverables": {
+        "complexity_medium_or_above": [
+          "impact_assessment",
+          "reproduction_steps",
+          "detailed_bug_report"
+        ]
+      },
       "exit_criteria": "Root cause identified and documented",
-      "timeout": "15m"
+      "timeout": "15m",
+      "adaptive_timeout": {
+        "simple": "15m",
+        "medium": "30m",
+        "complex": "45m"
+      },
+      "phase_join_criteria": {
+        "required_artifacts": [],
+        "prerequisites": ["bug reported"],
+        "context_indicators": ["bug", "error", "issue", "crash", "investigate"],
+        "skip_if": ["root cause already known"]
+      }
     },
     {
       "order": 2,
+      "role_id": "architect",
+      "phase": "solution_design",
+      "description": "Design comprehensive fix that addresses root cause and prevents recurrence",
+      "deliverables": [
+        "fix_design",
+        "prevention_strategy",
+        "testing_strategy"
+      ],
+      "exit_criteria": "Fix approach approved with prevention measures defined",
+      "timeout": "30m",
+      "skip_if_complexity": "simple",
+      "phase_join_criteria": {
+        "required_artifacts": ["root cause analysis"],
+        "prerequisites": ["root cause identified"],
+        "context_indicators": ["design solution", "plan fix"],
+        "skip_if": ["fix design exists", "simple fix", "complexity below medium"]
+      },
+      "metadata": {
+        "optional_for": "simple bugs",
+        "reason": "Simple bugs don't need architectural planning"
+      }
+    },
+    {
+      "order": 3,
       "role_id": "developer",
-      "phase": "fix_implementation",
+      "phase": "implementation",
       "description": "Implement the fix based on investigation",
       "deliverables": [
         "code",
         "unit_tests"
       ],
-      "exit_criteria": "Fix implemented and unit tests pass",
-      "timeout": "30m"
+      "conditional_deliverables": {
+        "complexity_medium_or_above": [
+          "integration_tests",
+          "updated_documentation",
+          "error_handling"
+        ]
+      },
+      "exit_criteria": "Fix implemented and tests pass",
+      "timeout": "30m",
+      "adaptive_timeout": {
+        "simple": "30m",
+        "medium": "45m",
+        "complex": "60m"
+      },
+      "phase_join_criteria": {
+        "required_artifacts": [],
+        "optional_artifacts": ["fix design"],
+        "prerequisites": [],
+        "context_indicators": ["fix", "implement", "code"],
+        "skip_if": ["fix already implemented"]
+      }
     },
     {
-      "order": 3,
+      "order": 4,
       "role_id": "tester",
       "phase": "verification",
-      "description": "Verify bug is fixed with E2E tests",
+      "description": "Verify bug is fixed with appropriate level of testing",
       "deliverables": [
         "test_results"
       ],
-      "exit_criteria": "Bug no longer reproduces in E2E tests",
-      "timeout": "20m"
+      "conditional_deliverables": {
+        "complexity_medium_or_above": [
+          "regression_test_results",
+          "performance_impact_analysis",
+          "edge_case_testing"
+        ]
+      },
+      "exit_criteria": "Bug verified as fixed",
+      "timeout": "20m",
+      "adaptive_timeout": {
+        "simple": "20m",
+        "medium": "30m",
+        "complex": "45m"
+      },
+      "phase_join_criteria": {
+        "required_artifacts": ["fix implementation"],
+        "prerequisites": ["fix implemented"],
+        "context_indicators": ["test", "verify", "regression"],
+        "skip_if": ["tests already pass"]
+      }
+    },
+    {
+      "order": 5,
+      "role_id": "code-reviewer",
+      "phase": "review",
+      "description": "Review fix for quality and prevention measures",
+      "deliverables": [
+        "code_review_report"
+      ],
+      "conditional_deliverables": {
+        "complexity_medium_or_above": [
+          "improvement_suggestions",
+          "security_check_results"
+        ]
+      },
+      "exit_criteria": "Code reviewed and approved",
+      "timeout": "20m",
+      "skip_if_complexity": "simple",
+      "phase_join_criteria": {
+        "required_artifacts": ["fix code"],
+        "prerequisites": ["fix exists"],
+        "context_indicators": ["review", "check", "approve"],
+        "skip_if": ["complexity below medium"]
+      },
+      "metadata": {
+        "optional_for": "simple bugs",
+        "reason": "Simple bugs verified by tester, don't need separate code review"
+      }
     }
   ],
   "estimated_time": "1h 5m",
-  "success_criteria": "All tests pass and bug is resolved"
+  "adaptive_estimated_time": {
+    "simple": "1h 5m",
+    "medium": "2h 15m",
+    "complex": "3h 20m",
+    "enterprise": "4h+"
+  },
+  "success_criteria": "Bug resolved and all tests passing",
+  "adaptive_success_criteria": {
+    "simple": "Bug resolved and all tests passing",
+    "medium": "Bug resolved, prevention measures in place, all tests passing",
+    "complex": "Bug resolved, prevention measures in place, all tests passing, no regressions, code reviewed"
+  },
+  "metadata": {
+    "adaptive_phase_detection": true,
+    "complexity_aware": true,
+    "version": "2.0",
+    "changelog": "Merged bug_fix_workflow and advanced_bug_fix into single adaptive workflow",
+    "complexity_thresholds": {
+      "simple": "0-39",
+      "medium": "40-69",
+      "complex": "70-89",
+      "enterprise": "90-100"
+    }
+  }
 }

@@ -23,9 +23,6 @@ import { DataArchitectAgent } from '../agents/roles/data-architect.agent'
 import { PerformanceEngineerAgent } from '../agents/roles/performance-engineer.agent'
 import { ScrumMasterAgent } from '../agents/roles/scrum-master.agent'
 import { SecuritySpecialistAgent } from '../agents/roles/security-specialist.agent'
-import { ProductManagerAgent } from '../agents/roles/product-manager.agent'
-import { RFQSpecialistAgent } from '../agents/roles/rfq-specialist.agent'
-import { SupplierOpsAgent } from '../agents/roles/supplier-ops.agent'
 import { AnalystAgent } from '../agents/roles/analyst.agent'
 import { TechWriterAgent } from '../agents/roles/tech-writer.agent'
 import { TestArchitectAgent } from '../agents/roles/test-architect.agent'
@@ -56,9 +53,6 @@ const AGENT_CLASS_REGISTRY: Record<string, any> = {
   PerformanceEngineerAgent,
   ScrumMasterAgent,
   SecuritySpecialistAgent,
-  ProductManagerAgent,
-  RFQSpecialistAgent,
-  SupplierOpsAgent,
   AnalystAgent,
   TechWriterAgent,
   TestArchitectAgent,

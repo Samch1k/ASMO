@@ -406,6 +406,7 @@ export class DynamicOrchestrator {
     requiredSkills?: string[]
   ): BaseAgent | undefined {
     if (!this.registry) {
+      console.warn(`[ASMO] No agent registry available, cannot resolve agent "${agentId || 'unknown'}"`)
       return undefined
     }
 

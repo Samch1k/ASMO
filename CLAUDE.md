@@ -2,6 +2,20 @@
 
 This project uses ASMO multi-agent orchestration system. ASMO automatically routes tasks to specialized AI agents and workflows.
 
+## System Overview
+
+| Resource | Count |
+|----------|-------|
+| Agents | 25 |
+| Workflows | 27 |
+| Skills | 92 |
+| Roles | 21 (6 core + 15 specialized) |
+
+**Key architecture features:**
+- Dual LLM provider: Session ($0 via Claude CLI) / API (pay-per-use) -- see `packages/core/docs/llm-provider-factory.md`
+- Adaptive Phase Detection: workflows can be joined at any phase -- see `packages/core/docs/adaptive-phase-detection.md`
+- YOLO mode: auto-approve low-complexity tasks via ApprovalCheckpoint
+
 ## When to Use ASMO
 
 Use `asmo run "<task>"` when the task involves:
@@ -65,16 +79,64 @@ asmo workflow <name> --task "<task>"
 
 ## Available Workflows
 
+### Core Development
+
 | Workflow | Use Case | Agents |
 |----------|----------|--------|
-| `bug_fix_workflow` | Bug fixes, error investigation | debugger, developer |
+| `bug_fix_workflow` | Bug fixes, error investigation (adaptive) | debugger, developer, tester |
 | `feature_implementation_full` | New features | architect, developer, tester |
 | `code_refactoring` | Code restructuring | architect, developer |
-| `performance_optimization` | Speed/memory improvements | optimizer, developer |
-| `security_audit` | Security review | security-specialist, tester |
-| `comprehensive_testing` | Test suite creation | tester, developer |
-| `api_design` | API design/implementation | architect, developer |
-| `architecture_design` | System architecture | architect |
+| `code_review_workflow` | Code review | code-reviewer, developer |
+| `dev_story_workflow` | Story implementation | developer, tester |
+| `create_story_workflow` | Story creation | product-owner, developer |
+
+### Architecture & Design
+
+| Workflow | Use Case |
+|----------|----------|
+| `architecture_design` | System architecture |
+| `api_design` | API design/implementation |
+| `ui_component_library` | UI component system |
+
+### Quality & Testing
+
+| Workflow | Use Case |
+|----------|----------|
+| `comprehensive_testing` | Test suite creation |
+| `security_audit` | Security review |
+| `performance_optimization` | Speed/memory improvements |
+| `performance_investigation` | Performance profiling |
+| `adversarial_review_workflow` | Adversarial code review |
+
+### TEA (Test Engineering & Automation)
+
+**Consolidated workflows (8 → 3):**
+
+| Workflow | Use Case | Time |
+|----------|----------|------|
+| `tea_planning_workflow` | Test planning: risk + strategy + design | 3h-5h |
+| `tea_execution_workflow` | Test execution: automation + regression + maintenance | 3.5h-6h |
+| `tea_validation_workflow` | Quality validation: gates + release readiness | 2h-3h |
+| `automate_tests_workflow` | Quick test automation | 2h |
+
+### Product & Planning
+
+| Workflow | Use Case |
+|----------|----------|
+| `create_product_brief_workflow` | Product brief |
+| `create_prd_workflow` | PRD creation |
+| `create_ux_design_workflow` | UX design |
+| `create_epics_and_stories_workflow` | Epics & stories |
+| `sprint_planning_workflow` | Sprint planning |
+| `check_implementation_readiness_workflow` | Implementation readiness |
+| `correct_course_workflow` | Course correction |
+| `retrospective_workflow` | Retrospective |
+
+### Database
+
+| Workflow | Use Case |
+|----------|----------|
+| `database_migration` | Database migration |
 
 ## Integration
 
@@ -100,7 +162,7 @@ packages/
 
 Ensure `.env` exists with:
 ```
-ANTHROPIC_API_KEY=sk-ant-...  # Required for API mode
+ANTHROPIC_API_KEY=sk-ant-...  # Required for API mode only
 ```
 
-Session mode (default) uses Claude subscription ($0 cost).
+Session mode (default) uses Claude CLI ($0 cost). API mode is used as fallback or when explicitly selected. See `packages/core/docs/llm-provider-factory.md` for details.

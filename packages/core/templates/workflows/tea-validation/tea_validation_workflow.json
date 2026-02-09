@@ -1,0 +1,481 @@
+{
+  "id": "tea_validation_workflow",
+  "name": "TEA Validation Workflow (Quality Gates → Release Readiness)",
+  "description": "Comprehensive quality validation workflow combining quality gate setup and release readiness assessment. Ensures release meets quality standards before deployment.",
+  "category": "tea",
+  "complexity": "medium",
+  "metadata": {
+    "version": "2.0.0",
+    "created": "2026-02-09",
+    "consolidated_from": [
+      "tea_quality_gates_workflow",
+      "tea_release_readiness_workflow"
+    ],
+    "adaptive_phase_detection": true,
+    "complexity_aware": true,
+    "complexity_thresholds": {
+      "simple": "0-39",
+      "medium": "40-69",
+      "complex": "70-100"
+    },
+    "time_estimates": {
+      "simple": "2h 0m",
+      "medium": "2h 30m",
+      "complex": "3h 0m"
+    }
+  },
+  "phases": [
+    {
+      "id": "gate_identification",
+      "name": "Quality Gate Identification",
+      "description": "Identify quality gate points (commit, PR, staging, production)",
+      "order": 1,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "gate_points"
+      ]
+    },
+    {
+      "id": "criteria_definition",
+      "name": "Gate Criteria Definition",
+      "description": "Define criteria for each quality gate (coverage, defects, performance)",
+      "order": 2,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "gate_criteria"
+      ]
+    },
+    {
+      "id": "thresholds",
+      "name": "Threshold Configuration",
+      "description": "Configure thresholds (min coverage %, max critical bugs)",
+      "order": 3,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "threshold_config"
+      ]
+    },
+    {
+      "id": "implementation",
+      "name": "Gate Implementation",
+      "description": "Implement quality gates in CI/CD (hooks, automation)",
+      "order": 4,
+      "estimated_duration": "25m",
+      "deliverables": [
+        "gate_implementation"
+      ]
+    },
+    {
+      "id": "gate_documentation",
+      "name": "Gate Documentation",
+      "description": "Document quality gate process, thresholds, and overrides",
+      "order": 5,
+      "estimated_duration": "15m",
+      "deliverables": [
+        "gate_documentation"
+      ]
+    },
+    {
+      "id": "feature_check",
+      "name": "Feature Completeness Check",
+      "description": "Verify all features tested and acceptance criteria met",
+      "order": 6,
+      "estimated_duration": "15m",
+      "deliverables": [
+        "feature_checklist"
+      ]
+    },
+    {
+      "id": "quality_metrics",
+      "name": "Quality Metrics Review",
+      "description": "Review quality metrics (coverage, pass rate, defects)",
+      "order": 7,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "quality_report"
+      ]
+    },
+    {
+      "id": "defect_review",
+      "name": "Defect Analysis",
+      "description": "Analyze open bugs (severity, risk assessment)",
+      "order": 8,
+      "estimated_duration": "20m",
+      "deliverables": [
+        "defect_analysis"
+      ]
+    },
+    {
+      "id": "operational_check",
+      "name": "Operational Readiness Check",
+      "description": "Verify deployment, rollback, and monitoring readiness",
+      "order": 9,
+      "estimated_duration": "15m",
+      "deliverables": [
+        "operational_checklist"
+      ]
+    },
+    {
+      "id": "recommendation",
+      "name": "Release Recommendation",
+      "description": "Make Go/No-Go release recommendation based on all criteria",
+      "order": 10,
+      "estimated_duration": "10m",
+      "deliverables": [
+        "release_recommendation"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": "step_1_gate_identification",
+      "order": 1,
+      "role_id": "test-architect",
+      "phase_id": "gate_identification",
+      "name": "Identify Quality Gate Points",
+      "objective": "Identify quality gate points in SDLC (commit, PR, staging, production)",
+      "instructions": [
+        "Map software development lifecycle stages",
+        "Identify decision points requiring quality checks",
+        "Define gate points: commit, pre-PR, PR approval, staging, production",
+        "Specify gate triggers (automated vs manual)",
+        "Prioritize gates by risk and impact",
+        "Create gate point diagram with flow"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "gate_points",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_2_criteria_definition",
+      "order": 2,
+      "role_id": "test-architect",
+      "phase_id": "criteria_definition",
+      "name": "Define Gate Criteria",
+      "objective": "Define criteria for each quality gate (coverage, defects, performance)",
+      "instructions": [
+        "For each gate point, define quality criteria",
+        "Specify code coverage requirements (line, branch, function)",
+        "Define defect limits (critical, high, medium)",
+        "Set performance benchmarks (response time, throughput)",
+        "Include security and accessibility criteria",
+        "Create criteria matrix (gate × criteria)"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "gate_criteria",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_3_thresholds",
+      "order": 3,
+      "role_id": "test-architect",
+      "phase_id": "thresholds",
+      "name": "Configure Thresholds",
+      "objective": "Configure thresholds (min coverage %, max critical bugs)",
+      "instructions": [
+        "Set minimum code coverage threshold (e.g., 80%)",
+        "Set maximum defect thresholds (0 critical, 2 high, 10 medium)",
+        "Define performance thresholds (p95 < 500ms, p99 < 1s)",
+        "Configure security scan thresholds (0 critical vulnerabilities)",
+        "Define override conditions and approvers",
+        "Create threshold configuration file"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "threshold_config",
+          "format": "json",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_4_implementation",
+      "order": 4,
+      "role_id": "devops",
+      "phase_id": "implementation",
+      "name": "Implement Quality Gates",
+      "objective": "Implement quality gates in CI/CD (hooks, automation)",
+      "instructions": [
+        "Configure CI/CD pipeline to enforce quality gates",
+        "Add pre-commit hooks (linting, unit tests)",
+        "Add PR status checks (coverage, tests, security)",
+        "Configure staging deployment gates (integration tests, smoke tests)",
+        "Add production deployment gates (manual approval, monitoring)",
+        "Test gate enforcement with sample PRs"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "gate_implementation",
+          "format": "code",
+          "required": true
+        }
+      ],
+      "estimated_duration": "25m"
+    },
+    {
+      "id": "step_5_gate_documentation",
+      "order": 5,
+      "role_id": "tech-writer",
+      "phase_id": "gate_documentation",
+      "name": "Document Quality Gates",
+      "objective": "Document quality gate process, thresholds, and overrides",
+      "instructions": [
+        "Create quality gate handbook",
+        "Document each gate: purpose, criteria, thresholds",
+        "Explain override process and approvers",
+        "Provide troubleshooting guide for common gate failures",
+        "Document metrics collection and reporting",
+        "Include examples and screenshots"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "gate_documentation",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "15m"
+    },
+    {
+      "id": "step_6_feature_check",
+      "order": 6,
+      "role_id": "test-architect",
+      "phase_id": "feature_check",
+      "name": "Check Feature Completeness",
+      "objective": "Verify all features tested and acceptance criteria met",
+      "instructions": [
+        "Review feature list from requirements/user stories",
+        "Verify each feature has test coverage",
+        "Check acceptance criteria met for each feature",
+        "Identify untested or partially tested features",
+        "Verify feature parity with requirements",
+        "Create feature completeness checklist"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "feature_checklist",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "15m"
+    },
+    {
+      "id": "step_7_quality_metrics",
+      "order": 7,
+      "role_id": "test-architect",
+      "phase_id": "quality_metrics",
+      "name": "Review Quality Metrics",
+      "objective": "Review quality metrics (coverage, pass rate, defects)",
+      "instructions": [
+        "Collect current quality metrics from CI/CD",
+        "Review code coverage (line, branch, function)",
+        "Analyze test pass rate (overall, by type)",
+        "Review defect metrics (density, severity distribution)",
+        "Compare metrics against defined thresholds",
+        "Create quality metrics dashboard"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "quality_report",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_8_defect_review",
+      "order": 8,
+      "role_id": "test-architect",
+      "phase_id": "defect_review",
+      "name": "Analyze Open Defects",
+      "objective": "Analyze open bugs (severity, risk assessment)",
+      "instructions": [
+        "Review all open defects in issue tracker",
+        "Categorize by severity (critical, high, medium, low)",
+        "Assess risk of releasing with open defects",
+        "Identify release blockers (critical bugs, high-risk areas)",
+        "Verify critical and high bugs have fixes or mitigations",
+        "Create defect analysis report with recommendations"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "defect_analysis",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "20m"
+    },
+    {
+      "id": "step_9_operational_check",
+      "order": 9,
+      "role_id": "devops",
+      "phase_id": "operational_check",
+      "name": "Check Operational Readiness",
+      "objective": "Verify deployment, rollback, and monitoring readiness",
+      "instructions": [
+        "Verify deployment scripts tested and ready",
+        "Confirm rollback procedure documented and tested",
+        "Check monitoring and alerting configured",
+        "Verify logging and observability in place",
+        "Confirm infrastructure capacity for expected load",
+        "Create operational readiness checklist"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "operational_checklist",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "15m"
+    },
+    {
+      "id": "step_10_recommendation",
+      "order": 10,
+      "role_id": "test-architect",
+      "phase_id": "recommendation",
+      "name": "Make Release Recommendation",
+      "objective": "Make Go/No-Go release recommendation based on all criteria",
+      "instructions": [
+        "Review all quality gate results",
+        "Assess feature completeness (100% or acceptable gap)",
+        "Verify quality metrics meet thresholds",
+        "Confirm no release-blocking defects",
+        "Verify operational readiness",
+        "Make Go/No-Go recommendation with rationale",
+        "Document risks and mitigation for Go decision"
+      ],
+      "deliverables": [
+        {
+          "artifact_id": "release_recommendation",
+          "format": "markdown",
+          "required": true
+        }
+      ],
+      "estimated_duration": "10m"
+    }
+  ],
+  "execution_plan": {
+    "total_estimated_time": "2h 45m",
+    "required_agents": [
+      "test-architect",
+      "devops",
+      "tech-writer"
+    ],
+    "critical_path": [
+      "step_1_gate_identification",
+      "step_2_criteria_definition",
+      "step_3_thresholds",
+      "step_4_implementation",
+      "step_6_feature_check",
+      "step_7_quality_metrics",
+      "step_8_defect_review",
+      "step_10_recommendation"
+    ],
+    "parallel_opportunities": [
+      {
+        "group": "quality_gates_setup",
+        "steps": ["step_4_implementation", "step_5_gate_documentation"]
+      },
+      {
+        "group": "release_checks",
+        "steps": ["step_6_feature_check", "step_9_operational_check"]
+      }
+    ],
+    "dependencies": {
+      "step_2_criteria_definition": ["step_1_gate_identification"],
+      "step_3_thresholds": ["step_2_criteria_definition"],
+      "step_4_implementation": ["step_3_thresholds"],
+      "step_5_gate_documentation": ["step_4_implementation"],
+      "step_7_quality_metrics": ["step_6_feature_check"],
+      "step_10_recommendation": ["step_7_quality_metrics", "step_8_defect_review", "step_9_operational_check"]
+    }
+  },
+  "phase_join_criteria": {
+    "gate_identification": {
+      "required_artifacts": [],
+      "optional_context": ["sdlc_diagram", "ci_cd_pipeline"]
+    },
+    "criteria_definition": {
+      "required_artifacts": ["gate_points"],
+      "optional_context": ["quality_metrics"]
+    },
+    "thresholds": {
+      "required_artifacts": ["gate_criteria"],
+      "optional_context": []
+    },
+    "implementation": {
+      "required_artifacts": ["threshold_config"],
+      "optional_context": []
+    },
+    "gate_documentation": {
+      "required_artifacts": ["gate_implementation"],
+      "optional_context": []
+    },
+    "feature_check": {
+      "required_artifacts": [],
+      "optional_context": ["requirements", "user_stories", "test_results"]
+    },
+    "quality_metrics": {
+      "required_artifacts": ["feature_checklist"],
+      "optional_context": ["test_results", "ci_history"]
+    },
+    "defect_review": {
+      "required_artifacts": [],
+      "optional_context": ["issue_tracker", "bug_database"]
+    },
+    "operational_check": {
+      "required_artifacts": [],
+      "optional_context": ["deployment_plan", "infrastructure_specs"]
+    },
+    "recommendation": {
+      "required_artifacts": ["quality_report", "defect_analysis", "operational_checklist"],
+      "optional_context": []
+    }
+  },
+  "adaptive_timeouts": {
+    "simple": {
+      "total_time": "2h 0m",
+      "per_phase_multiplier": 0.75
+    },
+    "medium": {
+      "total_time": "2h 30m",
+      "per_phase_multiplier": 0.9
+    },
+    "complex": {
+      "total_time": "3h 0m",
+      "per_phase_multiplier": 1.0
+    }
+  },
+  "success_criteria": [
+    "Quality gates implemented and enforced in CI/CD",
+    "All features tested and acceptance criteria met",
+    "Quality metrics meet defined thresholds",
+    "No release-blocking defects",
+    "Operational readiness verified",
+    "Go/No-Go recommendation documented with rationale"
+  ],
+  "tags": [
+    "tea",
+    "validation",
+    "quality-gates",
+    "release-readiness",
+    "go-no-go",
+    "adaptive",
+    "consolidated"
+  ]
+}

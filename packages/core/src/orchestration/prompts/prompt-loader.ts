@@ -171,6 +171,7 @@ export class PromptLoader {
     }
 
     // Return placeholder if not found
+    console.warn(`[ASMO] Prompt variable "${varName}" not resolved`)
     return `[${varName}]`
   }
 }
