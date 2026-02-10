@@ -7,8 +7,8 @@ Execute complex development workflows with autonomous AI agent teams directly fr
 ## Features
 
 - 🎯 **Adaptive Workflow Selection** - Automatic task analysis and workflow recommendation
-- 🤖 **26 Specialized Agents** - Architect, Developer, Tester, Security Specialist, and more
-- 📊 **20+ Production Workflows** - Bug fixes, features, refactoring, security audits
+- 🤖 **25 Specialized Agents** - Architect, Developer, Tester, Security Specialist, and more
+- 📊 **27 Production Workflows** - Bug fixes, features, refactoring, security audits
 - 🔄 **Config Fallback** - Works with or without `.cursor/config`
 - ⚡ **Zero Configuration** - Bundled templates included out of the box
 

@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2025-01-XX
 
 ### Initial Development
-- BMAD (Buy-Make-Analyze-Develop) system implementation
+- BMAD (Breakthrough Method of Agile AI Driven Development) system implementation
 - Dynamic orchestration with multi-agent collaboration
 - Claude Code adapter for hybrid analysis
 - Party Mode and brainstorming sessions

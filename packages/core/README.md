@@ -8,13 +8,13 @@ The core orchestration engine for ASMO autonomous development teams.
 - **Workflow Engine**: Define and execute complex development workflows
 - **Adaptive Workflow Selection**: Automatically choose workflows based on task complexity
 - **Complexity Analysis**: Intelligent task analysis with 5 complexity levels
-- **20+ Production-Ready Workflows**: From bug fixes to architecture design
+- **27 Production-Ready Workflows**: From bug fixes to architecture design
 - **Configuration System**: 3-tier configuration (defaults → file → environment)
 - **Instruction Manager**: Markdown-based agent guidance with priority system
 - **Quality Gates**: Automatic approval checkpoints and validation
 - **Metrics & Learning**: Built-in performance tracking and optimization
 - **Parallel Execution**: Run multiple agents simultaneously
-- **Skill-Based Matching**: 85 skills with dependency resolution
+- **Skill-Based Matching**: 55 skills with dependency resolution
 
 ### BMAD Integration Features
 - **Agent Personalities**: Amelia (TDD), Winston (Boring Tech), Bob (Zero Ambiguity), John (WHY-First)
@@ -189,9 +189,9 @@ Then customize the configuration files for your needs.
 
 By default, @asmo/core uses the bundled templates included in the npm package. These templates provide:
 
-- **20+ Production Workflows** - Bug fixes, features, refactoring, security audits, etc.
-- **26 Specialized Agents** - Architect, Developer, Tester, Security Specialist, etc.
-- **85 Skills** - With dependency resolution and complexity analysis
+- **27 Production Workflows** - Bug fixes, features, refactoring, security audits, etc.
+- **25 Specialized Agents** - Architect, Developer, Tester, Security Specialist, etc.
+- **55 Skills** - With dependency resolution and complexity analysis
 - **Instructions** - Markdown-based guidance for each agent role
 
 No setup required - just `npm install @asmo/core` and start using!
@@ -316,7 +316,7 @@ export default {
 
 ## Available Workflows
 
-ASMO includes **20+ production-ready workflows**, including:
+ASMO includes **27 production-ready workflows**, including:
 
 1. **Quick Flow** - Fast bug fixes and simple tasks
 2. **Feature Development** - Complete feature implementation with gates

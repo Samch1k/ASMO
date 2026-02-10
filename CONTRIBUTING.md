@@ -293,13 +293,15 @@ describe('WorkflowEngine', () => {
 
 ```
 docs/
-├── en/                 # English documentation
-│   ├── getting-started/
-│   ├── concepts/
-│   ├── guides/
-│   ├── reference/
-│   └── examples/
-└── ru/                 # Russian documentation (mirror)
+├── README.md              # Bilingual index (EN + RU)
+├── en/
+│   ├── system-overview.md # Complete system guide
+│   ├── phase-0-vision/    # Vision, problem, metrics, scope
+│   ├── phase-1-requirements/ # PRD, personas, use cases, criteria
+│   ├── phase-2-ux/        # IA, UX flows, wireframes, decisions
+│   ├── phase-3-architecture/ # Diagrams, data model, API, security
+│   └── phase-4-release/   # Demo, feature matrix, known issues
+└── ru/                    # Russian mirror of en/
 ```
 
 ### Generating Docs
@@ -316,6 +318,6 @@ pnpm docs:dev
 
 - Open an [issue](https://github.com/Samch1k/ASMO/issues) for bugs
 - Start a [discussion](https://github.com/Samch1k/ASMO/discussions) for questions
-- Read the [documentation](./docs/en/getting-started/index.md)
+- Read the [documentation](./docs/README.md)
 
 Thank you for contributing to ASMO!

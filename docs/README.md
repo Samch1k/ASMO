@@ -1,72 +1,92 @@
-# ASMO Documentation
+# ASMO Documentation / Документация ASMO
 
-> Transform AI from "helpful assistant" to "autonomous team"
+> **25 Agents · 27 Workflows · 55 Skills · 25 Roles**
 
-Welcome to the ASMO Framework documentation. ASMO is an autonomous AI development orchestration system that coordinates multiple AI agents to work together as a cohesive team.
+---
 
-## Quick Links
+## System Overview / Обзор системы
 
-| English | Русский |
-|---------|---------|
-| [Getting Started](./en/getting-started/index.md) | [Начало работы](./ru/getting-started/index.md) |
-| [Concepts](./en/concepts/index.md) | [Концепции](./ru/concepts/index.md) |
-| [Guides](./en/guides/index.md) | [Руководства](./ru/guides/index.md) |
-| [Reference](./en/reference/index.md) | [Справочник](./ru/reference/index.md) |
+Complete system guide in one document — read this first.
 
-## What's Inside
+| Language | Link |
+|----------|------|
+| English  | [System Overview](./en/system-overview.md) |
+| Русский  | [Обзор системы](./ru/system-overview.md) |
 
-- **24 Agents** - From Architect to Security Specialist
-- **10 Workflows** - From quick bug fixes to enterprise architecture
-- **85 Skills** - Comprehensive development skill coverage
-- **Adaptive Selection** - Automatic workflow selection based on task complexity
+---
 
-## Installation
+## Phase-Based Documentation / Фазовая документация
 
-```bash
-npm install @asmo/core
-# or
-pnpm add @asmo/core
-```
+### Phase 0 — Vision / Видение
 
-## Quick Example
+Product vision, problem statement, and scope definition.
 
-```typescript
-import { WorkflowEngine, AgentRegistry } from '@asmo/core'
+| EN | RU |
+|----|-----|
+| [Vision & One-Pager](./en/phase-0-vision/README.md) | [Видение и описание](./ru/phase-0-vision/README.md) |
+| [Problem Statement](./en/phase-0-vision/problem-statement.md) | [Постановка проблемы](./ru/phase-0-vision/problem-statement.md) |
+| [Success Metrics](./en/phase-0-vision/success-metrics.md) | [Метрики успеха](./ru/phase-0-vision/success-metrics.md) |
+| [Scope](./en/phase-0-vision/scope.md) | [Границы проекта](./ru/phase-0-vision/scope.md) |
 
-const registry = new AgentRegistry()
-const engine = new WorkflowEngine(registry)
-await engine.initialize()
+### Phase 1 — Requirements / Требования
 
-// Adaptive workflow selection based on task description
-const result = await engine.execute(
-  'Add user authentication with OAuth2',
-  undefined,
-  { projectSize: 'large' }
-)
-```
+Product requirements, user personas, and acceptance criteria.
 
-## Documentation Structure
+| EN | RU |
+|----|-----|
+| [PRD Summary](./en/phase-1-requirements/README.md) | [Обзор PRD](./ru/phase-1-requirements/README.md) |
+| [User Personas](./en/phase-1-requirements/user-personas.md) | [Персоны пользователей](./ru/phase-1-requirements/user-personas.md) |
+| [User Journey](./en/phase-1-requirements/user-journey.md) | [Путь пользователя](./ru/phase-1-requirements/user-journey.md) |
+| [Use Cases](./en/phase-1-requirements/use-cases.md) | [Сценарии использования](./ru/phase-1-requirements/use-cases.md) |
+| [Acceptance Criteria](./en/phase-1-requirements/acceptance-criteria.md) | [Критерии приёмки](./ru/phase-1-requirements/acceptance-criteria.md) |
+| [Non-Functional Requirements](./en/phase-1-requirements/nfr.md) | [Нефункциональные требования](./ru/phase-1-requirements/nfr.md) |
 
-```
-docs/
-├── en/                     # English documentation
-│   ├── getting-started/    # Installation & quick start
-│   ├── concepts/           # Core concepts
-│   ├── guides/             # How-to guides
-│   ├── reference/          # API & catalog reference
-│   │   ├── agents/         # 24 agent docs
-│   │   ├── workflows/      # 10 workflow docs
-│   │   └── skills/         # 85 skill docs
-│   └── examples/           # Code examples
-├── ru/                     # Russian documentation (mirror)
-├── assets/                 # Images & diagrams
-└── internal/               # Internal reports
-```
+### Phase 2 — Concept & UX / Концепция и UX
 
-## Contributing
+Information architecture, UX flows, and design decisions.
 
-See [Contributing Guide](./en/contributing/index.md) for information on how to contribute to this documentation.
+| EN | RU |
+|----|-----|
+| [UX Overview](./en/phase-2-ux/README.md) | [Обзор UX](./ru/phase-2-ux/README.md) |
+| [Information Architecture](./en/phase-2-ux/information-architecture.md) | [Информационная архитектура](./ru/phase-2-ux/information-architecture.md) |
+| [UX Flow](./en/phase-2-ux/ux-flow.md) | [UX-поток](./ru/phase-2-ux/ux-flow.md) |
+| [Wireframes](./en/phase-2-ux/wireframes.md) | [Макеты CLI](./ru/phase-2-ux/wireframes.md) |
+| [UX Decisions](./en/phase-2-ux/ux-decisions.md) | [UX-решения](./ru/phase-2-ux/ux-decisions.md) |
 
-## License
+### Phase 3 — Architecture / Архитектура
 
-MIT © 2026 ASMO Contributors
+System architecture, data model, integrations, and security.
+
+| EN | RU |
+|----|-----|
+| [Architecture Overview](./en/phase-3-architecture/README.md) | [Обзор архитектуры](./ru/phase-3-architecture/README.md) |
+| [Architecture Diagram](./en/phase-3-architecture/architecture-diagram.md) | [Архитектурная схема](./ru/phase-3-architecture/architecture-diagram.md) |
+| [Data Model](./en/phase-3-architecture/data-model.md) | [Модель данных](./ru/phase-3-architecture/data-model.md) |
+| [API Contract](./en/phase-3-architecture/api-contract.md) | [API-контракт](./ru/phase-3-architecture/api-contract.md) |
+| [Integration Map](./en/phase-3-architecture/integration-map.md) | [Карта интеграций](./ru/phase-3-architecture/integration-map.md) |
+| [Security & Privacy](./en/phase-3-architecture/security-privacy.md) | [Безопасность](./ru/phase-3-architecture/security-privacy.md) |
+| [Risks & Assumptions](./en/phase-3-architecture/risks-assumptions.md) | [Риски и допущения](./ru/phase-3-architecture/risks-assumptions.md) |
+
+### Phase 4 — Release / Релиз
+
+Demo scenarios, feature matrix, known issues, and release notes.
+
+| EN | RU |
+|----|-----|
+| [Release Overview](./en/phase-4-release/README.md) | [Обзор релиза](./ru/phase-4-release/README.md) |
+| [Demo Script](./en/phase-4-release/demo-script.md) | [Демо-сценарий](./ru/phase-4-release/demo-script.md) |
+| [Demo Data](./en/phase-4-release/demo-data.md) | [Демо-данные](./ru/phase-4-release/demo-data.md) |
+| [Feature Matrix](./en/phase-4-release/feature-matrix.md) | [Матрица фич](./ru/phase-4-release/feature-matrix.md) |
+| [Known Issues](./en/phase-4-release/known-issues.md) | [Известные проблемы](./ru/phase-4-release/known-issues.md) |
+| [Release Notes](./en/phase-4-release/release-notes.md) | [Заметки о релизе](./ru/phase-4-release/release-notes.md) |
+
+---
+
+## Other Documentation / Прочая документация
+
+| Document | Description |
+|----------|-------------|
+| [CLAUDE.md](../CLAUDE.md) | Claude Code integration instructions |
+| [CONTRIBUTING.md](../CONTRIBUTING.md) | Contribution guidelines |
+| [CHANGELOG.md](../CHANGELOG.md) | Version history |
+| [packages/core/docs/](../packages/core/docs/) | Technical docs (LLM provider, phase detection, context cascade) |

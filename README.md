@@ -15,9 +15,9 @@ ASMO is an autonomous AI development orchestration system that coordinates multi
 
 ### Core Orchestration
 
-- **28 Specialized Agents** — Architect, Developer, Tester, Security, UX, DevOps, Analyst, Tech Writer, and more
-- **28 Production Workflows** — From quick fixes to enterprise architecture + TEA testing workflows
-- **85 Skills Catalog** — Automatic skill matching across 12 categories
+- **25 Specialized Agents** — Architect, Developer, Tester, Security, UX, DevOps, Analyst, Tech Writer, and more
+- **27 Production Workflows** — From quick fixes to enterprise architecture + TEA testing workflows
+- **55 Skills Catalog** — Automatic skill matching across 12 categories
 - **Complexity Analysis** — 5-level task analysis with intelligent workflow selection
 - **Adaptive Phase Detection** — Smart phase joining based on project context and user intent (LLM-powered)
 
@@ -48,7 +48,7 @@ ASMO is an autonomous AI development orchestration system that coordinates multi
 - **3-Tier Configuration** — Defaults → File → Environment
 - **Context Cascade** — Automatic context flow between workflow phases
 - **Document Sharding** — Split large documents into manageable sections
-- **TEA Module** — 8 specialized testing workflows (Test Architect)
+- **TEA Module** — 3 consolidated testing workflows (Test Architect)
 
 ## Quick Install
 
@@ -466,19 +466,16 @@ _- Амелия, Разработчик (Тесты Обязательны ✅)_
 
 ## Documentation
 
-| Language | Link                                           |
-| -------- | ---------------------------------------------- |
-| English  | [docs/en/](./docs/en/getting-started/index.md) |
-| Russian  | [docs/ru/](./docs/ru/getting-started/index.md) |
+| Language | Link                                                   |
+| -------- | ------------------------------------------------------ |
+| English  | [docs/en/system-overview.md](./docs/en/system-overview.md) |
+| Russian  | [docs/ru/system-overview.md](./docs/ru/system-overview.md) |
 
 ### Quick Links
 
-- [Installation](./docs/en/getting-started/installation.md)
-- [Quick Start Guide](./docs/en/getting-started/quick-start.md)
-- [Configuration](./docs/en/getting-started/configuration.md)
-- [Agent Catalog](./docs/en/reference/agents/index.md)
-- [Workflow Catalog](./docs/en/reference/workflows/index.md)
-- [Skills Catalog](./docs/en/reference/skills/index.md)
+- [Documentation Index](./docs/README.md) — Phase-based product documentation
+- [System Overview (EN)](./docs/en/system-overview.md) — Complete system guide
+- [System Overview (RU)](./docs/ru/system-overview.md) — Полное руководство
 
 ## Project Structure
 
@@ -488,37 +485,36 @@ asmo/
 │   ├── core/           # @asmo/core - Main library (library-first architecture)
 │   ├── cli/            # @asmo/cli - Command-line interface
 │   └── docs/           # VitePress site (coming soon)
-├── docs/               # Markdown documentation
-│   ├── en/             # English
-│   └── ru/             # Russian
+├── docs/               # Product documentation (Phase 0–4)
+│   ├── en/             # English (phase-based + system overview)
+│   └── ru/             # Russian (phase-based + system overview)
 ├── scripts/            # Doc generation scripts
 └── turbo.json          # Turbo build config
 ```
 
-## Agents (28)
+## Agents (25)
 
-| Category        | Agents | Description                                                                                            |
-| --------------- | ------ | ------------------------------------------------------------------------------------------------------ |
-| **Core**        | 6      | Architect, Developer, Tester, UI Developer, UX Designer, DevOps                                        |
-| **Specialized** | 14     | Security, Performance, Database, API, Analyst, Tech Writer, Test Architect, Adversarial Reviewer, etc. |
-| **Validation**  | 5      | Code Reviewer, Design Validator, etc.                                                                  |
-| **Business**    | 3      | Product Owner, Business Analyst, Scrum Master                                                          |
+| Category        | Agents | Description                                                                        |
+| --------------- | ------ | ---------------------------------------------------------------------------------- |
+| **Core**        | 6      | Architect, Developer, Tester, Debugger, Optimizer, DevOps                          |
+| **Specialized** | 15     | Security, Performance, Database, API, UI, UX, Analyst, Tech Writer, TEA, and more  |
+| **Validation**  | 4      | Design Validator, Merge Coordinator, Post-Deploy Monitor, Requirements Validator   |
 
-[View full catalog →](./docs/en/reference/agents/index.md)
+[View full catalog →](./docs/en/system-overview.md)
 
-## Workflows (28)
+## Workflows (27)
 
-| Level                   | Workflows                                                                           | Complexity Score |
-| ----------------------- | ----------------------------------------------------------------------------------- | ---------------- |
-| Simple                  | Quick Flow, Bug Fix                                                                 | 0-40             |
-| Standard                | Feature Dev, Refactoring, Performance                                               | 41-60            |
-| Complex                 | Security Audit, API Design, Database Migration                                      | 61-80            |
-| Enterprise              | Architecture Design                                                                 | 81-100           |
-| **BMAD Planning**       | Product Brief, PRD, UX Design, Epics & Stories, Sprint Planning                     | N/A              |
-| **BMAD Implementation** | Correct Course, Retrospective, Automate Tests                                       | N/A              |
-| **TEA Testing**         | 8 workflows: Risk Assessment, Test Strategy, Quality Gates, Release Readiness, etc. | N/A              |
+| Level                   | Workflows                                                             | Complexity Score |
+| ----------------------- | --------------------------------------------------------------------- | ---------------- |
+| Simple                  | Quick Flow, Bug Fix                                                   | 0-40             |
+| Standard                | Feature Dev, Refactoring, Performance                                 | 41-60            |
+| Complex                 | Security Audit, API Design, Database Migration                        | 61-80            |
+| Enterprise              | Architecture Design                                                   | 81-100           |
+| **BMAD Planning**       | Product Brief, PRD, UX Design, Epics & Stories, Sprint Planning       | N/A              |
+| **BMAD Implementation** | Correct Course, Retrospective, Automate Tests, Dev Story, Code Review | N/A              |
+| **TEA Testing**         | 3 consolidated: Planning, Execution, Validation                       | N/A              |
 
-[View full catalog →](./docs/en/reference/workflows/index.md)
+[View full catalog →](./docs/en/system-overview.md)
 
 ## Development
 

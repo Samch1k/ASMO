@@ -117,13 +117,14 @@ export class AgentRegistry {
     // Create agent instance
     const instance = new agentClass()
 
-    // Set role and skills dynamically
-    if (typeof instance.setRole === 'function') {
-      instance.setRole(role)
-    }
-
+    // IMPORTANT: Add skills BEFORE setting role
+    // setRole() calls validateRoleSkills() which checks if required_skills are present
     if (typeof instance.addSkills === 'function') {
       instance.addSkills(skills)
+    }
+
+    if (typeof instance.setRole === 'function') {
+      instance.setRole(role)
     }
 
     // Create registry entry
