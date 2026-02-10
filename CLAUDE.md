@@ -186,6 +186,49 @@ When you see a suggestion to use ASMO, consider running:
 asmo run "<the task>"
 ```
 
+## ⚠️ Critical Execution Protocol for Claude Code
+
+**When user request STARTS WITH "asmo" (e.g., "asmo run ...", "asmo Проведи...", "asmo suggest..."):**
+
+### MANDATORY RULES:
+
+1. **Always use Bash tool** to execute the actual ASMO CLI command
+   - Example: `asmo run "Проведи аудит"` → `Bash: asmo run "Проведи аудит"`
+   - NEVER decompose via internal Task/Agent tools
+
+2. **Parse request content, NOT syntax**
+   - Russian/English multilingual requests are valid
+   - "asmo Проведи..." is same as "asmo run ..." (both trigger Bash execution)
+   - Language does NOT affect the execution pattern
+
+3. **Do NOT manually orchestrate agents**
+   - ASMO has its own agent routing system
+   - Your job: run the CLI, not replicate its logic
+   - Let WorkflowEngine select agents, not you
+
+4. **Flags and options preservation**
+   - Preserve all flags: `--use-api`, `--no-llm`, `--verbose`, `--dry-run`, `--workflow`
+   - Pass them exactly as provided to the asmo CLI
+
+5. **Error handling**
+   - If asmo command fails, report the error
+   - Don't retry silently or decompose the task
+   - Ask user for clarification if needed
+
+### QUICK CHECKLIST:
+- [ ] Request starts with "asmo"? → Use Bash to run it
+- [ ] Language is Russian/multilingual? → Still run via Bash
+- [ ] Tempted to use Task tool? → DON'T. Use Bash instead.
+- [ ] Want to optimize/decompose? → Let ASMO do it via CLI
+
+### EXAMPLE:
+```
+User: "asmo run 'Добавь тесты для модуля auth'"
+Claude Code:
+❌ WRONG: Task tool with Explore agent
+✅ CORRECT: Bash tool: asmo run 'Добавь тесты для модуля auth'
+```
+
 ## Project Structure
 
 ```
