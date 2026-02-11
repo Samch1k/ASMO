@@ -157,7 +157,7 @@ export class RoutingLogger {
   }
 
   /**
-   * Set verbose mode
+   * Set verbose mode (can be called after construction)
    */
   setVerbose(verbose: boolean): void {
     this.verbose = verbose
@@ -199,6 +199,9 @@ let loggerInstance: RoutingLogger | null = null
 export function getRoutingLogger(options?: { maxEntries?: number; verbose?: boolean }): RoutingLogger {
   if (!loggerInstance) {
     loggerInstance = new RoutingLogger(options)
+  } else if (options?.verbose !== undefined) {
+    // Update verbose mode if provided (allows changing verbosity after initialization)
+    loggerInstance.setVerbose(options.verbose)
   }
   return loggerInstance
 }

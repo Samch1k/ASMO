@@ -248,6 +248,7 @@ export interface ComplexityScore {
   recommendedWorkflow: string
   recommendedAgents: string[]
   factors: ComplexityFactors
+  taskDescription?: string  // Original task description for workflow selection
   alternatives?: Array<{
     workflowId: string
     confidence: number

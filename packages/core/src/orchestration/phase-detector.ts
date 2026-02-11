@@ -82,14 +82,16 @@ export class PhaseDetector {
   private llm: ClaudeCodeAdapter
   private contextAnalyzer: ContextAnalyzer
   private config: Required<Omit<PhaseDetectorConfig, 'contextConfig'>>
+  private verbose: boolean
 
-  constructor(claudeAdapter: ClaudeCodeAdapter, config?: PhaseDetectorConfig) {
+  constructor(claudeAdapter: ClaudeCodeAdapter, config?: PhaseDetectorConfig, verbose?: boolean) {
     this.llm = claudeAdapter
     this.contextAnalyzer = new ContextAnalyzer(config?.contextConfig)
     this.config = {
       ...DEFAULT_CONFIG,
       ...config
     }
+    this.verbose = verbose ?? false
   }
 
   /**
@@ -107,17 +109,23 @@ export class PhaseDetector {
     workflow: Workflow,
     context?: ProjectContext
   ): Promise<PhaseDetectionResult> {
-    console.log('\n🔍 PhaseDetector: Analyzing task (LLM-based)...')
-    console.log(`   Task: "${task.substring(0, 80)}${task.length > 80 ? '...' : ''}"`)
-    console.log(`   Workflow: ${workflow.name}`)
+    if (this.verbose) {
+      console.log('\n🔍 [PhaseDetector] Analyzing task (LLM-based)...')
+      console.log(`   Task: "${task.substring(0, 80)}${task.length > 80 ? '...' : ''}"`)
+      console.log(`   Workflow: ${workflow.name}`)
+    }
 
     // 1. Analyze project context
     const artifacts = await this.contextAnalyzer.analyze(context)
-    console.log(`   Context: ${artifacts.summary}`)
+    if (this.verbose) {
+      console.log(`   Context: ${artifacts.summary}`)
+    }
 
     // 2. Extract available phases (for logging)
     const phases = this.preparePhases(workflow)
-    console.log(`   Available phases: ${phases.map(p => p.name).join(' → ')}`)
+    if (this.verbose) {
+      console.log(`   Available phases: ${phases.map(p => p.name).join(' → ')}`)
+    }
 
     // 3. LLM Analysis through ClaudeCodeAdapter.analyzePhase()
     const llmResult = await this.llmAnalyze({
@@ -127,8 +135,10 @@ export class PhaseDetector {
       projectContext: context
     })
 
-    console.log(`   LLM recommended: ${llmResult.phase} (${(llmResult.confidence * 100).toFixed(0)}%)`)
-    console.log(`   Intent: ${llmResult.intent}`)
+    if (this.verbose) {
+      console.log(`   LLM recommended: ${llmResult.phase} (${(llmResult.confidence * 100).toFixed(0)}%)`)
+      console.log(`   Intent: ${llmResult.intent}`)
+    }
 
     // 4. Apply confidence threshold and fallback
     const finalPhase = this.applyFallback(llmResult, phases)
@@ -142,8 +152,10 @@ export class PhaseDetector {
       : this.calculateSkipped(workflow, finalPhase.phase)
     const stepIndex = this.findStepIndex(workflow, finalPhase.phase)
 
-    console.log(`   Final phase: ${finalPhase.phase}`)
-    console.log(`   Skipping: ${skipPhases.join(', ') || 'none'}`)
+    if (this.verbose) {
+      console.log(`   Final phase: ${finalPhase.phase}`)
+      console.log(`   Skipping: ${skipPhases.join(', ') || 'none'}`)
+    }
 
     // Combine LLM missing prerequisites with validation
     const allMissingPrerequisites = [

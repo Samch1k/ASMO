@@ -29,6 +29,7 @@ import { getTeamManager, type TeamManager } from './team-manager'
 import { getChecklistManager, type ChecklistManager } from './checklist-manager'
 import { getConfigManager, type ConfigManager } from './config/config-manager'
 import { getInstructionManager, type InstructionManager } from './instruction-manager'
+import { getRoutingLogger } from './routing-logger'
 // Adaptive workflow selection
 import { ComplexityAnalyzer } from './complexity-analyzer'
 import { WorkflowSelector } from './workflow-selector'
@@ -64,6 +65,7 @@ export interface WorkflowEngineOptions {
   approvalConfig?: ApprovalCheckpointConfig
   retryConfig?: RetryConfig
   databaseUrl?: string
+  verbose?: boolean  // Enable verbose logging
   configManager?: ConfigManager
   phaseManager?: PhaseManager
   approvalCheckpoint?: ApprovalCheckpoint
@@ -98,6 +100,7 @@ export class WorkflowEngine {
   private currentWorkflow: Workflow | null = null // Track current workflow for checklist access
   private currentComplexityScore: number | undefined
   private currentWorkflowName: string | undefined
+  private verbose: boolean = false
 
   // All fields below are initialized in initializeComponents() called from constructor
   private agentRegistry!: AgentRegistry
@@ -132,13 +135,15 @@ export class WorkflowEngine {
    * @param approvalConfig - Optional approval checkpoint configuration
    * @param retryConfig - Optional retry configuration
    * @param databaseUrl - Optional database URL for metrics persistence
+   * @param verbose - Enable verbose logging
    * @returns Fully initialized WorkflowEngine
    */
   static create(
     agentRegistry: AgentRegistry,
     approvalConfig?: ApprovalCheckpointConfig,
     retryConfig?: RetryConfig,
-    databaseUrl?: string
+    databaseUrl?: string,
+    verbose?: boolean
   ): WorkflowEngine {
     const configManager = getConfigManager()
 
@@ -157,6 +162,7 @@ export class WorkflowEngine {
       approvalConfig,
       retryConfig,
       databaseUrl,
+      verbose,
       configManager,
       phaseManager: new PhaseManager(),
       approvalCheckpoint: new ApprovalCheckpoint(
@@ -178,8 +184,8 @@ export class WorkflowEngine {
       teamManager: getTeamManager(),
       checklistManager: getChecklistManager(),
       instructionManager: getInstructionManager(),
-      complexityAnalyzer: new ComplexityAnalyzer(complexityConfig),
-      workflowSelector: new WorkflowSelector(workflowSelectorConfig),
+      complexityAnalyzer: new ComplexityAnalyzer(complexityConfig, verbose),
+      workflowSelector: new WorkflowSelector(workflowSelectorConfig, verbose),
       contextCascade: new ContextCascade(),
       testEnforcementValidator: new TestEnforcementValidator(),
       principleValidators: {
@@ -246,6 +252,7 @@ export class WorkflowEngine {
   private initializeComponents(opts: WorkflowEngineOptions): void {
     this.agentRegistry = opts.agentRegistry
     this.configManager = opts.configManager || getConfigManager()
+    this.verbose = opts.verbose ?? false
 
     this.globalSettings = {
       max_parallel_agents: 5,
@@ -267,8 +274,8 @@ export class WorkflowEngine {
     this.teamManager = opts.teamManager || getTeamManager()
     this.checklistManager = opts.checklistManager || getChecklistManager()
     this.instructionManager = opts.instructionManager || getInstructionManager()
-    this.complexityAnalyzer = opts.complexityAnalyzer || new ComplexityAnalyzer()
-    this.workflowSelector = opts.workflowSelector || new WorkflowSelector()
+    this.complexityAnalyzer = opts.complexityAnalyzer || new ComplexityAnalyzer(undefined, this.verbose)
+    this.workflowSelector = opts.workflowSelector || new WorkflowSelector(undefined, this.verbose)
     this.contextCascade = opts.contextCascade || new ContextCascade()
     this.testEnforcementValidator = opts.testEnforcementValidator || new TestEnforcementValidator()
     this.principleValidators = opts.principleValidators || {
@@ -276,6 +283,9 @@ export class WorkflowEngine {
       boringTechnology: new BoringTechnologyValidator(),
       whyFirst: new WhyFirstValidator()
     }
+
+    // Initialize global routing logger with verbose mode
+    getRoutingLogger({ verbose: this.verbose })
   }
 
   /**
@@ -614,12 +624,24 @@ export class WorkflowEngine {
       throw new Error('WorkflowEngine not initialized. Call initialize() first.')
     }
 
+    if (this.verbose) {
+      console.log('\n🚀 [WorkflowEngine] Starting execution...')
+      console.log(`   Input: ${workflowIdOrDescription.slice(0, 80)}${workflowIdOrDescription.length > 80 ? '...' : ''}`)
+    }
+
     // Resolve input → workflow + state + optional phase join point
     const { workflow, state, startPhase } = await this.resolveInput(
       workflowIdOrDescription,
       initialState,
       context
     )
+
+    if (this.verbose) {
+      console.log(`   Workflow: ${workflow.name} (${workflow.id})`)
+      if (startPhase) {
+        console.log(`   Starting from phase: ${startPhase}`)
+      }
+    }
 
     // Phase-aware execution when join point detected
     if (startPhase) {
@@ -1581,17 +1603,29 @@ export class WorkflowEngine {
 
   /**
    * Merge step result into state
+   * Consolidates artifacts from agentResults into state.artifacts
    */
   private mergeStepResult(
     state: AgentState,
     result: StepResult
   ): AgentState {
+    const newAgentResults = result.output.agentResults || []
+
+    // Collect new artifacts from agent results
+    const newArtifacts = newAgentResults.flatMap(
+      (r: any) => r.artifacts || []
+    )
+
     return {
       ...state,
       ...result.output,
       agentResults: [
         ...state.agentResults,
-        ...(result.output.agentResults || [])
+        ...newAgentResults
+      ],
+      artifacts: [
+        ...(state.artifacts || []),
+        ...newArtifacts
       ],
       context: {
         ...state.context,
@@ -1602,6 +1636,7 @@ export class WorkflowEngine {
 
   /**
    * Merge parallel results with namespace isolation
+   * Preserves artifacts from all parallel agents
    */
   private mergeParallelResults(
     baseState: AgentState,
@@ -1620,25 +1655,43 @@ export class WorkflowEngine {
         const namespace = `${agentId}_${phase}_findings`
         mergedContext[namespace] = output.context || {}
       }
+
+      // Also merge top-level context keys (implementation, tests, etc.)
+      if (output.context) {
+        Object.assign(mergedContext, output.context)
+      }
     }
 
-    // Collect all agent results
+    // Collect all agent results, preserving artifacts from each
     const allResults = results
       .filter(r => r.success)
-      .map(r => ({
-        agentId: r.agentId,
-        status: 'success' as const,
-        output: r.output,
-        artifacts: [],
-        confidence: 1.0,
-        timestamp: new Date()
-      }))
+      .map(r => {
+        // Extract artifacts from agent's output
+        const agentResults = r.output?.agentResults || []
+        const artifacts = agentResults.flatMap((ar: any) => ar.artifacts || [])
+
+        return {
+          agentId: r.agentId,
+          status: 'success' as const,
+          output: r.output,
+          artifacts,
+          confidence: 1.0,
+          timestamp: new Date()
+        }
+      })
+
+    // Consolidate all artifacts into state.artifacts
+    const allArtifacts = allResults.flatMap(r => r.artifacts || [])
 
     return {
       ...baseState,
       agentResults: [
         ...baseState.agentResults,
         ...allResults
+      ],
+      artifacts: [
+        ...(baseState.artifacts || []),
+        ...allArtifacts
       ],
       context: mergedContext,
       currentAgent: results[results.length - 1]?.agentId || baseState.currentAgent

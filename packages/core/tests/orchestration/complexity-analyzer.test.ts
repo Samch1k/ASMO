@@ -257,13 +257,13 @@ describe('ComplexityAnalyzer', () => {
 
     it('should throw error for empty task description', async () => {
       await expect(analyzer.analyzeTask('')).rejects.toThrow(
-        'Task description cannot be empty'
+        'Prompt validation failed'
       )
     })
 
     it('should throw error for whitespace-only task description', async () => {
       await expect(analyzer.analyzeTask('   ')).rejects.toThrow(
-        'Task description cannot be empty'
+        'Prompt validation failed'
       )
     })
 

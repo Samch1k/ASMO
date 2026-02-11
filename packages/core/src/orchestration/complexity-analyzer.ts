@@ -86,10 +86,12 @@ export class ComplexityAnalyzer {
   private lastProvider: string = 'heuristics'
   /** Prompt validator for input sanitization */
   private promptValidator: PromptValidator
+  private verbose: boolean
 
-  constructor(config?: ComplexityAnalyzerConfig) {
+  constructor(config?: ComplexityAnalyzerConfig, verbose?: boolean) {
     this.config = { ...DEFAULT_CONFIG, ...config }
     this.promptValidator = new PromptValidator()
+    this.verbose = verbose ?? false
   }
 
   /**
@@ -113,6 +115,11 @@ export class ComplexityAnalyzer {
     taskDescription: string,
     context?: ProjectContext
   ): Promise<ComplexityScore> {
+    if (this.verbose) {
+      console.log('🔍 [ComplexityAnalyzer] Analyzing task complexity...')
+      console.log(`   Task: ${taskDescription.slice(0, 80)}${taskDescription.length > 80 ? '...' : ''}`)
+    }
+
     // Validate and sanitize prompt
     const sanitizedPrompt = this.promptValidator.validateOrThrow(taskDescription)
 
@@ -121,6 +128,10 @@ export class ComplexityAnalyzer {
     const effectiveConfig = context?.llmMode
       ? { ...this.config, llmMode: context.llmMode }
       : this.config
+
+    if (this.verbose) {
+      console.log(`   LLM Mode: ${effectiveConfig.llmMode}`)
+    }
 
     // Build analysis prompt with sanitized input
     const prompt = this.buildAnalysisPrompt(sanitizedPrompt, context)
@@ -134,6 +145,9 @@ export class ComplexityAnalyzer {
     // Map score to level
     complexity.level = this.scoreToLevel(complexity.score, effectiveConfig)
 
+    // Add task description for intent detection in workflow recommendation
+    complexity.taskDescription = taskDescription
+
     // Recommend workflow based on complexity
     complexity.recommendedWorkflow = this.recommendWorkflow(complexity)
 
@@ -142,6 +156,14 @@ export class ComplexityAnalyzer {
       analysisMode: this.lastAnalysisMode,
       provider: this.lastProvider,
       timestamp: new Date()
+    }
+
+    if (this.verbose) {
+      console.log(`   Complexity: ${complexity.level} (score: ${complexity.score}/100)`)
+      console.log(`   Provider: ${this.lastProvider} (${this.lastAnalysisMode} mode)`)
+      if (complexity.recommendedWorkflow) {
+        console.log(`   Recommended: ${complexity.recommendedWorkflow}`)
+      }
     }
 
     return complexity
@@ -550,32 +572,75 @@ Be objective and realistic in your assessment. Consider both the immediate task 
   private recommendWorkflow(complexity: ComplexityScore): string {
     // If no workflows registered, return default
     if (this.workflows.size === 0) {
+      if (this.verbose) {
+        console.log('   [recommendWorkflow] No workflows registered, using default')
+      }
       return this.getDefaultWorkflowForLevel(complexity.level)
     }
 
     // Try to match based on complexity level and task type
     const { level, factors } = complexity
+    const taskDescription = complexity.taskDescription?.toLowerCase() || ''
 
-    // Bug fix workflow
-    if (level === 'trivial' || level === 'simple') {
+    if (this.verbose) {
+      console.log('   [recommendWorkflow] Detecting task intent...')
+      console.log(`      Task description: ${taskDescription}`)
+      console.log(`      Level: ${level}`)
+    }
+
+    // Detect task intent from description
+    // Note: Don't use \b for Cyrillic, as word boundaries don't work with non-ASCII
+    const isCreation = /(создать|создай|разработать|разработай|реализовать|реализуй|построить|построй|сделать|сделай|\badd\b|\bcreate\b|\bimplement\b|\bbuild\b|\bdevelop\b)/.test(taskDescription)
+    const isFix = /(исправить|исправь|починить|почини|\bfix\b|\brepair\b|\bdebug\b|\bresolve\b)/.test(taskDescription)
+    const isRefactor = /(рефакторинг|\brefactor\b|\bcleanup\b|\bimprove\b|\boptimize code\b)/.test(taskDescription)
+    const isTest = /(тест|\btest\b|\btesting\b|\bqa\b|\bquality\b)/.test(taskDescription)
+
+    if (this.verbose) {
+      console.log(`      Intent: creation=${isCreation}, fix=${isFix}, refactor=${isRefactor}, test=${isTest}`)
+    }
+
+    // Bug fix workflow (high priority for fix tasks)
+    if (isFix && (level === 'trivial' || level === 'simple')) {
       const bugFixWorkflow = this.findWorkflowByKeyword('bug')
       if (bugFixWorkflow) return bugFixWorkflow.id
     }
 
-    // Feature development workflow
-    if (level === 'simple' || level === 'medium') {
-      const featureWorkflow = this.findWorkflowByKeyword('feature')
-      if (featureWorkflow) return featureWorkflow.id
-    }
-
-    // Complex workflows
-    if (level === 'complex' || level === 'enterprise') {
-      // Architecture design for high complexity
-      if (factors.filesAffected > 10) {
+    // Feature creation/development workflow
+    if (isCreation) {
+      if (this.verbose) {
+        console.log('      → Detected CREATION task')
+      }
+      // For complex creation tasks, prefer architecture design first
+      if (level === 'complex' || level === 'enterprise') {
         const archWorkflow = this.findWorkflowByKeyword('architecture')
+        if (this.verbose) {
+          console.log(`      → Searching for architecture workflow: ${archWorkflow ? 'FOUND (' + archWorkflow.id + ')' : 'NOT FOUND'}`)
+        }
         if (archWorkflow) return archWorkflow.id
       }
 
+      // Otherwise use feature implementation
+      const featureWorkflow = this.findWorkflowByKeyword('feature')
+      if (this.verbose) {
+        console.log(`      → Searching for feature workflow: ${featureWorkflow ? 'FOUND (' + featureWorkflow.id + ')' : 'NOT FOUND'}`)
+      }
+      if (featureWorkflow) return featureWorkflow.id
+    }
+
+    // Refactoring workflow
+    if (isRefactor) {
+      const refactorWorkflow = this.findWorkflowByKeyword('refactor')
+      if (refactorWorkflow) return refactorWorkflow.id
+    }
+
+    // Testing workflow
+    if (isTest) {
+      const testWorkflow = this.findWorkflowByKeyword('test')
+      if (testWorkflow) return testWorkflow.id
+    }
+
+    // Complex workflows - specific concerns
+    if (level === 'complex' || level === 'enterprise') {
       // Security audit
       if (factors.securityImpact) {
         const securityWorkflow = this.findWorkflowByKeyword('security')
@@ -593,41 +658,76 @@ Be objective and realistic in your assessment. Consider both the immediate task 
         const dbWorkflow = this.findWorkflowByKeyword('database')
         if (dbWorkflow) return dbWorkflow.id
       }
+
+      // High file count -> architecture design
+      if (factors.filesAffected > 10) {
+        const archWorkflow = this.findWorkflowByKeyword('architecture')
+        if (archWorkflow) return archWorkflow.id
+      }
     }
 
     // Fallback to default
-    return this.getDefaultWorkflowForLevel(level)
+    if (this.verbose) {
+      console.log('      → No specific workflow matched, using default for level')
+    }
+    const defaultWorkflow = this.getDefaultWorkflowForLevel(level)
+    if (this.verbose) {
+      console.log(`      → Default workflow: ${defaultWorkflow}`)
+    }
+    return defaultWorkflow
   }
 
   /**
    * Find workflow by keyword in name or description
+   * Prioritizes ID matches, then name matches, then description matches
    */
   private findWorkflowByKeyword(keyword: string): Workflow | undefined {
-    for (const workflow of this.workflows.values()) {
-      const nameMatch = workflow.name.toLowerCase().includes(keyword)
-      const descMatch = workflow.description.toLowerCase().includes(keyword)
-      if (nameMatch || descMatch) {
-        return workflow
-      }
-    }
-    return undefined
+    const workflows = Array.from(this.workflows.values())
+
+    // First try to find exact ID match (e.g., "architecture" -> "architecture_design")
+    const idMatch = workflows.find(w => w.id.toLowerCase().includes(keyword))
+    if (idMatch) return idMatch
+
+    // Then try name match
+    const nameMatch = workflows.find(w => w.name.toLowerCase().includes(keyword))
+    if (nameMatch) return nameMatch
+
+    // Finally try description match
+    const descMatch = workflows.find(w => w.description.toLowerCase().includes(keyword))
+    return descMatch
   }
 
   /**
    * Get default workflow ID for complexity level
    */
   private getDefaultWorkflowForLevel(level: ComplexityLevel): string {
+    // Level-based keyword fallback: try to find registered workflow matching the level
+    const levelKeywords: Record<string, string[]> = {
+      'trivial': ['bug', 'fix', 'quick'],
+      'simple': ['bug', 'fix', 'quick'],
+      'medium': ['feature', 'development'],
+      'complex': ['feature', 'development'],
+      'enterprise': ['architecture', 'design']
+    }
+
+    const keywords = levelKeywords[level] || ['feature']
+    for (const keyword of keywords) {
+      const match = this.findWorkflowByKeyword(keyword)
+      if (match) return match.id
+    }
+
+    // Hardcoded fallback when no workflows are registered
     switch (level) {
       case 'trivial':
       case 'simple':
-        return '1-quick-flow'
+        return 'bug_fix_workflow'
       case 'medium':
-        return '2-feature-development'
       case 'complex':
+        return 'feature_implementation_full'
       case 'enterprise':
-        return '3-quality-assurance'
+        return 'architecture_design'
       default:
-        return '2-feature-development'
+        return 'feature_implementation_full'
     }
   }
 }

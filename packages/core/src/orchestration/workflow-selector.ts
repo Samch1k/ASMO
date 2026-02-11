@@ -101,6 +101,7 @@ export class WorkflowSelector {
   private config: Required<Omit<WorkflowSelectorConfig, 'complexityConfig' | 'claudeCodeAdapter' | 'skillMatcher' | 'phaseDetectorConfig'>>
   private complexityAnalyzer: ComplexityAnalyzer
   private workflows: Map<string, Workflow> = new Map()
+  private verbose: boolean
 
   // Hybrid analysis components (optional)
   private claudeCodeAdapter?: ClaudeCodeAdapter
@@ -109,14 +110,15 @@ export class WorkflowSelector {
   // Phase detection component (optional)
   private phaseDetector?: PhaseDetector
 
-  constructor(config?: WorkflowSelectorConfig) {
+  constructor(config?: WorkflowSelectorConfig, verbose?: boolean) {
     this.config = {
       ...DEFAULT_CONFIG,
       ...config,
       enableHybridAnalysis: config?.enableHybridAnalysis ?? false,
       enablePhaseDetection: config?.enablePhaseDetection ?? false
     }
-    this.complexityAnalyzer = new ComplexityAnalyzer(config?.complexityConfig)
+    this.verbose = verbose ?? false
+    this.complexityAnalyzer = new ComplexityAnalyzer(config?.complexityConfig, this.verbose)
 
     // Store hybrid analysis components if provided
     if (config?.claudeCodeAdapter) {
@@ -130,9 +132,12 @@ export class WorkflowSelector {
     if (this.config.enablePhaseDetection && this.claudeCodeAdapter) {
       this.phaseDetector = new PhaseDetector(
         this.claudeCodeAdapter,
-        config?.phaseDetectorConfig
+        config?.phaseDetectorConfig,
+        this.verbose
       )
-      console.log('📍 PhaseDetector initialized for adaptive workflow joining')
+      if (this.verbose) {
+        console.log('📍 [PhaseDetector] Initialized for adaptive workflow joining')
+      }
     }
   }
 
@@ -160,11 +165,18 @@ export class WorkflowSelector {
     context?: ProjectContext,
     userPreference?: string
   ): Promise<WorkflowSelection> {
+    if (this.verbose) {
+      console.log('🎯 [WorkflowSelector] Selecting workflow...')
+    }
+
     // Analyze task complexity
     const complexity = await this.complexityAnalyzer.analyzeTask(taskDescription, context)
 
     // If user specified a workflow, use it (with validation)
     if (userPreference) {
+      if (this.verbose) {
+        console.log(`   Using user preference: ${userPreference}`)
+      }
       return this.selectUserPreference(userPreference, complexity)
     }
 
@@ -176,6 +188,10 @@ export class WorkflowSelector {
 
     // Calculate confidence in recommendation
     const confidence = this.calculateConfidence(complexity, workflow)
+
+    if (this.verbose) {
+      console.log(`   Selected: ${workflow.id} (confidence: ${(confidence * 100).toFixed(1)}%)`)
+    }
 
     // Get alternative workflows
     const alternatives = this.findAlternatives(complexity, workflow)
@@ -209,7 +225,9 @@ export class WorkflowSelector {
     context?: ProjectContext,
     userPreference?: string
   ): Promise<WorkflowSelectionWithPhase> {
-    console.log('\n🎯 WorkflowSelector: Selecting workflow with phase detection...')
+    if (this.verbose) {
+      console.log('\n🎯 [WorkflowSelector] Selecting workflow with phase detection...')
+    }
 
     // 1. Standard workflow selection (hybrid or normal based on config)
     const selection = this.config.enableHybridAnalysis
@@ -217,8 +235,14 @@ export class WorkflowSelector {
       : await this.selectWorkflow(taskDescription, context, userPreference)
 
     // 2. Phase detection (if enabled and available)
-    if (!this.phaseDetector) {
-      console.log('   Phase detection disabled or unavailable')
+    // Skip phase detection in heuristics mode (no LLM available)
+    if (!this.phaseDetector || context?.llmMode === 'heuristics') {
+      const reason = !this.phaseDetector
+        ? 'Phase detection disabled or unavailable'
+        : 'Phase detection skipped (heuristics mode - no LLM)'
+      if (this.verbose) {
+        console.log(`   ${reason}`)
+      }
       // Return selection with first phase as default
       const firstPhase = selection.workflow.steps[0]?.phase || 'unknown'
       return {
