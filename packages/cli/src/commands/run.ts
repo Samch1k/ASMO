@@ -85,7 +85,7 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
     await engine.initialize()
 
     // Initialize CLI User Input Handler (for interactive agent questions)
-    userInputHandler = getCLIUserInputHandler()
+    userInputHandler = getCLIUserInputHandler({ verbose: options.verbose })
     userInputHandler.initialize()
 
     // If --workflow specified, execute directly (bypass adaptive selection)

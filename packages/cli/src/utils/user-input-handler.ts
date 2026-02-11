@@ -16,6 +16,10 @@ import {
   createAnswerSet
 } from '@asmo/core'
 
+export interface CLIUserInputHandlerOptions {
+  verbose?: boolean
+}
+
 /**
  * CLI User Input Handler
  *
@@ -25,6 +29,11 @@ import {
 export class CLIUserInputHandler {
   private isListening = false
   private activeRequestId: string | null = null
+  private verbose: boolean
+
+  constructor(options: CLIUserInputHandlerOptions = {}) {
+    this.verbose = options.verbose ?? false
+  }
 
   /**
    * Initialize handler and start listening for input requests
@@ -59,6 +68,11 @@ export class CLIUserInputHandler {
     })
 
     this.isListening = true
+
+    const listenerCount = manager.listenerCount('inputRequested')
+    if (this.verbose) {
+      console.log(`[UserInput] Handler initialized, ${listenerCount} listener(s) registered`)
+    }
   }
 
   /**
@@ -78,7 +92,21 @@ export class CLIUserInputHandler {
   private async handleInputRequest(request: UserInputRequest): Promise<void> {
     this.activeRequestId = request.id
 
+    if (this.verbose) {
+      console.log(`[UserInput] Event received: ${request.id}`)
+    }
+
     try {
+      // Check if stdin is a TTY (interactive terminal)
+      if (!process.stdin.isTTY) {
+        console.warn('[UserInput] WARNING: stdin is not a TTY, cannot prompt interactively')
+        console.log('[UserInput] Cancelling request, agent will use defaults')
+
+        const manager = getUserInputManager()
+        manager.cancelRequest(request.id)
+        return
+      }
+
       // Display header
       this.displayHeader(request)
 
@@ -93,6 +121,10 @@ export class CLIUserInputHandler {
       // Add individual questions
       if (request.questions) {
         allQuestions.push(...request.questions)
+      }
+
+      if (this.verbose) {
+        console.log(`[UserInput] Displaying ${allQuestions.length} questions from ${request.groups.length} groups`)
       }
 
       // Convert to inquirer prompts
@@ -111,10 +143,24 @@ export class CLIUserInputHandler {
       // Display confirmation
       this.displayConfirmation(answerSet)
     } catch (error) {
-      // User cancelled (Ctrl+C) or other error
-      console.log(chalk.yellow('\n⚠️  Input cancelled by user'))
-
       const manager = getUserInputManager()
+
+      // Distinguish user cancellation (Ctrl+C / ExitPromptError) from real errors
+      const isUserCancel = error instanceof Error && (
+        error.message.includes('User force closed') ||
+        error.constructor.name === 'ExitPromptError'
+      )
+
+      if (isUserCancel) {
+        console.log(chalk.yellow('\n⚠️  Input cancelled by user'))
+      } else {
+        const errMsg = error instanceof Error ? error.message : String(error)
+        console.error(chalk.red(`\n❌ User input error: ${errMsg}`))
+        if (this.verbose && error instanceof Error && error.stack) {
+          console.error(chalk.gray(error.stack))
+        }
+      }
+
       manager.cancelRequest(request.id)
     } finally {
       this.activeRequestId = null
@@ -136,6 +182,14 @@ export class CLIUserInputHandler {
     if (request.timeout) {
       const timeoutSec = Math.round(request.timeout / 1000)
       console.log(chalk.yellow(`⏱️  Timeout: ${timeoutSec}s`))
+      console.log('')
+    }
+
+    if (this.verbose) {
+      const totalQuestions = request.groups.reduce((sum, g) => sum + g.questions.length, 0)
+        + (request.questions?.length || 0)
+      console.log(chalk.gray(`  [debug] Request ID: ${request.id}`))
+      console.log(chalk.gray(`  [debug] Groups: ${request.groups.length}, Questions: ${totalQuestions}`))
       console.log('')
     }
   }
@@ -334,9 +388,9 @@ let handlerInstance: CLIUserInputHandler | null = null
 /**
  * Get CLI user input handler instance
  */
-export function getCLIUserInputHandler(): CLIUserInputHandler {
+export function getCLIUserInputHandler(options?: CLIUserInputHandlerOptions): CLIUserInputHandler {
   if (!handlerInstance) {
-    handlerInstance = new CLIUserInputHandler()
+    handlerInstance = new CLIUserInputHandler(options)
   }
   return handlerInstance
 }

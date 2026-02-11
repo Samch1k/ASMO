@@ -86,7 +86,7 @@
         "project_scope"
       ],
       "exit_criteria": "User preferences collected or intelligent defaults applied",
-      "timeout": "15m",
+      "timeout": "60m",
       "phase_join_criteria": {
         "required_artifacts": [],
         "prerequisites": ["task defined"],

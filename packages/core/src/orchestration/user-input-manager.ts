@@ -127,6 +127,15 @@ export class UserInputManager extends EventEmitter {
       }
     })
 
+    // Verify listeners exist before emitting
+    const listenerCount = this.listenerCount('inputRequested')
+    if (listenerCount === 0) {
+      console.warn('[UserInputManager] WARNING: No listeners for inputRequested! CLI handler may not be initialized.')
+    }
+
+    const totalQuestions = groups.reduce((sum, g) => sum + g.questions.length, 0) + questions.length
+    console.log(`[UserInputManager] Input requested: ${requestId}, ${groups.length} groups, ${totalQuestions} questions, ${listenerCount} listener(s)`)
+
     // Emit event for CLI/UI to handle (handlers can now call submitResponse)
     this.emit('inputRequested', request)
 
