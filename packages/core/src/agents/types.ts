@@ -1,4 +1,5 @@
 import type { Message } from "../llm"
+import type { UserInputSession } from "../orchestration/user-input-types"
 
 /**
  * Context object shared between agents
@@ -7,6 +8,8 @@ import type { Message } from "../llm"
 export interface AgentContext extends Record<string, any> {
   /** Agent instructions loaded from markdown files */
   instructions?: string
+  /** User input session for interactive flows */
+  userInputSession?: UserInputSession
 }
 
 /**

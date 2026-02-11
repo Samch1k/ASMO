@@ -8,6 +8,14 @@ import {
   type ModelTier
 } from "../llm"
 import { PersonalityPromptLoader } from "../orchestration/personality-prompt-loader"
+import { getUserInputManager } from "../orchestration/user-input-manager"
+import {
+  Question,
+  QuestionGroup,
+  UserInputResponse,
+  AnswerSet,
+  getAnswer
+} from "../orchestration/user-input-types"
 
 // Optional RunnableConfig for future LangChain integration
 type RunnableConfig = Record<string, any> | undefined
@@ -156,16 +164,136 @@ export abstract class BaseAgent {
     }
   }
 
+  // =========================================================================
+  // ARTIFACT ACCESS
+  // =========================================================================
+
+  /**
+   * Get all artifacts from previous agents (via state.artifacts or state.agentResults)
+   */
+  protected getArtifacts(state: AgentState): Artifact[] {
+    // Primary: consolidated artifacts array
+    if (state.artifacts && state.artifacts.length > 0) {
+      return state.artifacts
+    }
+
+    // Fallback: extract from agentResults
+    return state.agentResults.flatMap(r => r.artifacts || [])
+  }
+
+  /**
+   * Find artifacts by type from previous agents
+   */
+  protected getArtifactsByType(state: AgentState, type: Artifact['type']): Artifact[] {
+    return this.getArtifacts(state).filter(a => a.type === type)
+  }
+
+  /**
+   * Find artifacts created by a specific agent
+   */
+  protected getArtifactsByAgent(state: AgentState, agentId: string): Artifact[] {
+    return this.getArtifacts(state).filter(a => a.metadata?.createdBy === agentId)
+  }
+
+  // =========================================================================
+  // USER INPUT MECHANISM
+  // =========================================================================
+
+  /**
+   * Ask user for input with structured questions
+   *
+   * This pauses workflow execution and waits for user to provide answers.
+   * Use this when agent needs user input to proceed (e.g., clarifying requirements,
+   * choosing between options, confirming decisions).
+   *
+   * @param context - Context/reason for asking (what will answers be used for)
+   * @param groups - Question groups (organized questions)
+   * @param questions - Individual questions (if not grouped)
+   * @param timeout - Optional timeout in milliseconds
+   * @returns Promise that resolves with user's answers
+   *
+   * @example
+   * ```typescript
+   * const answers = await this.askUser(
+   *   'Need to clarify architecture decisions',
+   *   [
+   *     {
+   *       id: 'tech-stack',
+   *       title: 'Technology Stack',
+   *       questions: [
+   *         {
+   *           id: 'database',
+   *           type: 'single_choice',
+   *           text: 'Which database to use?',
+   *           options: [
+   *             { id: 'postgres', label: 'PostgreSQL', recommended: true },
+   *             { id: 'mysql', label: 'MySQL' },
+   *             { id: 'sqlite', label: 'SQLite' }
+   *           ]
+   *         }
+   *       ]
+   *     }
+   *   ]
+   * )
+   *
+   * const database = getAnswer(answers.answers, 'database')
+   * ```
+   */
+  protected async askUser(
+    context: string,
+    groups: QuestionGroup[] = [],
+    questions: Question[] = [],
+    timeout?: number
+  ): Promise<UserInputResponse> {
+    this.log(`⏸️  Requesting user input: ${context}`)
+
+    const manager = getUserInputManager()
+
+    try {
+      const response = await manager.requestInput(
+        this.agentId,
+        this.role?.name || this.agentId,
+        context,
+        groups,
+        questions,
+        timeout,
+        true // blocking - pauses workflow
+      )
+
+      if (response.cancelled) {
+        this.log('User cancelled input request', 'warn')
+        throw new Error('User cancelled input request')
+      }
+
+      this.log(`✅ Received ${response.answers.answers.length} answers from user`)
+      return response
+    } catch (error) {
+      this.log(`Failed to get user input: ${error}`, 'error')
+      throw error
+    }
+  }
+
+  /**
+   * Get answer from answer set by question ID
+   *
+   * @param answerSet - Answer set from askUser()
+   * @param questionId - Question ID to get answer for
+   * @returns Answer value or undefined if not found
+   */
+  protected getAnswer(answerSet: AnswerSet, questionId: string): any {
+    return getAnswer(answerSet, questionId)
+  }
+
   /**
    * Log agent activity
-   * 
+   *
    * @param message - Log message
    * @param level - Log level
    */
   protected log(message: string, level: 'info' | 'warn' | 'error' = 'info'): void {
     const timestamp = new Date().toISOString()
     const prefix = `[${timestamp}] [${this.agentId}]`
-    
+
     switch (level) {
       case 'error':
         console.error(`${prefix} ❌`, message)
