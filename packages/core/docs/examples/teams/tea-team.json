@@ -1,0 +1,35 @@
+{
+  "teams": [
+    {
+      "id": "tea-team",
+      "name": "Test Engineering & Automation Team",
+      "description": "Test automation, quality engineering, and test strategy",
+      "agents": [
+        {
+          "role_id": "test-architect",
+          "phase": "design",
+          "focus": "test strategy, risk analysis, and test design"
+        },
+        {
+          "role_id": "tester",
+          "phase": "implementation",
+          "parallel_with": ["developer"],
+          "focus": "test automation and execution"
+        },
+        {
+          "role_id": "developer",
+          "phase": "implementation",
+          "focus": "test infrastructure and tooling"
+        }
+      ],
+      "default_parallel": ["tester", "developer"],
+      "approval_required": false,
+      "estimated_duration": "2h",
+      "metadata": {
+        "complexity": "medium",
+        "team_type": "tea",
+        "test_automation": true
+      }
+    }
+  ]
+}

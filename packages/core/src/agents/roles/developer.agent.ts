@@ -45,17 +45,21 @@ export class DeveloperAgent extends BaseAgent {
     this.log('💻 Starting feature implementation...')
 
     try {
-      // STEP 1: Get architecture context
+      // STEP 1: Get architecture context and user preferences
       const architectureDecision = state.context.architectureDecision
+      const userAnswers = state.context.userAnswers
       if (!architectureDecision) {
         this.log('No architecture decision found, proceeding with task directly...', 'warn')
+      }
+      if (userAnswers) {
+        this.log('Using user tech stack preferences from architecture phase')
       }
 
       // STEP 2: Look up API documentation (optional)
       this.log('Looking up API documentation...')
       const apiDocs = await this.requestMCP('context7', {
         action: 'get-library-docs',
-        context7CompatibleLibraryID: this.selectLibraryForTask(state.task),
+        context7CompatibleLibraryID: this.selectLibraryForTask(state.task, userAnswers),
         topic: state.task,
         tokens: 4000
       })
@@ -149,8 +153,24 @@ export class DeveloperAgent extends BaseAgent {
 
   /**
    * Select appropriate library for Context7 lookup
+   * Uses user answers (if available) to pick the right library
    */
-  private selectLibraryForTask(task: string): string {
+  private selectLibraryForTask(task: string, userAnswers?: any): string {
+    // Use user's tech choices if available
+    if (userAnswers) {
+      const backend = this.getAnswerById(userAnswers, 'backend')
+      const frontend = this.getAnswerById(userAnswers, 'frontend')
+
+      if (backend === 'express') return '/expressjs/express'
+      if (backend === 'fastify') return '/fastify/fastify'
+      if (backend === 'nestjs') return '/nestjs/nest'
+      if (frontend === 'vue') return '/vuejs/core'
+      if (frontend === 'angular') return '/angular/angular'
+      if (frontend === 'svelte') return '/sveltejs/kit'
+      if (frontend === 'react') return '/facebook/react'
+    }
+
+    // Fallback: detect from task description
     const taskLower = task.toLowerCase()
 
     if (taskLower.includes('react') || taskLower.includes('component')) {
@@ -166,8 +186,62 @@ export class DeveloperAgent extends BaseAgent {
       return '/tailwindlabs/tailwindcss'
     }
 
-    // Default to React
     return '/facebook/react'
+  }
+
+  /**
+   * Extract answer value from AnswerSet by question ID
+   */
+  private getAnswerById(answerSet: any, questionId: string): any {
+    if (!answerSet?.answers) return undefined
+    const answer = answerSet.answers.find((a: any) => a.questionId === questionId)
+    return answer?.value
+  }
+
+  /**
+   * Build tech stack section for system prompt based on user answers
+   */
+  private buildTechStackSection(userAnswers?: any): string {
+    if (!userAnswers) {
+      return `- TypeScript (strict mode)
+- Modern web frameworks (React, Vue, Next.js, or similar)
+- Backend APIs (Node.js, Express, Fastify, or similar)
+- Database ORM/query builders
+- Modern build tools`
+    }
+
+    const frontend = this.getAnswerById(userAnswers, 'frontend') || 'react'
+    const backend = this.getAnswerById(userAnswers, 'backend') || 'express'
+    const database = this.getAnswerById(userAnswers, 'database') || 'postgres'
+    const typescript = this.getAnswerById(userAnswers, 'typescript') !== false
+
+    const lang = typescript ? 'TypeScript (strict mode)' : 'JavaScript (ES2022+)'
+    const lines = [`- ${lang}`]
+
+    const frontendMap: Record<string, string> = {
+      'react': 'React 19', 'vue': 'Vue.js 3', 'angular': 'Angular 18', 'svelte': 'SvelteKit'
+    }
+    if (frontend !== 'none') {
+      lines.push(`- Frontend: ${frontendMap[frontend] || frontend}`)
+    }
+
+    const backendMap: Record<string, string> = {
+      'express': 'Express.js', 'fastify': 'Fastify', 'nestjs': 'NestJS'
+    }
+    if (backend !== 'none') {
+      lines.push(`- Backend: ${backendMap[backend] || backend} (Node.js)`)
+    }
+
+    const dbMap: Record<string, string> = {
+      'postgres': 'PostgreSQL', 'sqlite': 'SQLite', 'mysql': 'MySQL',
+      'mongodb': 'MongoDB', 'json': 'JSON file storage'
+    }
+    if (database !== 'none') {
+      lines.push(`- Database: ${dbMap[database] || database}`)
+    }
+
+    lines.push('- Modern build tools (Vite, tsup)')
+    return lines.join('\n')
   }
 
   /**
@@ -180,14 +254,14 @@ export class DeveloperAgent extends BaseAgent {
       apiDocs?: any
     }
   ): Promise<string> {
+    // Build tech stack section from user answers or defaults
+    const userAnswers = state.context?.userAnswers
+    const techStackSection = this.buildTechStackSection(userAnswers)
+
     const systemPrompt = `You are an expert TypeScript Developer for your project.
 
 TECHNOLOGY STACK:
-- TypeScript (strict mode)
-- Modern web frameworks (React, Vue, Next.js, or similar)
-- Backend APIs (Node.js, Express, Fastify, or similar)
-- Database ORM/query builders
-- Modern build tools
+${techStackSection}
 
 ARCHITECTURE DECISION:
 ${context.architectureDecision || 'No architecture decision provided'}

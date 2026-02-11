@@ -1,0 +1,40 @@
+{
+  "teams": [
+    {
+      "id": "feature-team",
+      "name": "Feature Implementation Team",
+      "description": "Full-cycle feature development from architecture to testing",
+      "agents": [
+        {
+          "role_id": "architect",
+          "phase": "design",
+          "focus": "system architecture and API design"
+        },
+        {
+          "role_id": "developer",
+          "phase": "implementation",
+          "parallel_with": ["tester"],
+          "focus": "core implementation"
+        },
+        {
+          "role_id": "tester",
+          "phase": "implementation",
+          "focus": "unit and integration tests"
+        },
+        {
+          "role_id": "code-reviewer",
+          "phase": "validation",
+          "focus": "code quality and security review"
+        }
+      ],
+      "default_parallel": ["developer", "tester"],
+      "approval_required": true,
+      "estimated_duration": "3h",
+      "metadata": {
+        "complexity": "high",
+        "team_type": "feature",
+        "requires_architecture": true
+      }
+    }
+  ]
+}

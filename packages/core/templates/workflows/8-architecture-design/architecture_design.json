@@ -1,7 +1,7 @@
 {
   "id": "architecture_design",
-  "name": "Architecture Design",
-  "description": "Comprehensive system architecture design and documentation",
+  "name": "Architecture Design & Implementation",
+  "description": "Full lifecycle: Architecture design → Review → Implementation → Testing",
   "trigger_condition": {
     "keywords": [
       "architecture",
@@ -11,65 +11,79 @@
       "redesign",
       "microservices",
       "архитектура",
-      "проектирование"
+      "проектирование",
+      "создать сервис",
+      "create service",
+      "build service",
+      "новый сервис",
+      "new service"
     ],
     "task_types": [
       "architecture",
       "system_design",
-      "planning"
+      "planning",
+      "feature"
     ],
     "required_skills": [
       "system_design",
       "architecture_decisions",
-      "documentation"
+      "documentation",
+      "code_writing"
     ],
     "complexity_range": ["complex", "enterprise"]
+  },
+  "phases": {
+    "design": {
+      "description": "Requirements analysis, architecture design, and ADR creation",
+      "description_ru": "Анализ требований, проектирование архитектуры, создание ADR",
+      "order": 1,
+      "intent_keywords": ["design", "architect", "plan", "requirements", "спроектировать", "архитектура", "требования"]
+    },
+    "review": {
+      "description": "Architecture review and infrastructure planning",
+      "description_ru": "Ревью архитектуры и планирование инфраструктуры",
+      "order": 2,
+      "intent_keywords": ["review", "validate", "check", "проверить", "ревью"]
+    },
+    "implementation": {
+      "description": "Backend and frontend implementation based on architecture",
+      "description_ru": "Реализация бэкенда и фронтенда по архитектуре",
+      "order": 3,
+      "intent_keywords": ["implement", "code", "develop", "build", "реализовать", "написать код", "разработать"]
+    },
+    "testing": {
+      "description": "Integration and E2E testing",
+      "description_ru": "Интеграционное и E2E тестирование",
+      "order": 4,
+      "intent_keywords": ["test", "e2e", "integration", "qa", "тестировать", "проверить"]
+    }
   },
   "steps": [
     {
       "order": 1,
       "role_id": "architect",
-      "phase": "requirements_analysis",
-      "description": "Analyze requirements and constraints for architecture",
+      "phase": "design",
+      "description": "Analyze requirements, design architecture, and create ADR with user input",
       "deliverables": [
         "requirements_document",
-        "constraints_analysis",
-        "quality_attributes"
-      ],
-      "exit_criteria": "Requirements and constraints clearly documented",
-      "timeout": "45m"
-    },
-    {
-      "order": 2,
-      "role_id": "architect",
-      "phase": "high_level_design",
-      "description": "Design high-level system architecture and components",
-      "deliverables": [
         "system_architecture_diagram",
         "component_diagram",
         "technology_stack",
-        "architectural_patterns"
-      ],
-      "exit_criteria": "High-level architecture designed and documented",
-      "timeout": "90m"
-    },
-    {
-      "order": 3,
-      "role_id": "architect",
-      "phase": "detailed_design",
-      "description": "Create detailed architecture specifications",
-      "deliverables": [
         "api_contracts",
         "data_models",
-        "sequence_diagrams",
-        "deployment_architecture",
         "adr_documents"
       ],
-      "exit_criteria": "Detailed specifications complete with ADRs",
-      "timeout": "120m"
+      "exit_criteria": "Architecture designed and documented with ADR",
+      "timeout": "60m",
+      "phase_join_criteria": {
+        "required_artifacts": [],
+        "prerequisites": ["task defined"],
+        "context_indicators": ["new project", "new service", "architecture needed"],
+        "skip_if": ["architecture exists", "ADR exists"]
+      }
     },
     {
-      "order": 4,
+      "order": 2,
       "role_id": "code-reviewer",
       "phase": "review",
       "description": "Review architecture for quality, scalability, and maintainability",
@@ -78,24 +92,79 @@
         "risk_assessment",
         "improvement_recommendations"
       ],
-      "exit_criteria": "Architecture reviewed and approved with documented decisions",
-      "timeout": "60m"
+      "exit_criteria": "Architecture reviewed and approved",
+      "timeout": "30m",
+      "phase_join_criteria": {
+        "required_artifacts": ["adr_documents"],
+        "prerequisites": ["architecture designed"],
+        "context_indicators": ["review", "validate"],
+        "skip_if": ["architecture approved"]
+      }
     },
     {
-      "order": 5,
-      "role_id": "devops",
-      "phase": "infrastructure_planning",
-      "description": "Plan infrastructure and deployment strategy",
+      "order": 3,
+      "role_id": "developer",
+      "phase": "implementation",
+      "description": "Implement backend logic, APIs, database schema, and unit tests based on architecture",
+      "parallel_with": ["ui-developer"],
       "deliverables": [
-        "infrastructure_plan",
-        "deployment_strategy",
-        "monitoring_plan",
-        "disaster_recovery_plan"
+        "backend_code",
+        "api_endpoints",
+        "database_schema",
+        "unit_tests"
       ],
-      "exit_criteria": "Infrastructure and deployment plans complete",
-      "timeout": "45m"
+      "exit_criteria": "Backend implemented with passing unit tests",
+      "timeout": "60m",
+      "phase_join_criteria": {
+        "required_artifacts": ["adr_documents", "api_contracts", "data_models"],
+        "prerequisites": ["architecture approved"],
+        "context_indicators": ["implement", "code", "build"],
+        "skip_if": ["implementation exists"]
+      }
+    },
+    {
+      "order": 3,
+      "role_id": "ui-developer",
+      "phase": "implementation",
+      "description": "Implement frontend UI components based on architecture specifications",
+      "parallel_with": ["developer"],
+      "deliverables": [
+        "frontend_code",
+        "ui_components",
+        "frontend_tests"
+      ],
+      "exit_criteria": "Frontend implemented and responsive",
+      "timeout": "60m",
+      "phase_join_criteria": {
+        "required_artifacts": ["component_diagram", "technology_stack"],
+        "prerequisites": ["architecture approved"],
+        "context_indicators": ["UI", "frontend", "components"],
+        "skip_if": ["frontend exists", "backend only"]
+      }
+    },
+    {
+      "order": 4,
+      "role_id": "tester",
+      "phase": "testing",
+      "description": "Create and run integration and E2E tests",
+      "deliverables": [
+        "integration_tests",
+        "e2e_tests",
+        "test_results"
+      ],
+      "exit_criteria": "All tests pass with adequate coverage",
+      "timeout": "30m",
+      "phase_join_criteria": {
+        "required_artifacts": ["backend_code", "frontend_code"],
+        "prerequisites": ["implementation complete"],
+        "context_indicators": ["test", "e2e", "integration"],
+        "skip_if": ["tests exist and pass"]
+      }
     }
   ],
-  "estimated_time": "6h",
-  "success_criteria": "Complete architecture documentation, ADRs, approved design, infrastructure plan"
+  "estimated_time": "4h",
+  "success_criteria": "Architecture designed, approved, implemented, and tested with passing test suite",
+  "metadata": {
+    "adaptive_phase_detection": true
+  }
 }

@@ -32,10 +32,20 @@ export class TesterAgent extends BaseAgent {
     this.log('🧪 Starting test creation and quality assurance...')
 
     try {
-      // STEP 1: Get implementation context
+      // STEP 1: Get implementation context from artifacts and state
       const implementation = state.context.implementation || state.task
-      // codeArtifact is available in state.context for future use in test generation
-      void state.context.codeArtifact
+
+      // Get artifacts from previous agents for richer context
+      const codeArtifacts = this.getArtifactsByType(state, 'code')
+      const adrArtifacts = this.getArtifactsByType(state, 'adr')
+      const unitTestArtifacts = this.getArtifactsByType(state, 'test')
+
+      if (codeArtifacts.length > 0) {
+        this.log(`📦 Found ${codeArtifacts.length} code artifact(s) from previous agents`)
+      }
+      if (adrArtifacts.length > 0) {
+        this.log(`📋 Found ${adrArtifacts.length} ADR artifact(s) for test context`)
+      }
 
       this.log('📖 Analyzing implementation for test scenarios...')
 
@@ -60,7 +70,10 @@ export class TesterAgent extends BaseAgent {
       const testPlan = await this.generateTestPlan(state, {
         implementation,
         existingTests,
-        testingPatterns
+        testingPatterns,
+        codeArtifacts,
+        adrArtifacts,
+        unitTestArtifacts
       })
 
       // STEP 5: Generate Playwright test code
@@ -157,17 +170,24 @@ export class TesterAgent extends BaseAgent {
       implementation: any
       existingTests: any
       testingPatterns: any
+      codeArtifacts?: any[]
+      adrArtifacts?: any[]
+      unitTestArtifacts?: any[]
     }
   ): Promise<{
     scenarios: Array<{ name: string; description: string; steps: string[] }>
     edgeCases: string[]
     estimatedCoverage: number
   }> {
+    // Build artifact context for richer test generation
+    const artifactContext = this.buildArtifactContext(context)
+
     const systemPrompt = `You are a QA Engineer for your project.
 
 IMPLEMENTATION:
 ${JSON.stringify(context.implementation, null, 2)}
 
+${artifactContext}
 EXISTING TESTS:
 ${JSON.stringify(context.existingTests, null, 2)}
 
@@ -288,6 +308,45 @@ Include file path as comment at the top.`
     })
 
     return response.content
+  }
+
+  /**
+   * Build artifact context section for LLM prompt
+   * Extracts useful metadata from artifacts created by previous agents
+   */
+  private buildArtifactContext(context: {
+    codeArtifacts?: any[]
+    adrArtifacts?: any[]
+    unitTestArtifacts?: any[]
+  }): string {
+    const sections: string[] = []
+
+    if (context.adrArtifacts && context.adrArtifacts.length > 0) {
+      sections.push('ARCHITECTURE DECISION (from Architect):')
+      for (const adr of context.adrArtifacts) {
+        sections.push(adr.content?.substring(0, 2000) || '')
+      }
+      sections.push('')
+    }
+
+    if (context.codeArtifacts && context.codeArtifacts.length > 0) {
+      sections.push('CODE ARTIFACTS:')
+      for (const code of context.codeArtifacts) {
+        const lang = code.metadata?.language || 'unknown'
+        const createdBy = code.metadata?.createdBy || 'unknown'
+        sections.push(`- [${lang}] by ${createdBy}`)
+      }
+      sections.push('')
+    }
+
+    if (context.unitTestArtifacts && context.unitTestArtifacts.length > 0) {
+      const framework = context.unitTestArtifacts[0]?.metadata?.testFramework || 'unknown'
+      sections.push(`EXISTING UNIT TESTS (framework: ${framework}):`)
+      sections.push(`- ${context.unitTestArtifacts.length} test artifact(s) from developer`)
+      sections.push('')
+    }
+
+    return sections.length > 0 ? sections.join('\n') + '\n' : ''
   }
 
   /**

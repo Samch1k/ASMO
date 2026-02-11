@@ -1,0 +1,33 @@
+{
+  "teams": [
+    {
+      "id": "bugfix-team",
+      "name": "Bug Fix Team",
+      "description": "Quick bug investigation and fixes",
+      "agents": [
+        {
+          "role_id": "debugger",
+          "phase": "design",
+          "focus": "root cause analysis and debugging"
+        },
+        {
+          "role_id": "developer",
+          "phase": "implementation",
+          "focus": "implement fix with tests"
+        },
+        {
+          "role_id": "tester",
+          "phase": "validation",
+          "focus": "regression testing"
+        }
+      ],
+      "approval_required": false,
+      "estimated_duration": "1h",
+      "metadata": {
+        "complexity": "medium",
+        "team_type": "bugfix",
+        "quick_turnaround": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "teams": [
+    {
+      "id": "security-team",
+      "name": "Security Audit Team",
+      "description": "Security review and vulnerability remediation",
+      "agents": [
+        {
+          "role_id": "security-specialist",
+          "phase": "design",
+          "focus": "threat modeling and security analysis"
+        },
+        {
+          "role_id": "developer",
+          "phase": "implementation",
+          "focus": "security fixes and hardening"
+        },
+        {
+          "role_id": "tester",
+          "phase": "validation",
+          "focus": "security testing and penetration testing"
+        },
+        {
+          "role_id": "code-reviewer",
+          "phase": "validation",
+          "focus": "security code review"
+        }
+      ],
+      "approval_required": true,
+      "estimated_duration": "4h",
+      "metadata": {
+        "complexity": "high",
+        "team_type": "security",
+        "critical": true,
+        "requires_audit_trail": true
+      }
+    }
+  ]
+}

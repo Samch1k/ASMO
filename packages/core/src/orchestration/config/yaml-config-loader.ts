@@ -155,10 +155,11 @@ export class YamlConfigLoader {
    */
   private findConfigDir(): string {
     const possiblePaths = [
-      path.join(process.cwd(), 'packages/core/src/orchestration/config'),  // Monorepo dev
-      path.join(__dirname),                                                  // Bundled (might work if copied)
-      path.join(__dirname, '../orchestration/config'),                       // Relative from dist
-      path.join(__dirname, '../../src/orchestration/config'),                // Dist back to src
+      path.join(__dirname, '../src/orchestration/config'),                   // From dist to src (bundled)
+      path.join(__dirname, '../../src/orchestration/config'),                // From nested dist
+      path.join(__dirname),                                                  // Current dir (if copied)
+      path.resolve(process.cwd(), 'packages/core/src/orchestration/config'), // Monorepo root
+      path.resolve(process.cwd(), 'src/orchestration/config'),               // From packages/core
     ]
 
     for (const dir of possiblePaths) {

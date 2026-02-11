@@ -174,6 +174,7 @@ export class ConfigLoader {
     const roleFiles = [
       'core-roles.json',
       'specialized-roles.json',
+      'validation-roles.json',
       'project-roles.json'
     ]
 

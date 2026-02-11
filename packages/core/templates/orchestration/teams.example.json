@@ -1,0 +1,34 @@
+{
+  "teams": [
+    {
+      "id": "example-team",
+      "name": "Example Team",
+      "description": "Template team - copy and customize for your needs",
+      "agents": [
+        {
+          "role_id": "architect",
+          "phase": "design",
+          "focus": "Optional focus description"
+        },
+        {
+          "role_id": "developer",
+          "phase": "implementation",
+          "parallel_with": [],
+          "focus": "Optional focus description"
+        },
+        {
+          "role_id": "tester",
+          "phase": "validation",
+          "focus": "Optional focus description"
+        }
+      ],
+      "default_parallel": [],
+      "approval_required": false,
+      "estimated_duration": "1h",
+      "metadata": {
+        "complexity": "medium",
+        "team_type": "example"
+      }
+    }
+  ]
+}
