@@ -1,0 +1,102 @@
+.my-bookings {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.my-bookings h2 {
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+}
+
+.bookings-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.booking-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s;
+}
+
+.booking-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.booking-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.desk-badge {
+  background: #3498db;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.booking-location {
+  color: #666;
+}
+
+.booking-time {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.time-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.time-item .label {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.time-item .value {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.booking-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.booked-at {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 8px;
+}
+
+.empty-state h2 {
+  margin-bottom: 1rem;
+  color: #666;
+}
+
+.empty-state p {
+  color: #999;
+  font-size: 1.1rem;
+}

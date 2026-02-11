@@ -5,6 +5,33 @@ All notable changes to @asmo/core will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added - Teams & Execution Modes
+
+#### Phase 2: Teams Configuration
+- **Team Configuration System**: Define reusable agent teams in `teams.json`
+- **TeamManager API**: `createWorkflowFromTeam()` for team-based workflow creation
+- **Team Properties**: Support for parallel execution, approval requirements, and metadata
+- **Configuration Fallback**: Teams loaded from `.cursor/config`, `~/.asmo/config`, or bundled templates
+- **Example Configurations**: 4 ready-to-use team templates (feature, bugfix, security, TEA)
+
+#### Phase 3: Execution Modes
+- **Sequential Mode**: Default execution for simple tasks (complexity < 60)
+- **Party Mode**: Parallel collaboration with consensus building for complex tasks (complexity ≥ 60)
+- **Brainstorming Mode**: Structured 4-round process with ADR generation for design tasks
+- **Automatic Mode Selection**: `SkillMatcher.detectSessionType()` chooses optimal mode
+- **Convergence Mechanism**: Track agreement between agents in party mode
+- **Teams Integration**: Teams work seamlessly with execution modes
+
+### Documentation
+- [Teams Configuration Guide](./docs/teams-configuration.md) — Complete Teams API reference
+- [Execution Modes Guide](./docs/execution-modes.md) — Sequential, party, brainstorming modes
+- [Example Teams](./docs/examples/teams/) — 4 team configuration examples
+- [Template File](./templates/orchestration/teams.example.json) — Team configuration template
+- Updated main README.md with Teams & Execution Modes sections
+- Updated packages/core/README.md with team-based workflow examples
+
 ## [1.0.0] - 2025-02-02
 
 ### Added - Library-First Architecture

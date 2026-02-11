@@ -1,0 +1,140 @@
+.desk-map {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.floor-selector {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.floor-selector label {
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+
+.floor-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.floor-btn:hover {
+  background: #f5f7fa;
+}
+
+.floor-btn.active {
+  background: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.legend {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.dot.available {
+  background: #27ae60;
+}
+
+.dot.booked {
+  background: #e74c3c;
+}
+
+.dot.unavailable {
+  background: #95a5a6;
+}
+
+.desk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.desk {
+  aspect-ratio: 1;
+  background: white;
+  border: 2px solid #27ae60;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.desk:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.desk.booked {
+  border-color: #e74c3c;
+  background: #fee;
+  cursor: not-allowed;
+}
+
+.desk.booked:hover {
+  transform: none;
+}
+
+.desk.unavailable,
+.desk.maintenance {
+  border-color: #95a5a6;
+  background: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.desk.unavailable:hover,
+.desk.maintenance:hover {
+  transform: none;
+}
+
+.desk-number {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.desk-zone {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #666;
+}
