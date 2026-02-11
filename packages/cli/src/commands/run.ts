@@ -19,6 +19,7 @@ import {
   AgentRegistry,
   getConfigLoader
 } from '@asmo/core'
+import { getCLIUserInputHandler } from '../utils/user-input-handler'
 
 function promptUser(question: string, timeoutMs: number): Promise<string> {
   return new Promise((resolve) => {
@@ -42,6 +43,26 @@ interface RunOptions {
 }
 
 export async function runCommand(task: string, options: RunOptions): Promise<void> {
+  // Setup cleanup handlers for graceful shutdown
+  let userInputHandler: ReturnType<typeof getCLIUserInputHandler> | null = null
+
+  const cleanup = () => {
+    if (userInputHandler) {
+      userInputHandler.shutdown()
+    }
+  }
+
+  process.on('SIGINT', () => {
+    console.log('\n\n⚠️  Interrupted by user')
+    cleanup()
+    process.exit(130) // Standard exit code for SIGINT
+  })
+
+  process.on('SIGTERM', () => {
+    cleanup()
+    process.exit(143) // Standard exit code for SIGTERM
+  })
+
   try {
     // Step 1: Initialize WorkflowEngine (loads workflows with fallback)
     console.log('\n⚙️  Initializing ASMO...')
@@ -57,10 +78,15 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
     const engine = options.phaseDetection === false
       ? new WorkflowEngine({
           agentRegistry,
-          workflowSelector: new WorkflowSelector({ enablePhaseDetection: false })
+          verbose: options.verbose,
+          workflowSelector: new WorkflowSelector({ enablePhaseDetection: false }, options.verbose)
         })
-      : new WorkflowEngine(agentRegistry)
+      : new WorkflowEngine({ agentRegistry, verbose: options.verbose })
     await engine.initialize()
+
+    // Initialize CLI User Input Handler (for interactive agent questions)
+    userInputHandler = getCLIUserInputHandler()
+    userInputHandler.initialize()
 
     // If --workflow specified, execute directly (bypass adaptive selection)
     if (options.workflow) {
@@ -151,11 +177,18 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
       console.log('   Result: success')
     }
 
+    // Cleanup
+    cleanup()
+
   } catch (error) {
     console.error('\n❌ Execution failed:', error)
     if (error instanceof Error) {
       console.error('   Error:', error.message)
     }
+
+    // Cleanup on error
+    cleanup()
+
     process.exit(1)
   }
 }

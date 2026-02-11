@@ -179,7 +179,7 @@ IMPORTANT: Respond with valid JSON only. No markdown, no code blocks, no explana
       const child = spawn('claude', args, {
         cwd: this.config.workingDirectory,
         env: { ...process.env },
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['ignore', 'pipe', 'pipe']  // ignore stdin - claude -p doesn't need input
       })
 
       let stdout = ''

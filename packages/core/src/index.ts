@@ -82,6 +82,14 @@ export { JsonTaskPersister, getJsonTaskPersister } from './orchestration/json-ta
 
 // BMAD Phase 4: Multi-Agent Collaboration
 export { PartySession } from './orchestration/party-session'
+export {
+  PartyModeManager,
+  getPartyModeManager,
+  resetPartyModeManager,
+  type PartyModeConfig,
+  type PartyModeResult,
+  type PartyAgent
+} from './orchestration/party-mode-manager'
 
 // BMAD Phase 5: Help & Documentation
 export { HelpSystem } from './orchestration/help-system'
@@ -90,6 +98,33 @@ export { DocumentationManager } from './orchestration/documentation-manager'
 // BMAD Integration: Core Concepts
 export { AdversarialReviewSession } from './orchestration/adversarial-review'
 export { ContextCascade } from './orchestration/context-cascade'
+
+// User Input System (Priority 1.1 - User Input Mechanism)
+export {
+  getUserInputManager,
+  resetUserInputManager,
+  createAnswerSet,
+  UserInputManager
+} from './orchestration/user-input-manager'
+export type {
+  Question,
+  QuestionOption,
+  QuestionType,
+  QuestionGroup,
+  Answer,
+  AnswerSet,
+  UserInputRequest,
+  UserInputResponse,
+  UserInputSession
+} from './orchestration/user-input-types'
+export {
+  createSingleChoiceQuestion,
+  createMultipleChoiceQuestion,
+  createTextQuestion,
+  createBooleanQuestion,
+  getAnswer,
+  validateAnswers
+} from './orchestration/user-input-types'
 export { DocumentRegistry } from './orchestration/document-registry'
 export { ElicitationManager } from './orchestration/elicitation'
 

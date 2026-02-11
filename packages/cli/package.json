@@ -21,13 +21,21 @@
   },
   "dependencies": {
     "@asmo/core": "workspace:*",
-    "commander": "^12.0.0"
+    "@types/inquirer": "^9.0.9",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "inquirer": "^9.2.0"
   },
   "devDependencies": {
     "tsup": "^8.0.0",
     "typescript": "^5.3.0"
   },
-  "keywords": ["ai", "cli", "orchestration", "bmad"],
+  "keywords": [
+    "ai",
+    "cli",
+    "orchestration",
+    "bmad"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/Samch1k/ASMO",

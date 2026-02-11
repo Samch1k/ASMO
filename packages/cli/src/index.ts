@@ -39,17 +39,6 @@ program
   .option('--no-phase-detection', 'Disable adaptive phase detection')
   .action(runCommand)
 
-// Default command - same as run (allows: asmo "task")
-program
-  .argument('[task]', 'Task to execute (shorthand for "asmo run <task>")')
-  .option('-v, --verbose', 'Verbose output')
-  .option('-d, --dry-run', 'Dry run without executing')
-  .action(async (task: string | undefined, options: { verbose?: boolean; dryRun?: boolean }) => {
-    if (task && !task.startsWith('-')) {
-      await runCommand(task, options)
-    }
-  })
-
 // Suggest command - fast hybrid analysis for hooks
 program
   .command('suggest <task>')
