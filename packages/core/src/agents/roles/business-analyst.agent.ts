@@ -118,6 +118,7 @@ export class BusinessAnalystAgent extends BaseAgent {
         'documentation',
         requirementsDocument.fullDocument,
         {
+          documentType: 'prd',
           userStoryCount: userStories.length,
           acceptanceCriteriaCount: acceptanceCriteria.length,
           edgeCaseCount: edgeCases.length

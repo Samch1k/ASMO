@@ -86,7 +86,15 @@ export class UXDesignerAgent extends BaseAgent {
       this.log('Adding responsive design considerations...')
       const responsiveConsiderations = await this.generateResponsiveConsiderations(task)
 
-      // STEP 8: Generate UX design document
+      // STEP 8: Generate HTML mockups
+      this.log('Generating HTML mockups...')
+      const htmlMockups = await this.generateHTMLMockups(task, userFlows)
+
+      // STEP 9: Generate styleguide
+      this.log('Generating styleguide...')
+      const styleguide = await this.generateStyleguide(task, componentRecommendations)
+
+      // STEP 10: Generate UX design document
       const uxDocument = this.generateUXDocument(
         task,
         userFlows,
@@ -97,7 +105,7 @@ export class UXDesignerAgent extends BaseAgent {
         pastUXPatterns
       )
 
-      // STEP 9: Store in Memory MCP
+      // STEP 11: Store in Memory MCP
       this.log('Storing UX design patterns...')
       await this.requestMCP('memory', {
         action: 'create_entities',
@@ -126,6 +134,26 @@ export class UXDesignerAgent extends BaseAgent {
         }
       )
 
+      // Create HTML mockups artifact
+      const mockupsContent = htmlMockups.map(m => `<!-- Screen: ${m.screenName} -->\n${m.html}`).join('\n\n---\n\n')
+      const mockupsArtifact = this.createArtifact(
+        'documentation',
+        mockupsContent,
+        {
+          documentType: 'html_mockups',
+          screenCount: htmlMockups.length
+        }
+      )
+
+      // Create styleguide artifact
+      const styleguideArtifact = this.createArtifact(
+        'documentation',
+        styleguide,
+        {
+          documentType: 'styleguide'
+        }
+      )
+
       // Create result
       const result = this.createResult(
         'success',
@@ -134,9 +162,10 @@ export class UXDesignerAgent extends BaseAgent {
           wireframes: wireframes.map(w => w.name),
           components: componentRecommendations.map(c => c.name),
           accessibilityCompliance: 'WCAG AA',
+          htmlMockupCount: htmlMockups.length,
           uxSummary: uxDocument.summary
         },
-        [artifact]
+        [artifact, mockupsArtifact, styleguideArtifact]
       )
 
       return {
@@ -148,7 +177,9 @@ export class UXDesignerAgent extends BaseAgent {
             userFlows,
             wireframes,
             components: componentRecommendations,
-            accessibilityChecklist
+            accessibilityChecklist,
+            htmlMockups,
+            styleguide
           }
         },
         nextAction: 'architect' // Hand to architect for technical design
@@ -725,6 +756,99 @@ ${pastPatterns && pastPatterns.length > 0 ?
 `
 
     return { fullDocument, summary }
+  }
+
+  /**
+   * Generate self-contained HTML5 + Tailwind CSS mockups for key screens
+   */
+  private async generateHTMLMockups(task: string, userFlows: any[]): Promise<Array<{
+    screenName: string
+    html: string
+  }>> {
+    const screens = userFlows.flatMap((f: any) =>
+      f.steps?.map((s: any) => s.screen) || []
+    ).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i).slice(0, 5)
+
+    const prompt = `Generate self-contained HTML5 mockups with Tailwind CSS (via CDN) for these screens.
+
+Task: ${task}
+
+Screens to mock up: ${screens.join(', ') || 'Main screen, List view, Detail view'}
+
+For each screen, create a COMPLETE, self-contained HTML file that:
+- Uses <!DOCTYPE html> with Tailwind CSS CDN (<script src="https://cdn.tailwindcss.com"></script>)
+- Is responsive (mobile-first)
+- Uses semantic HTML5 elements
+- Includes realistic placeholder content
+- Has a consistent header/navigation across screens
+
+Return JSON:
+{
+  "mockups": [
+    {
+      "screenName": "Screen Name",
+      "html": "<!DOCTYPE html>\\n<html>...</html>"
+    }
+  ]
+}`
+
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 8192
+    })
+
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) {
+      return [{
+        screenName: 'Main Screen',
+        html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${task} - Main Screen</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <header class="bg-white shadow"><div class="max-w-7xl mx-auto px-4 py-4"><h1 class="text-xl font-bold text-gray-900">${task}</h1></div></header>
+  <main class="max-w-7xl mx-auto px-4 py-8"><p class="text-gray-600">Main content area</p></main>
+</body>
+</html>`
+      }]
+    }
+
+    const parsed = JSON.parse(jsonMatch[0])
+    return parsed.mockups || []
+  }
+
+  /**
+   * Generate design system / styleguide document
+   */
+  private async generateStyleguide(task: string, components: any[]): Promise<string> {
+    const prompt = `Generate a design system styleguide document for this project.
+
+Task: ${task}
+
+Components used: ${components.map((c: any) => c.name).join(', ')}
+
+Create a markdown styleguide covering:
+1. Color Palette (primary, secondary, neutral, semantic colors with hex codes)
+2. Typography (font families, sizes, weights, line heights)
+3. Spacing Scale (4px base, 8-step scale)
+4. Component Patterns (buttons, forms, cards, navigation)
+5. Icons and Imagery guidelines
+6. Responsive breakpoints
+
+Format as a clean markdown document.`
+
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.4,
+      maxTokens: 4096
+    })
+
+    return response.content
   }
 
   /**

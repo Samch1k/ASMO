@@ -5,10 +5,12 @@ The core orchestration engine for ASMO autonomous development teams.
 ## Features
 
 - **Multi-Agent System**: Coordinate multiple AI agents working together
+- **Teams Configuration** (Phase 2): Define reusable agent teams for workflow templates
+- **Execution Modes** (Phase 3): Sequential, party, and brainstorming collaboration modes
 - **Workflow Engine**: Define and execute complex development workflows
 - **Adaptive Workflow Selection**: Automatically choose workflows based on task complexity
 - **Complexity Analysis**: Intelligent task analysis with 5 complexity levels
-- **27 Production-Ready Workflows**: From bug fixes to architecture design
+- **28 Production-Ready Workflows**: From bug fixes to architecture design
 - **Configuration System**: 3-tier configuration (defaults → file → environment)
 - **Instruction Manager**: Markdown-based agent guidance with priority system
 - **Quality Gates**: Automatic approval checkpoints and validation
@@ -74,6 +76,26 @@ console.log('Confidence:', selection.confidence)        // e.g., 0.85
 console.log('Reasoning:', selection.reasoning)
 console.log('Agents:', selection.complexity.recommendedAgents)
 ```
+
+### Team-Based Workflows (Phase 2)
+
+```typescript
+// Create workflow from predefined team
+const workflow = engine.createWorkflowFromTeam(
+  'feature-team',           // team ID from teams.json
+  'task-123',               // unique task ID
+  'Implement user authentication with OAuth2'
+)
+
+// Execute with automatic mode selection
+const result = await engine.executeWorkflow(workflow)
+
+// → If complexity ≥ 60, agents work in Party Mode (Phase 3)
+// → Otherwise, sequential execution
+console.log('Session type:', result.sessionType)  // 'sequential' | 'party' | 'brainstorming'
+```
+
+📖 See [Teams Configuration](./docs/teams-configuration.md) and [Execution Modes](./docs/execution-modes.md) for details.
 
 ### BMAD Principles in Action
 
@@ -189,7 +211,7 @@ Then customize the configuration files for your needs.
 
 By default, @asmo/core uses the bundled templates included in the npm package. These templates provide:
 
-- **27 Production Workflows** - Bug fixes, features, refactoring, security audits, etc.
+- **28 Production Workflows** - Bug fixes, features, refactoring, security audits, etc.
 - **25 Specialized Agents** - Architect, Developer, Tester, Security Specialist, etc.
 - **55 Skills** - With dependency resolution and complexity analysis
 - **Instructions** - Markdown-based guidance for each agent role
@@ -316,7 +338,7 @@ export default {
 
 ## Available Workflows
 
-ASMO includes **27 production-ready workflows**, including:
+ASMO includes **28 production-ready workflows**, including:
 
 1. **Quick Flow** - Fast bug fixes and simple tasks
 2. **Feature Development** - Complete feature implementation with gates

@@ -7,7 +7,7 @@ This project uses ASMO multi-agent orchestration system. ASMO automatically rout
 | Resource  | Count                                       |
 | --------- | ------------------------------------------- |
 | Agents    | 25                                          |
-| Workflows | 27                                          |
+| Workflows | 28                                          |
 | Skills    | 55                                          |
 | Roles     | 25 (6 core + 15 specialized + 4 validation) |
 
@@ -129,9 +129,10 @@ asmo workflow <name> --task "<task>"
 
 | Workflow               | Use Case                  |
 | ---------------------- | ------------------------- |
-| `architecture_design`  | System architecture       |
-| `api_design`           | API design/implementation |
-| `ui_component_library` | UI component system       |
+| `architecture_design`        | System architecture                  |
+| `full_discovery_workflow`    | Full discovery (7 deliverables, ~6h)  |
+| `api_design`                 | API design/implementation             |
+| `ui_component_library`       | UI component system                   |
 
 ### Quality & Testing
 

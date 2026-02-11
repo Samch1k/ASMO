@@ -1,0 +1,242 @@
+{
+  "id": "full_discovery_workflow",
+  "name": "Full Discovery Phase",
+  "description": "Comprehensive discovery producing 7 deliverables: PRD, Technical Specification, System Architecture (ADR), Database Schema, API Contracts, HTML Mockups + Styleguide, and Quality Strategy",
+  "trigger_condition": {
+    "keywords": [
+      "full discovery",
+      "discovery phase",
+      "comprehensive planning",
+      "полное исследование",
+      "фаза дискавери",
+      "discovery",
+      "full planning",
+      "complete design",
+      "design everything",
+      "plan everything"
+    ],
+    "task_types": [
+      "product",
+      "planning",
+      "architecture"
+    ],
+    "required_skills": [
+      "system_design",
+      "requirements",
+      "user_flows",
+      "database_design",
+      "api_design",
+      "test_strategy",
+      "documentation"
+    ],
+    "complexity_range": ["complex", "enterprise"]
+  },
+  "phases": {
+    "user_input": {
+      "description": "Gather user preferences and requirements",
+      "description_ru": "Сбор предпочтений и требований пользователя",
+      "order": 1,
+      "intent_keywords": ["preferences", "clarify", "requirements", "предпочтения", "требования"]
+    },
+    "requirements": {
+      "description": "Business analysis and PRD creation",
+      "description_ru": "Бизнес-анализ и создание PRD",
+      "order": 2,
+      "intent_keywords": ["requirements", "prd", "analysis", "stories", "требования", "анализ"]
+    },
+    "ux_design": {
+      "description": "UX design, HTML mockups, and styleguide",
+      "description_ru": "UX-дизайн, HTML-макеты и стайлгайд",
+      "order": 3,
+      "intent_keywords": ["ux", "design", "mockup", "wireframe", "ui", "дизайн", "макеты"]
+    },
+    "architecture": {
+      "description": "System architecture (ADR) and Technical Specification",
+      "description_ru": "Системная архитектура (ADR) и техническая спецификация",
+      "order": 4,
+      "intent_keywords": ["architecture", "adr", "technical", "spec", "архитектура", "спецификация"]
+    },
+    "data_and_api": {
+      "description": "Database schema and API contract design (parallel)",
+      "description_ru": "Схема БД и API-контракты (параллельно)",
+      "order": 5,
+      "intent_keywords": ["database", "api", "schema", "endpoints", "база данных", "эндпоинты"]
+    },
+    "quality_planning": {
+      "description": "Quality strategy, quality gates, and E2E scenarios",
+      "description_ru": "Стратегия качества, quality gates и E2E-сценарии",
+      "order": 6,
+      "intent_keywords": ["quality", "test", "strategy", "gates", "качество", "тестирование"]
+    },
+    "documentation": {
+      "description": "Master document consolidating all 7 deliverables",
+      "description_ru": "Мастер-документ, объединяющий все 7 артефактов",
+      "order": 7,
+      "intent_keywords": ["documentation", "master", "consolidate", "summary", "документация", "итог"]
+    }
+  },
+  "steps": [
+    {
+      "order": 1,
+      "role_id": "architect",
+      "phase": "user_input",
+      "description": "Gather user preferences: app type, scope, tech stack, features, language",
+      "deliverables": [
+        "user_preferences",
+        "project_scope"
+      ],
+      "exit_criteria": "User preferences collected or intelligent defaults applied",
+      "timeout": "15m",
+      "phase_join_criteria": {
+        "required_artifacts": [],
+        "prerequisites": ["task defined"],
+        "context_indicators": ["new project", "new service", "create", "build"],
+        "skip_if": ["preferences exist", "userAnswers in context"]
+      }
+    },
+    {
+      "order": 2,
+      "role_id": "business-analyst",
+      "phase": "requirements",
+      "description": "Analyze requirements, create PRD with user stories, acceptance criteria, and success metrics",
+      "deliverables": [
+        "prd_document",
+        "user_stories",
+        "acceptance_criteria",
+        "success_metrics"
+      ],
+      "exit_criteria": "PRD complete with user stories and acceptance criteria",
+      "timeout": "45m",
+      "phase_join_criteria": {
+        "required_artifacts": ["user_preferences"],
+        "prerequisites": ["user preferences collected"],
+        "context_indicators": ["requirements", "prd", "stories"],
+        "skip_if": ["PRD exists"]
+      }
+    },
+    {
+      "order": 3,
+      "role_id": "ux-designer",
+      "phase": "ux_design",
+      "description": "Design UX flows, generate HTML mockups with Tailwind CSS, and create styleguide",
+      "deliverables": [
+        "user_flows",
+        "html_mockups",
+        "styleguide",
+        "accessibility_checklist"
+      ],
+      "exit_criteria": "HTML mockups and styleguide generated for key screens",
+      "timeout": "60m",
+      "phase_join_criteria": {
+        "required_artifacts": ["prd_document"],
+        "prerequisites": ["requirements defined"],
+        "context_indicators": ["ux", "design", "mockup", "wireframe"],
+        "skip_if": ["mockups exist"]
+      }
+    },
+    {
+      "order": 4,
+      "role_id": "architect",
+      "phase": "architecture",
+      "description": "Create Architecture Decision Record (ADR) and Technical Specification",
+      "deliverables": [
+        "adr_document",
+        "technical_specification"
+      ],
+      "exit_criteria": "ADR and Technical Specification complete",
+      "timeout": "60m",
+      "phase_join_criteria": {
+        "required_artifacts": ["prd_document", "user_flows"],
+        "prerequisites": ["requirements and UX defined"],
+        "context_indicators": ["architecture", "adr", "technical spec"],
+        "skip_if": ["architecture exists", "ADR exists"]
+      }
+    },
+    {
+      "order": 5,
+      "role_id": "data-architect",
+      "phase": "data_and_api",
+      "description": "Design database schema, migration plan, and data integrity constraints",
+      "parallel_with": ["api-designer"],
+      "deliverables": [
+        "database_schema",
+        "migration_plan",
+        "er_diagram"
+      ],
+      "exit_criteria": "Database schema designed with migration plan",
+      "timeout": "45m",
+      "phase_join_criteria": {
+        "required_artifacts": ["adr_document", "technical_specification"],
+        "prerequisites": ["architecture designed"],
+        "context_indicators": ["database", "schema", "migration"],
+        "skip_if": ["schema exists"]
+      }
+    },
+    {
+      "order": 5,
+      "role_id": "api-designer",
+      "phase": "data_and_api",
+      "description": "Design API contracts, endpoints, and OpenAPI specification",
+      "parallel_with": ["data-architect"],
+      "deliverables": [
+        "api_contracts",
+        "openapi_specification",
+        "api_documentation"
+      ],
+      "exit_criteria": "API contracts designed with OpenAPI spec",
+      "timeout": "45m",
+      "phase_join_criteria": {
+        "required_artifacts": ["adr_document", "technical_specification"],
+        "prerequisites": ["architecture designed"],
+        "context_indicators": ["api", "endpoints", "contracts"],
+        "skip_if": ["API design exists"]
+      }
+    },
+    {
+      "order": 6,
+      "role_id": "test-architect",
+      "phase": "quality_planning",
+      "description": "Create quality strategy with quality gates, E2E scenarios, and test data strategy",
+      "deliverables": [
+        "quality_strategy",
+        "quality_gates",
+        "e2e_scenarios",
+        "test_data_strategy"
+      ],
+      "exit_criteria": "Quality strategy complete with measurable gates",
+      "timeout": "45m",
+      "phase_join_criteria": {
+        "required_artifacts": ["prd_document", "adr_document", "database_schema", "api_contracts"],
+        "prerequisites": ["all design artifacts available"],
+        "context_indicators": ["quality", "testing", "strategy"],
+        "skip_if": ["quality strategy exists"]
+      }
+    },
+    {
+      "order": 7,
+      "role_id": "tech-writer",
+      "phase": "documentation",
+      "description": "Consolidate all 7 deliverables into a master discovery document with executive summary and implementation roadmap",
+      "deliverables": [
+        "discovery_master_document",
+        "executive_summary",
+        "implementation_roadmap"
+      ],
+      "exit_criteria": "Master document consolidating all deliverables",
+      "timeout": "30m",
+      "phase_join_criteria": {
+        "required_artifacts": ["prd_document", "html_mockups", "adr_document", "technical_specification", "database_schema", "api_contracts", "quality_strategy"],
+        "prerequisites": ["all 7 deliverables complete"],
+        "context_indicators": ["documentation", "master", "consolidate"],
+        "skip_if": []
+      }
+    }
+  ],
+  "estimated_time": "6h",
+  "success_criteria": "All 7 deliverables produced: PRD, HTML Mockups + Styleguide, ADR, Technical Specification, Database Schema, API Contracts, Quality Strategy — consolidated into master document",
+  "metadata": {
+    "adaptive_phase_detection": true,
+    "deliverable_count": 7,
+    "parallel_steps": [5]
+  }
+}

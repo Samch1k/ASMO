@@ -67,7 +67,62 @@ export class TestArchitectAgent extends BaseAgent {
         testHistory
       }
 
-      // STEP 2: Execute based on focus
+      // STEP 2: Check if running in discovery workflow context
+      const isDiscoveryContext = this.isDiscoveryContext(state)
+      if (isDiscoveryContext) {
+        this.log('Discovery workflow detected — generating Quality Strategy')
+        const qualityResult = await this.generateQualityStrategy(task, enrichedContext)
+
+        await this.requestMCP('memory', {
+          action: 'create_entities',
+          entities: [{
+            name: `TEA: ${task.substring(0, 50)}`,
+            entityType: 'test_strategy',
+            observations: [
+              'Focus: quality-strategy (discovery)',
+              `Quality gates: ${qualityResult.qualityGates?.length || 0}`,
+              `E2E scenarios: ${qualityResult.e2eScenarios?.length || 0}`
+            ]
+          }]
+        })
+
+        const qsArtifact = this.createArtifact(
+          'test',
+          qualityResult.document,
+          {
+            documentType: 'test_strategy',
+            teaFocus: 'quality-strategy',
+            qualityGateCount: qualityResult.qualityGates?.length || 0,
+            e2eScenarioCount: qualityResult.e2eScenarios?.length || 0
+          }
+        )
+
+        const qsResult = this.createResult(
+          'success',
+          {
+            teaFocus: 'quality-strategy',
+            summary: qualityResult.summary,
+            qualityGates: qualityResult.qualityGates,
+            e2eScenarios: qualityResult.e2eScenarios
+          },
+          [qsArtifact]
+        )
+
+        this.log('✅ Quality Strategy complete')
+
+        return {
+          agentResults: [...state.agentResults, qsResult],
+          context: {
+            ...state.context,
+            testStrategy: qualityResult,
+            qualityGates: qualityResult.qualityGates,
+            e2eScenarios: qualityResult.e2eScenarios
+          },
+          nextAction: 'tech-writer'
+        }
+      }
+
+      // STEP 3: Execute based on focus (non-discovery path)
       let result
       switch (teaFocus) {
         case 'risk-assessment':
@@ -98,7 +153,7 @@ export class TestArchitectAgent extends BaseAgent {
           result = await this.createTestStrategy(task, state.context)
       }
 
-      // STEP 3: Store in Memory MCP
+      // STEP 4: Store in Memory MCP
       this.log('Storing test architecture...')
       await this.requestMCP('memory', {
         action: 'create_entities',
@@ -118,6 +173,7 @@ export class TestArchitectAgent extends BaseAgent {
         'test',
         result.document,
         {
+          documentType: 'test_strategy',
           teaFocus,
           riskLevel: result.riskLevel,
           testTypes: result.testTypes
@@ -155,6 +211,101 @@ export class TestArchitectAgent extends BaseAgent {
         agentResults: [...state.agentResults, errorResult],
         nextAction: 'error_recovery'
       }
+    }
+  }
+
+  /**
+   * Detect if running in a discovery workflow context
+   * Checks for presence of discovery-specific artifacts in state
+   */
+  private isDiscoveryContext(state: AgentState): boolean {
+    // Check workflow ID
+    if ((state as any).workflow?.id === 'full_discovery_workflow') return true
+
+    // Check for discovery artifacts by documentType
+    const artifacts = state.artifacts || []
+    const documentTypes = artifacts
+      .map((a: any) => a.metadata?.documentType)
+      .filter(Boolean)
+
+    const discoveryTypes = ['prd', 'html_mockups', 'technical_specification']
+    const matchCount = discoveryTypes.filter(t => documentTypes.includes(t)).length
+
+    return matchCount >= 2
+  }
+
+  /**
+   * Generate comprehensive Quality Strategy for discovery workflow
+   * Includes quality gates, E2E scenarios, metrics, and test data strategy
+   */
+  private async generateQualityStrategy(
+    task: string,
+    context: any
+  ): Promise<TEAResult & { qualityGates: any[]; e2eScenarios: any[] }> {
+    const prompt = `Create a comprehensive Quality Strategy for this project's discovery phase.
+
+Task: ${task}
+
+Context (requirements, architecture, etc.):
+${JSON.stringify(context, null, 2)}
+
+Generate:
+
+1. QUALITY GATES (8-12 gates)
+For each gate:
+{
+  "name": "Gate name",
+  "metric": "What is measured",
+  "threshold": "Pass criteria",
+  "blocker": true/false,
+  "stage": "commit/pr/staging/production"
+}
+
+2. E2E CRITICAL FLOW SCENARIOS (5-8 scenarios)
+For each scenario:
+{
+  "name": "Scenario name",
+  "description": "What this validates",
+  "steps": ["Step 1", "Step 2", ...],
+  "expectedOutcome": "Success criteria",
+  "priority": "critical/high/medium"
+}
+
+3. QUALITY METRICS
+- Code coverage targets (unit, integration, e2e)
+- Performance budgets (response times, bundle sizes)
+- Security requirements (OWASP, dependency audit)
+- Accessibility (WCAG level)
+
+4. TEST DATA STRATEGY
+- Data generation approach
+- Test fixtures
+- Environment isolation
+
+Return as JSON:
+{
+  "summary": "Quality strategy summary",
+  "riskLevel": "medium",
+  "testTypes": ["unit", "integration", "e2e", "performance", "security", "accessibility"],
+  "qualityGates": [...],
+  "e2eScenarios": [...],
+  "qualityMetrics": {...},
+  "testDataStrategy": {...},
+  "recommendations": ["rec1", "rec2"],
+  "document": "Full markdown quality strategy document"
+}`
+
+    const response = await this.callLLM(prompt, {
+      model: 'sonnet',
+      temperature: 0.2,
+      maxTokens: 8192
+    })
+
+    const base = this.parseResponse(response.content)
+    return {
+      ...base,
+      qualityGates: base.qualityGates || [],
+      e2eScenarios: base.e2eScenarios || []
     }
   }
 

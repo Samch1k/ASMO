@@ -16,7 +16,7 @@ ASMO is an autonomous AI development orchestration system that coordinates multi
 ### Core Orchestration
 
 - **25 Specialized Agents** — Architect, Developer, Tester, Security, UX, DevOps, Analyst, Tech Writer, and more
-- **27 Production Workflows** — From quick fixes to enterprise architecture + TEA testing workflows
+- **28 Production Workflows** — From quick fixes to enterprise architecture + TEA testing workflows
 - **55 Skills Catalog** — Automatic skill matching across 12 categories
 - **Complexity Analysis** — 5-level task analysis with intelligent workflow selection
 - **Adaptive Phase Detection** — Smart phase joining based on project context and user intent (LLM-powered)
@@ -31,8 +31,9 @@ ASMO is an autonomous AI development orchestration system that coordinates multi
 
 ### Collaboration & Quality
 
+- **Teams Configuration** — Reusable agent teams for workflow templates (Phase 2)
 - **YOLO Mode** — Automatic approval bypass for trivial tasks
-- **Party Mode** — Multi-agent collaboration with consensus building
+- **Party Mode** — Multi-agent collaboration with consensus building (Phase 3)
 - **Adversarial Review** — Critical code review that MUST find issues
 - **Advanced Elicitation** — 5 techniques: First Principles, Red Team/Blue Team, Pre-mortem, Socratic, Devil's Advocate
 
@@ -477,6 +478,20 @@ _- Амелия, Разработчик (Тесты Обязательны ✅)_
 - [System Overview (EN)](./docs/en/system-overview.md) — Complete system guide
 - [System Overview (RU)](./docs/ru/system-overview.md) — Полное руководство
 
+### Teams & Execution Modes
+
+ASMO supports predefined teams and dynamic execution modes for flexible workflow orchestration.
+
+**Teams (Phase 2)** — Define reusable agent groups:
+
+- 📖 [Teams Configuration Guide](./packages/core/docs/teams-configuration.md) — Full API reference
+- 📋 [Example Configurations](./packages/core/docs/examples/teams/) — Ready-to-use team templates
+
+**Execution Modes (Phase 3)** — Dynamic collaboration:
+
+- 🎭 [Execution Modes Guide](./packages/core/docs/execution-modes.md) — Sequential, party, brainstorming
+- 🔄 [Adaptive Phase Detection](./packages/core/docs/adaptive-phase-detection.md) — Smart phase joining
+
 ## Project Structure
 
 ```
@@ -502,14 +517,14 @@ asmo/
 
 [View full catalog →](./docs/en/system-overview.md)
 
-## Workflows (27)
+## Workflows (28)
 
 | Level                   | Workflows                                                             | Complexity Score |
 | ----------------------- | --------------------------------------------------------------------- | ---------------- |
 | Simple                  | Quick Flow, Bug Fix                                                   | 0-40             |
 | Standard                | Feature Dev, Refactoring, Performance                                 | 41-60            |
 | Complex                 | Security Audit, API Design, Database Migration                        | 61-80            |
-| Enterprise              | Architecture Design                                                   | 81-100           |
+| Enterprise              | Architecture Design, Full Discovery                                   | 81-100           |
 | **BMAD Planning**       | Product Brief, PRD, UX Design, Epics & Stories, Sprint Planning       | N/A              |
 | **BMAD Implementation** | Correct Course, Retrospective, Automate Tests, Dev Story, Code Review | N/A              |
 | **TEA Testing**         | 3 consolidated: Planning, Execution, Validation                       | N/A              |
