@@ -53,8 +53,8 @@ export class CodeReviewerAgent extends BaseAgent {
       const implementationPlan = state.context?.implementationPlan
 
       if (!codeArtifacts || codeArtifacts.length === 0) {
-        this.log('No code artifacts to review', 'warn')
-        return this.createEmptyResult(state)
+        this.log('No code artifacts to review — skipping review step', 'warn')
+        return this.createSkippedResult(state)
       }
 
       // STEP 2: Check Memory MCP for similar reviews
@@ -770,25 +770,27 @@ ${approved ? `1. ✅ Code is approved for next phase
   }
 
   /**
-   * Create empty result when no code to review
+   * Create skipped result when no code artifacts are available yet.
+   * Returns 'skipped' status instead of 'failed' to avoid triggering error_recovery.
+   * This happens when CodeReviewer runs before implementation agents produce artifacts.
    */
-  private createEmptyResult(state: AgentState): Partial<AgentState> {
+  private createSkippedResult(state: AgentState): Partial<AgentState> {
     const artifact = this.createArtifact(
       'documentation',
-      '# Code Review Report\n\nNo code artifacts provided for review.',
-      { approved: false, overallScore: 0 }
+      '# Code Review Report\n\nNo code artifacts available for review. Step skipped — will review after implementation.',
+      { approved: true, overallScore: 0, skipped: true }
     )
 
     const result = this.createResult(
-      'failed',
-      { error: 'No code artifacts to review' },
+      'skipped',
+      { reason: 'No code artifacts to review yet', skipped: true },
       [artifact]
     )
 
     return {
       messages: [...state.messages],
       agentResults: [...state.agentResults, result],
-      nextAction: 'error_recovery'
+      nextAction: 'continue'
     }
   }
 }

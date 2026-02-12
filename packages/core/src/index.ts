@@ -123,7 +123,8 @@ export {
   createTextQuestion,
   createBooleanQuestion,
   getAnswer,
-  validateAnswers
+  validateAnswers,
+  InputRequiredError
 } from './orchestration/user-input-types'
 export { DocumentRegistry } from './orchestration/document-registry'
 export { ElicitationManager } from './orchestration/elicitation'

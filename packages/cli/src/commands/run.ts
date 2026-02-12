@@ -13,6 +13,8 @@
  */
 
 import * as readline from 'readline'
+import * as fs from 'fs'
+import * as path from 'path'
 import {
   WorkflowEngine,
   WorkflowSelector,
@@ -40,6 +42,39 @@ interface RunOptions {
   useApi?: boolean   // Force API mode (requires ANTHROPIC_API_KEY)
   noLlm?: boolean    // Disable LLM, use heuristics only
   phaseDetection?: boolean  // commander --no-X pattern sets false
+  preferences?: string  // Inline JSON or path to JSON file with user preferences
+  defaults?: boolean    // Use recommended defaults for agent questions
+}
+
+/**
+ * Parse preferences from inline JSON string or file path
+ */
+function parsePreferences(raw: string): Record<string, any> | null {
+  // Try inline JSON first
+  const trimmed = raw.trim()
+  if (trimmed.startsWith('{')) {
+    try {
+      return JSON.parse(trimmed)
+    } catch {
+      console.error(`❌ Failed to parse inline preferences JSON: ${trimmed}`)
+      return null
+    }
+  }
+
+  // Try as file path
+  const filePath = path.resolve(trimmed)
+  if (fs.existsSync(filePath)) {
+    try {
+      const content = fs.readFileSync(filePath, 'utf-8')
+      return JSON.parse(content)
+    } catch (e) {
+      console.error(`❌ Failed to read preferences file: ${filePath}`)
+      return null
+    }
+  }
+
+  console.error(`❌ Preferences: not valid JSON and file not found: ${trimmed}`)
+  return null
 }
 
 export async function runCommand(task: string, options: RunOptions): Promise<void> {
@@ -84,8 +119,35 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
       : new WorkflowEngine({ agentRegistry, verbose: options.verbose })
     await engine.initialize()
 
+    // Parse preferences if provided
+    let preferences: Record<string, any> | undefined
+    if (options.preferences) {
+      const parsed = parsePreferences(options.preferences)
+      if (parsed) {
+        preferences = parsed
+        if (options.verbose) {
+          console.log('📋 User preferences loaded:')
+          for (const [key, val] of Object.entries(parsed)) {
+            console.log(`   ${key}: ${JSON.stringify(val)}`)
+          }
+        } else {
+          console.log(`📋 User preferences loaded (${Object.keys(parsed).length} values)`)
+        }
+      }
+    }
+
+    // Auto-detect non-interactive environment (no TTY and no explicit preferences/defaults)
+    let useDefaults = options.defaults
+    if (!process.stdin.isTTY && !useDefaults && !preferences) {
+      console.warn(
+        '⚠️  Non-interactive environment detected (no TTY). Using recommended defaults.\n' +
+        '   To customize: use --preferences \'{"key":"value"}\' or --defaults'
+      )
+      useDefaults = true
+    }
+
     // Initialize CLI User Input Handler (for interactive agent questions)
-    userInputHandler = getCLIUserInputHandler({ verbose: options.verbose })
+    userInputHandler = getCLIUserInputHandler({ verbose: options.verbose, preferences, useDefaults })
     userInputHandler.initialize()
 
     // If --workflow specified, execute directly (bypass adaptive selection)

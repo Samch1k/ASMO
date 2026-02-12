@@ -80,7 +80,7 @@ export interface AgentResult {
   agentName?: string
 
   /** Execution status */
-  status: 'success' | 'failed' | 'needs_handoff' | 'needs_approval'
+  status: 'success' | 'failed' | 'needs_handoff' | 'needs_approval' | 'skipped'
 
   /** Output produced by the agent */
   output: any

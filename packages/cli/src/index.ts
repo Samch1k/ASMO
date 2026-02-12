@@ -37,6 +37,8 @@ program
   .option('--use-api', 'Force API mode (requires ANTHROPIC_API_KEY)')
   .option('--no-llm', 'Disable LLM, use heuristics only')
   .option('--no-phase-detection', 'Disable adaptive phase detection')
+  .option('-p, --preferences <json-or-file>', 'User preferences as inline JSON or path to JSON file')
+  .option('--defaults', 'Use recommended defaults for all agent questions (non-interactive)')
   .action(runCommand)
 
 // Suggest command - fast hybrid analysis for hooks

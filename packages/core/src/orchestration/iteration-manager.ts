@@ -103,7 +103,11 @@ export class IterationManager {
     'business rule',
     'constraint violation',
     'duplicate key',
-    'invalid state'
+    'invalid state',
+    'session mode unavailable',
+    'cli timeout',
+    'no llm provider available',
+    'input is required'
   ]
 
   constructor(config: RetryConfig = {}) {

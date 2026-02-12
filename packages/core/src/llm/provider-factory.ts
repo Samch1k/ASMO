@@ -78,13 +78,20 @@ export class LLMProviderFactory {
    * Auto-select best available provider
    *
    * Priority:
-   * 1. Session (Claude CLI) - $0, uses subscription
+   * 1. Session (Claude CLI) - $0, uses subscription (skip if inside Claude Code)
    * 2. Anthropic API - pay-per-use
    */
   private getAutoProvider(): ILLMProvider {
-    // Prefer session (free)
+    // Prefer session (free) — but not inside Claude Code (nested call hangs)
     if (this.sessionProvider.isAvailable()) {
       return this.sessionProvider
+    }
+
+    // If session was skipped because of Claude Code, note it
+    if (this.sessionProvider.isInsideClaudeCode()) {
+      console.warn(
+        '⚠️  [LLMProvider] Running inside Claude Code — session mode disabled (nested claude -p hangs).'
+      )
     }
 
     // Fallback to API

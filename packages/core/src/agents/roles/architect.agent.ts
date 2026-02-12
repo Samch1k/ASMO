@@ -6,6 +6,7 @@ import {
   createSingleChoiceQuestion,
   createMultipleChoiceQuestion,
   createBooleanQuestion,
+  InputRequiredError,
   type QuestionGroup,
   type AnswerSet
 } from "../../orchestration/user-input-types"
@@ -110,8 +111,14 @@ export class ArchitectAgent extends BaseAgent {
           userAnswers = response.answers
           this.log(`✅ Received ${userAnswers.answers.length} answers from user`)
         } catch (error) {
-          // User cancelled or timeout — proceed with defaults
-          this.log('User input not available, proceeding with intelligent defaults', 'warn')
+          if (error instanceof InputRequiredError) {
+            // Mandatory gate: input was required but unavailable (no TTY, timeout)
+            // Do NOT fall back to defaults — re-throw to stop the workflow
+            this.log('❌ User input is required but was not provided. Workflow cannot continue.', 'error')
+            throw error
+          }
+          // User deliberately cancelled (Ctrl+C) — proceed with defaults
+          this.log('User input cancelled, proceeding with intelligent defaults', 'warn')
           userAnswers = null
         }
       }

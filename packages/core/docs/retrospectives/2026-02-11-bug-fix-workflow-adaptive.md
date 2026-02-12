@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-Workflow failed after 0s, across 0 phases and 5 steps, with 4 parallel optimizations applied, performing 52% slower than historical average.
+Workflow failed after 0s, across 0 phases and 5 steps, with 4 parallel optimizations applied, performing 56% slower than historical average.
 
 ## Phase Performance
 
@@ -27,7 +27,7 @@ Workflow failed after 0s, across 0 phases and 5 steps, with 4 parallel optimizat
 ## Improvement Areas
 
 1. **Execution Performance** 🔴
-   - **Current**: 52% slower than historical average
+   - **Current**: 56% slower than historical average
    - **Desired**: Match or exceed average performance
    - **Gap**: Identify bottlenecks and optimize slow phases
 
@@ -46,9 +46,9 @@ Identify bottlenecks and optimize slow phases
 ## Historical Comparison
 
 - **Total Runs**: 51
-- **Performance Rank**: #24 of 51
-- **Duration Percentile**: 47th (lower is better)
-- **vs Average**: 52% slower 🐌
+- **Performance Rank**: #25 of 51
+- **Duration Percentile**: 49th (lower is better)
+- **vs Average**: 56% slower 🐌
 - **Success Rate Trend**: ➡️  Stable
 
 ---

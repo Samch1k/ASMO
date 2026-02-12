@@ -155,6 +155,19 @@ export interface UserInputSession {
 }
 
 /**
+ * Error thrown when user input is required but was not provided.
+ * Unlike regular cancellation (user pressed Ctrl+C), this indicates
+ * that the input mechanism was unavailable (no TTY, timeout in file mode).
+ * Agents should NOT fall back to defaults when catching this error.
+ */
+export class InputRequiredError extends Error {
+  constructor(message: string = 'User input is required but was not provided') {
+    super(message)
+    this.name = 'InputRequiredError'
+  }
+}
+
+/**
  * Helper function to create a single choice question
  */
 export function createSingleChoiceQuestion(

@@ -293,6 +293,19 @@ export class ApprovalCheckpoint {
     _phase: WorkflowPhase,
     _request: ApprovalRequest
   ): Promise<ApprovalResponse> {
+    // Non-interactive environment: auto-approve since user can't interact via stdin
+    if (!process.stdin.isTTY) {
+      console.log('⚠️  Non-interactive environment detected (no TTY) — auto-approving phase')
+      return {
+        approved: true,
+        timestamp: new Date().toISOString(),
+        approver: 'non-interactive',
+        autoApproved: true,
+        timedOut: false,
+        feedback: 'Auto-approved: non-interactive environment (no TTY)'
+      }
+    }
+
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout

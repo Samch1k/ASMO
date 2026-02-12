@@ -195,8 +195,12 @@ export class UserInputManager extends EventEmitter {
 
   /**
    * Cancel pending request
+   *
+   * @param requestId - ID of request to cancel
+   * @param error - Custom error to reject with (default: generic cancellation).
+   *   Use InputRequiredError when input was mandatory but unavailable (no TTY, timeout).
    */
-  cancelRequest(requestId: string): void {
+  cancelRequest(requestId: string, error?: Error): void {
     const pending = this.pendingPromises.get(requestId)
 
     if (!pending) {
@@ -219,8 +223,8 @@ export class UserInputManager extends EventEmitter {
     this.currentSession.activeRequest = null
     this.currentSession.isPaused = false
 
-    // Reject promise
-    pending.reject(new Error('Request cancelled by user'))
+    // Reject promise with custom or default error
+    pending.reject(error ?? new Error('Request cancelled by user'))
     this.pendingPromises.delete(requestId)
 
     // Emit event

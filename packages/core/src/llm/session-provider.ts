@@ -63,11 +63,24 @@ export class SessionLLMProvider implements ILLMProvider {
   }
 
   /**
+   * Check if we're running inside Claude Code (nested CLI call would hang)
+   */
+  isInsideClaudeCode(): boolean {
+    return !!(process.env.CLAUDE_CODE || process.env.CLAUDE_SESSION)
+  }
+
+  /**
    * Check if Claude CLI is available
    */
   isAvailable(): boolean {
     if (this.available !== null) {
       return this.available
+    }
+
+    // Nested claude -p inside Claude Code hangs — not available
+    if (this.isInsideClaudeCode()) {
+      this.available = false
+      return false
     }
 
     try {
@@ -84,6 +97,12 @@ export class SessionLLMProvider implements ILLMProvider {
    * Generate text response using Claude CLI
    */
   async generate(prompt: string, options?: LLMGenerateOptions): Promise<LLMResponse> {
+    if (this.isInsideClaudeCode()) {
+      throw new Error(
+        'Session mode unavailable inside Claude Code (nested claude -p would hang). ' +
+        'Use --use-api or --no-llm instead.'
+      )
+    }
     if (!this.isAvailable()) {
       throw new Error('Claude CLI not available. Install from: https://claude.ai/code')
     }
