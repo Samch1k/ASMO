@@ -1,6 +1,6 @@
 ---
-"name": "Performance Debugging"
-"description": "Debug performance issues by profiling code, identifying bottlenecks, analyzing slow queries, and optimizing hot paths. Systematic approach to finding performance problems. Use when: investigating bugs. Keywords: perf debugging, performance issues, slow performance"
+name: "Performance Debugging"
+description: "Debug performance issues by profiling code, identifying bottlenecks, analyzing slow queries, and optimizing hot paths. Systematic approach to finding performance problems. Use when: investigating bugs. Keywords: perf debugging, performance issues, slow performance"
 ---
 
 # Performance Debugging

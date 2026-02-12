@@ -1,6 +1,6 @@
 ---
-"name": "Product Roadmap"
-"description": "Create and maintain product roadmaps that communicate planned features and timelines. Balance short-term delivery with long-term vision. Use when: performing relevant tasks. Keywords: roadmap, product plan, feature timeline"
+name: "Product Roadmap"
+description: "Create and maintain product roadmaps that communicate planned features and timelines. Balance short-term delivery with long-term vision. Use when: performing relevant tasks. Keywords: roadmap, product plan, feature timeline"
 ---
 
 # Product Roadmap

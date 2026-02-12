@@ -1,6 +1,6 @@
 ---
-"name": "KPIs Definition"
-"description": "Define key performance indicators to measure business success and feature effectiveness. Includes metric selection, tracking setup, and goal setting. Use when: performing relevant tasks. Keywords: kpi, metrics, key metrics"
+name: "KPIs Definition"
+description: "Define key performance indicators to measure business success and feature effectiveness. Includes metric selection, tracking setup, and goal setting. Use when: performing relevant tasks. Keywords: kpi, metrics, key metrics"
 ---
 
 # KPIs Definition

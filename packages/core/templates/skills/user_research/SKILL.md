@@ -1,6 +1,6 @@
 ---
-"name": "User Research"
-"description": "Conduct user research through interviews, surveys, and data analysis to understand user needs, behaviors, and pain points. Inform design decisions with user insights. Use when: performing relevant tasks. Keywords: research, user interviews, user studies"
+name: "User Research"
+description: "Conduct user research through interviews, surveys, and data analysis to understand user needs, behaviors, and pain points. Inform design decisions with user insights. Use when: performing relevant tasks. Keywords: research, user interviews, user studies"
 ---
 
 # User Research

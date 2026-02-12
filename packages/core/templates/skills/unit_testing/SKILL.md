@@ -1,6 +1,6 @@
 ---
-"name": "Unit Testing"
-"description": "Write unit tests using Vitest to verify individual functions and components work correctly in isolation. Includes test setup, mocking, assertions, and achieving good test coverage. Use when: verifying functionality or writing tests. Keywords: unit test, tests, testing"
+name: "Unit Testing"
+description: "Write unit tests using Vitest to verify individual functions and components work correctly in isolation. Includes test setup, mocking, assertions, and achieving good test coverage. Use when: verifying functionality or writing tests. Keywords: unit test, tests, testing"
 ---
 
 # Unit Testing

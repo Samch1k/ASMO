@@ -1,6 +1,6 @@
 ---
-"name": "Debug Investigation"
-"description": "Comprehensive debugging including bug diagnosis, error investigation, root cause analysis, and log analysis. Use when: debugging, error investigation, root cause analysis. Keywords: debug, bug, error, investigation, root cause, logs"
+name: "Debug Investigation"
+description: "Comprehensive debugging including bug diagnosis, error investigation, root cause analysis, and log analysis. Use when: debugging, error investigation, root cause analysis. Keywords: debug, bug, error, investigation, root cause, logs"
 ---
 
 # Debug Investigation

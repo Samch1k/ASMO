@@ -679,14 +679,16 @@ export class WorkflowEngine {
         throw new Error(`Workflow not found: ${input}`)
       }
 
-      console.log(`[Workflow] Using: ${workflow.name} (${workflow.id})`)
+      console.log(`[ResolveInput] Path: direct ID → ${workflow.name} (${workflow.id})`)
 
       // Run complexity analysis for YOLO mode,
       // but only if score not already computed (e.g., from prior selectWorkflowAdaptively)
       if (this.currentComplexityScore === undefined) {
         const taskDescription = initialState?.task || input
+        console.log(`[ResolveInput] Running complexity analysis for YOLO scoring...`)
         const complexity = await this.complexityAnalyzer.analyzeTask(taskDescription, context)
         this.currentComplexityScore = complexity.score
+        console.log(`[ResolveInput] Complexity score: ${complexity.score}/100 (${complexity.level})`)
       }
       this.currentWorkflowName = workflow.name
 
@@ -697,12 +699,16 @@ export class WorkflowEngine {
     }
 
     // 2. Natural Language (via WorkflowSelector - adaptive)
+    console.log(`[ResolveInput] Path: natural language → adaptive selection`)
     const selection = await this.selectWorkflowAdaptively(input, context)
     this.currentComplexityScore = selection.complexity.score
     this.currentWorkflowName = selection.workflow.name
 
     const hasPhaseJoin = selection.joinPoint && selection.joinPoint > 0
     const state = this.buildState(initialState, input)
+    if (hasPhaseJoin) {
+      console.log(`[ResolveInput] Phase join detected: starting at "${selection.phase}" (step ${selection.joinPoint})`)
+    }
 
     // Record phase detection info in metadata for logs/reports
     if (hasPhaseJoin) {
@@ -1124,6 +1130,9 @@ export class WorkflowEngine {
       const displayName = agent.role.personality?.persona_name || agent.role.name
 
       console.log(`   Starting: ${displayName} (${step.phase})...`)
+      if (agents.length > 1) {
+        console.log(`   [AgentSelect] ${agents.length} candidates for role "${step.role_id}", selected: ${agent.agentId} (confidence: ${(agent.confidence * 100).toFixed(0)}%)`)
+      }
 
       // Display checklist before step execution
       if (this.currentWorkflow && this.checklistManager.hasChecklist(this.currentWorkflow.id)) {
@@ -1137,6 +1146,10 @@ export class WorkflowEngine {
         step.phase,
         this.currentWorkflow?.id
       )
+
+      if (instructions) {
+        console.log(`   [Instructions] Loaded for ${step.role_id}/${step.phase}`)
+      }
 
       // Enrich state with instructions
       const enrichedState: AgentState = {
@@ -1158,10 +1171,19 @@ export class WorkflowEngine {
 
       // CircuitBreaker: fail fast if agent is repeatedly broken
       const circuitBreaker = getCircuitBreakerManager().get(`workflow-${agent.agentId}`)
+      const cbState = circuitBreaker.getState()
 
-      if (circuitBreaker.getState() === 'OPEN') {
+      if (cbState !== 'CLOSED') {
+        console.log(`   [CircuitBreaker] ${agent.agentId}: state=${cbState}`)
+      }
+
+      if (cbState === 'OPEN') {
         throw new CircuitOpenError(`Circuit breaker open for ${agent.agentId}`)
       }
+
+      const isRealAgent = instance && typeof instance.execute === 'function'
+      const timeoutValue = step.timeout || this.globalSettings.default_timeout
+      console.log(`   [Execution] mode=${isRealAgent ? 'real' : 'mock'}, timeout=${timeoutValue}, circuitBreaker=${cbState}`)
 
       // Layering: CircuitBreaker (outer) → Timeout → IterationManager retry (inner)
       const output: Partial<AgentState> = await circuitBreaker.execute(async () => {
@@ -1449,7 +1471,9 @@ export class WorkflowEngine {
     const successfulOutputs: Partial<AgentState>[] = []
 
     settledResults.forEach((settled, index) => {
+      const stepName = steps[index].role_id
       if (settled.status === 'fulfilled') {
+        console.log(`   [Parallel] ${stepName}: ${settled.value.success ? '✓ success' : '✗ failed'} (${settled.value.duration.toFixed(1)}s)`)
         results.push(settled.value)
         if (settled.value.success) {
           successfulOutputs.push({
@@ -1459,6 +1483,7 @@ export class WorkflowEngine {
           } as any)
         }
       } else {
+        console.log(`   [Parallel] ${stepName}: ✗ rejected (${settled.reason?.message || 'Unknown error'})`)
         results.push({
           step: steps[index],
           agentId: steps[index].role_id,
@@ -1644,6 +1669,7 @@ export class WorkflowEngine {
     results: StepResult[]
   ): AgentState {
     // Namespace isolation strategy - each agent writes to its own namespace
+    console.log(`[Merge] Merging ${outputs.length} parallel outputs (strategy: namespace_isolation)`)
     const mergedContext: Record<string, any> = { ...baseState.context }
 
     for (const output of outputs) {
@@ -1654,6 +1680,7 @@ export class WorkflowEngine {
         // Store in namespaced key
         const namespace = `${agentId}_${phase}_findings`
         mergedContext[namespace] = output.context || {}
+        console.log(`[Merge] Created namespace: ${namespace}`)
       }
 
       // Also merge top-level context keys (implementation, tests, etc.)

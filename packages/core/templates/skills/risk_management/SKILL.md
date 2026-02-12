@@ -1,6 +1,6 @@
 ---
-"name": "Risk Management"
-"description": "Identify, assess, and mitigate project risks. Create risk mitigation plans and monitor risk factors throughout the project lifecycle. Use when: performing relevant tasks. Keywords: risk, risk assessment, risk mitigation"
+name: "Risk Management"
+description: "Identify, assess, and mitigate project risks. Create risk mitigation plans and monitor risk factors throughout the project lifecycle. Use when: performing relevant tasks. Keywords: risk, risk assessment, risk mitigation"
 ---
 
 # Risk Management

@@ -1,6 +1,6 @@
 ---
-"name": "Architecture Decisions"
-"description": "Make informed decisions about technology choices, architectural patterns, and design trade-offs. Evaluate alternatives and document decisions with rationale. Use when: designing systems. Keywords: decisions, tech choices, architectural decisions"
+name: "Architecture Decisions"
+description: "Make informed decisions about technology choices, architectural patterns, and design trade-offs. Evaluate alternatives and document decisions with rationale. Use when: designing systems. Keywords: decisions, tech choices, architectural decisions"
 ---
 
 # Architecture Decisions

@@ -1,6 +1,6 @@
 ---
-"name": "User Stories"
-"description": "Write user stories that capture functionality from the user's perspective. Includes acceptance criteria, story sizing, and backlog management. Use when: performing relevant tasks. Keywords: user story, stories, agile stories"
+name: "User Stories"
+description: "Write user stories that capture functionality from the user's perspective. Includes acceptance criteria, story sizing, and backlog management. Use when: performing relevant tasks. Keywords: user story, stories, agile stories"
 ---
 
 # User Stories

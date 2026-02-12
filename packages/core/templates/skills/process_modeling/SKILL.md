@@ -1,6 +1,6 @@
 ---
-"name": "Process Modeling"
-"description": "Model business processes and workflows using BPMN or similar notation. Visualize and optimize business processes. Use when: performing relevant tasks. Keywords: bpmn, process, workflow modeling"
+name: "Process Modeling"
+description: "Model business processes and workflows using BPMN or similar notation. Visualize and optimize business processes. Use when: performing relevant tasks. Keywords: bpmn, process, workflow modeling"
 ---
 
 # Process Modeling

@@ -1,6 +1,6 @@
 ---
-"name": "Code Writing"
-"description": "Write production-quality TypeScript code following project conventions, best practices, and SOLID principles. Includes implementing features, writing clean maintainable code, and following the project's coding standards. Use when: implementing features or writing code. Keywords: coding, programming, implementation"
+name: "Code Writing"
+description: "Write production-quality TypeScript code following project conventions, best practices, and SOLID principles. Includes implementing features, writing clean maintainable code, and following the project's coding standards. Use when: implementing features or writing code. Keywords: coding, programming, implementation"
 ---
 
 # Code Writing

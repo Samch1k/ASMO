@@ -1,6 +1,6 @@
 ---
-"name": "Integration"
-"description": "Integrate new features or components into existing systems. Includes API integration, third-party service integration, database integration, and ensuring proper communication between system components. Use when: implementing features or writing code. Keywords: integrate, connect, api integration"
+name: "Integration"
+description: "Integrate new features or components into existing systems. Includes API integration, third-party service integration, database integration, and ensuring proper communication between system components. Use when: implementing features or writing code. Keywords: integrate, connect, api integration"
 ---
 
 # Integration

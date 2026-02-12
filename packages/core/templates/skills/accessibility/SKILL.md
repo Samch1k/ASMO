@@ -1,6 +1,6 @@
 ---
-"name": "Accessibility"
-"description": "Ensure web accessibility compliance with ARIA standards and WCAG guidelines. Includes semantic HTML, keyboard navigation, screen reader support, and inclusive design. Use when: performing relevant tasks. Keywords: a11y, wcag, aria"
+name: "Accessibility"
+description: "Ensure web accessibility compliance with ARIA standards and WCAG guidelines. Includes semantic HTML, keyboard navigation, screen reader support, and inclusive design. Use when: performing relevant tasks. Keywords: a11y, wcag, aria"
 ---
 
 # Accessibility

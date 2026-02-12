@@ -1,6 +1,6 @@
 ---
-"name": "Scalability Planning"
-"description": "Plan for system growth and performance under increased load. Includes capacity planning, load testing strategies, and designing for horizontal/vertical scaling. Use when: designing systems. Keywords: scalability, scale, growth planning"
+name: "Scalability Planning"
+description: "Plan for system growth and performance under increased load. Includes capacity planning, load testing strategies, and designing for horizontal/vertical scaling. Use when: designing systems. Keywords: scalability, scale, growth planning"
 ---
 
 # Scalability Planning

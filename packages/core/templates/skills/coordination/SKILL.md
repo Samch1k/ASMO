@@ -1,6 +1,6 @@
 ---
-"name": "Team Coordination"
-"description": "Coordinate work across team members, resolve dependencies, facilitate communication, and ensure smooth collaboration. Use when: performing relevant tasks. Keywords: team coordination, collaboration, coordination"
+name: "Team Coordination"
+description: "Coordinate work across team members, resolve dependencies, facilitate communication, and ensure smooth collaboration. Use when: performing relevant tasks. Keywords: team coordination, collaboration, coordination"
 ---
 
 # Team Coordination

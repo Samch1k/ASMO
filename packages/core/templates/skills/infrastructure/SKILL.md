@@ -1,6 +1,6 @@
 ---
-"name": "Infrastructure Management"
-"description": "Manage cloud infrastructure, server configuration, database setup, and service provisioning. Includes infrastructure as code, resource optimization, and environment management. Use when: deploying or managing infrastructure. Keywords: infra, cloud, servers"
+name: "Infrastructure Management"
+description: "Manage cloud infrastructure, server configuration, database setup, and service provisioning. Includes infrastructure as code, resource optimization, and environment management. Use when: deploying or managing infrastructure. Keywords: infra, cloud, servers"
 ---
 
 # Infrastructure Management

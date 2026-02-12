@@ -1,6 +1,6 @@
 ---
-"name": "TypeScript Expert"
-"description": "Deep knowledge of TypeScript strict mode, advanced types, generics, type inference, and type-safe patterns. Expertise in leveraging TypeScript's type system for maximum safety and developer experience. Use when: implementing features or writing code. Keywords: typescript, ts, types"
+name: "TypeScript Expert"
+description: "Deep knowledge of TypeScript strict mode, advanced types, generics, type inference, and type-safe patterns. Expertise in leveraging TypeScript's type system for maximum safety and developer experience. Use when: implementing features or writing code. Keywords: typescript, ts, types"
 ---
 
 # TypeScript Expert

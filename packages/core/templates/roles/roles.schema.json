@@ -162,8 +162,7 @@
               "type": "array",
               "description": "Types of artifacts this role produces",
               "items": {
-                "type": "string",
-                "enum": ["code", "adr", "diagram", "test", "documentation"]
+                "type": "string"
               }
             }
           },
@@ -194,8 +193,7 @@
           "type": "array",
           "description": "Task types this role handles",
           "items": {
-            "type": "string",
-            "enum": ["bug_fix", "feature", "optimization", "architecture", "deployment", "infrastructure", "testing", "qa", "refactor"]
+            "type": "string"
           },
           "uniqueItems": true
         }

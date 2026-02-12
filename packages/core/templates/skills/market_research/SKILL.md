@@ -1,6 +1,6 @@
 ---
-"name": "Market Research"
-"description": "Market and competitive analysis. Research market trends, analyze competitors, identify opportunities. Use when: market analysis, competitive analysis, market research. Keywords: market, competitive, analysis, research"
+name: "Market Research"
+description: "Market and competitive analysis. Research market trends, analyze competitors, identify opportunities. Use when: market analysis, competitive analysis, market research. Keywords: market, competitive, analysis, research"
 ---
 
 # Market Research

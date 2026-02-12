@@ -60,6 +60,7 @@ export class SkillMatcher {
    * @returns Array of workflow skill IDs
    */
   detectWorkflowPatterns(task: string): string[] {
+    console.log(`[SkillMatcher] Detecting workflow patterns...`)
     const taskLower = task.toLowerCase()
     const workflows: string[] = []
 
@@ -139,7 +140,9 @@ export class SkillMatcher {
     }
 
     if (workflows.length > 0) {
-      console.log(`🔍 Detected workflow patterns: ${workflows.join(', ')}`)
+      console.log(`[SkillMatcher] ✅ Detected patterns: ${workflows.join(', ')}`)
+    } else {
+      console.log(`[SkillMatcher] No workflow patterns matched (checked: TDD, debug, brainstorm, planning)`)
     }
 
     return workflows
@@ -152,6 +155,8 @@ export class SkillMatcher {
    * @returns Array of skill IDs required for the task
    */
   async extractRequiredSkills(task: string): Promise<string[]> {
+    console.log(`[SkillMatcher] Extracting required skills for: "${task.substring(0, 80)}${task.length > 80 ? '...' : ''}"`)
+
     // STEP 1: Detect workflow patterns (Superpowers integration)
     const workflowSkills = this.detectWorkflowPatterns(task)
 
@@ -216,6 +221,7 @@ OUTPUT FORMAT (JSON only):
 ["skill_id_1", "skill_id_2", ...]`
 
     try {
+      console.log(`[SkillMatcher] Calling LLM (haiku) for skill extraction with ${skillMetadata.length} available skills...`)
       const response = await this.llmProvider.generate(systemPrompt, {
         model: 'haiku', // Fast model for skill extraction
         temperature: 0.1,
@@ -235,6 +241,7 @@ OUTPUT FORMAT (JSON only):
       let skillIds: string[]
       try {
         skillIds = JSON.parse(jsonMatch[0])
+        console.log(`[SkillMatcher] LLM extracted skills: [${skillIds.join(', ')}]`)
       } catch (e) {
         console.warn('⚠️  Failed to parse skill IDs from LLM response:', e)
         return workflowSkills // Return at least workflow skills as fallback
@@ -242,6 +249,9 @@ OUTPUT FORMAT (JSON only):
 
       // STEP 3: Merge LLM-extracted skills with workflow skills
       const mergedSkills = [...new Set([...skillIds, ...workflowSkills])]
+      if (workflowSkills.length > 0) {
+        console.log(`[SkillMatcher] Merged with workflow skills: [${mergedSkills.join(', ')}]`)
+      }
 
       // Validate: all skill IDs must exist
       const validSkillIds = await this.validateSkillIds(mergedSkills)

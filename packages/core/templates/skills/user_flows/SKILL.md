@@ -1,6 +1,6 @@
 ---
-"name": "User Flows"
-"description": "Design user flows and journey maps to visualize how users navigate through the application. Identify pain points and optimize user paths. Use when: performing relevant tasks. Keywords: flow, user journey, user path"
+name: "User Flows"
+description: "Design user flows and journey maps to visualize how users navigate through the application. Identify pain points and optimize user paths. Use when: performing relevant tasks. Keywords: flow, user journey, user path"
 ---
 
 # User Flows

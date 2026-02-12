@@ -1,6 +1,6 @@
 ---
-"name": "E2E Testing"
-"description": "Create and run end-to-end tests with Playwright to verify full user workflows work correctly. Includes browser automation, page object patterns, and testing across different browsers. Use when: verifying functionality or writing tests. Keywords: e2e, end-to-end, integration test"
+name: "E2E Testing"
+description: "Create and run end-to-end tests with Playwright to verify full user workflows work correctly. Includes browser automation, page object patterns, and testing across different browsers. Use when: verifying functionality or writing tests. Keywords: e2e, end-to-end, integration test"
 ---
 
 # E2E Testing

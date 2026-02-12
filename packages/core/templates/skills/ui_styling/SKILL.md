@@ -1,6 +1,6 @@
 ---
-"name": "UI Styling"
-"description": "Component styling with Tailwind CSS, animations, CSS optimization, and modern styling techniques. Comprehensive UI development skill. Use when: UI styling, component design, CSS, Tailwind, animations. Keywords: UI, styling, CSS, Tailwind, animation, design"
+name: "UI Styling"
+description: "Component styling with Tailwind CSS, animations, CSS optimization, and modern styling techniques. Comprehensive UI development skill. Use when: UI styling, component design, CSS, Tailwind, animations. Keywords: UI, styling, CSS, Tailwind, animation, design"
 ---
 
 # UI Styling

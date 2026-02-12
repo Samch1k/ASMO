@@ -1,6 +1,6 @@
 ---
-"name": "Bundle Optimization"
-"description": "Optimize JavaScript bundle sizes through code splitting, tree shaking, lazy loading, and removing unused dependencies. Improve initial load time. Use when: performing relevant tasks. Keywords: bundle, bundle size, webpack optimization"
+name: "Bundle Optimization"
+description: "Optimize JavaScript bundle sizes through code splitting, tree shaking, lazy loading, and removing unused dependencies. Improve initial load time. Use when: performing relevant tasks. Keywords: bundle, bundle size, webpack optimization"
 ---
 
 # Bundle Optimization

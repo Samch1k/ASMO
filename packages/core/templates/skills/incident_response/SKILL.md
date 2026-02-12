@@ -1,6 +1,6 @@
 ---
-"name": "Incident Response"
-"description": "Respond to production incidents, perform root cause analysis, implement hotfixes, and restore service availability. Includes incident communication and post-mortem analysis. Use when: deploying or managing infrastructure. Keywords: incident, emergency, production issue"
+name: "Incident Response"
+description: "Respond to production incidents, perform root cause analysis, implement hotfixes, and restore service availability. Includes incident communication and post-mortem analysis. Use when: deploying or managing infrastructure. Keywords: incident, emergency, production issue"
 ---
 
 # Incident Response

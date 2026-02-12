@@ -1,6 +1,6 @@
 ---
-"name": "Responsive Design"
-"description": "Create responsive user interfaces that work seamlessly across desktop, tablet, and mobile devices. Includes mobile-first approach and breakpoint management. Use when: performing relevant tasks. Keywords: responsive, mobile design, adaptive"
+name: "Responsive Design"
+description: "Create responsive user interfaces that work seamlessly across desktop, tablet, and mobile devices. Includes mobile-first approach and breakpoint management. Use when: performing relevant tasks. Keywords: responsive, mobile design, adaptive"
 ---
 
 # Responsive Design

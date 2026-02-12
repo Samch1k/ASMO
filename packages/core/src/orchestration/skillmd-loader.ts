@@ -90,7 +90,7 @@ export class SkillMDLoader {
       const content = await fs.readFile(skillPath, 'utf-8')
 
       // Extract only frontmatter (efficient - don't parse full body)
-      const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/)
+      const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/)
       if (!frontmatterMatch) {
         console.error(`❌ Invalid SKILL.md format for ${skillId}: missing frontmatter`)
         return null
@@ -166,7 +166,7 @@ export class SkillMDLoader {
       const content = await fs.readFile(skillPath, 'utf-8')
 
       // Parse frontmatter
-      const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/)
+      const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/)
       if (!frontmatterMatch) {
         console.error(`❌ Invalid SKILL.md format for ${skillId}: missing frontmatter`)
         return null

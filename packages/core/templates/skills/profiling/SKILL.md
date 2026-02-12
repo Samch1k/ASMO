@@ -1,6 +1,6 @@
 ---
-"name": "Profiling"
-"description": "Profile application performance to identify CPU hotspots, memory usage, and bottlenecks. Generate performance reports with actionable insights. Use when: performing relevant tasks. Keywords: profile, profiler, performance profiling"
+name: "Profiling"
+description: "Profile application performance to identify CPU hotspots, memory usage, and bottlenecks. Generate performance reports with actionable insights. Use when: performing relevant tasks. Keywords: profile, profiler, performance profiling"
 ---
 
 # Profiling

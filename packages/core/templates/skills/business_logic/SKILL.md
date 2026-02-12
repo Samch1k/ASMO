@@ -1,6 +1,6 @@
 ---
-"name": "Business Logic"
-"description": "Analyze and implement complex business rules and workflows. Ensure business logic is correctly translated into technical implementation. Use when: performing relevant tasks. Keywords: business rules, domain logic, business workflow"
+name: "Business Logic"
+description: "Analyze and implement complex business rules and workflows. Ensure business logic is correctly translated into technical implementation. Use when: performing relevant tasks. Keywords: business rules, domain logic, business workflow"
 ---
 
 # Business Logic

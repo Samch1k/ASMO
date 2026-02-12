@@ -1,6 +1,6 @@
 ---
-"name": "Requirements Gathering"
-"description": "Gather and document business requirements through stakeholder interviews, workshops, and analysis. Translate business needs into clear, actionable requirements. Use when: performing relevant tasks. Keywords: requirements, requirement analysis, business requirements"
+name: "Requirements Gathering"
+description: "Gather and document business requirements through stakeholder interviews, workshops, and analysis. Translate business needs into clear, actionable requirements. Use when: performing relevant tasks. Keywords: requirements, requirement analysis, business requirements"
 ---
 
 # Requirements Gathering

@@ -1,6 +1,6 @@
 ---
-"name": "ADR Creation"
-"description": "Create Architecture Decision Records (ADRs) to document important architectural decisions, context, alternatives considered, and consequences. Maintains architectural knowledge. Use when: designing systems. Keywords: adr, decision record, architecture documentation"
+name: "ADR Creation"
+description: "Create Architecture Decision Records (ADRs) to document important architectural decisions, context, alternatives considered, and consequences. Maintains architectural knowledge. Use when: designing systems. Keywords: adr, decision record, architecture documentation"
 ---
 
 # ADR Creation

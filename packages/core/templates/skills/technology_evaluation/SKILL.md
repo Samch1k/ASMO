@@ -1,6 +1,6 @@
 ---
-"name": "Technology Evaluation"
-"description": "Evaluate new technologies, frameworks, libraries, and tools for adoption. Includes proof-of-concept development, comparison analysis, and recommendation reports. Use when: designing systems. Keywords: tech eval, evaluation, technology assessment"
+name: "Technology Evaluation"
+description: "Evaluate new technologies, frameworks, libraries, and tools for adoption. Includes proof-of-concept development, comparison analysis, and recommendation reports. Use when: designing systems. Keywords: tech eval, evaluation, technology assessment"
 ---
 
 # Technology Evaluation

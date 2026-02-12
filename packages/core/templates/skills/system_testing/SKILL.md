@@ -1,6 +1,6 @@
 ---
-"name": "System Testing"
-"description": "End-to-end system testing including acceptance testing and smoke testing. Validate system behavior and user acceptance. Use when: system testing, acceptance testing, smoke testing, UAT. Keywords: system test, acceptance, smoke, UAT"
+name: "System Testing"
+description: "End-to-end system testing including acceptance testing and smoke testing. Validate system behavior and user acceptance. Use when: system testing, acceptance testing, smoke testing, UAT. Keywords: system test, acceptance, smoke, UAT"
 ---
 
 # System Testing

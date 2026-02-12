@@ -1,6 +1,6 @@
 ---
-"name": "Sprint Planning"
-"description": "Plan sprint iterations, estimate effort, assign tasks, and define sprint goals. Facilitate sprint planning meetings and ensure team alignment. Use when: performing relevant tasks. Keywords: sprint, iteration planning, sprint setup"
+name: "Sprint Planning"
+description: "Plan sprint iterations, estimate effort, assign tasks, and define sprint goals. Facilitate sprint planning meetings and ensure team alignment. Use when: performing relevant tasks. Keywords: sprint, iteration planning, sprint setup"
 ---
 
 # Sprint Planning

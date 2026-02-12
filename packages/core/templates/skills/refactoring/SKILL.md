@@ -1,6 +1,6 @@
 ---
-"name": "Code Refactoring"
-"description": "Improve existing code structure, readability, and maintainability without changing external behavior. Includes extracting functions, simplifying logic, removing duplication, and improving naming. Use when: implementing features or writing code. Keywords: refactor, cleanup, improve code"
+name: "Code Refactoring"
+description: "Improve existing code structure, readability, and maintainability without changing external behavior. Includes extracting functions, simplifying logic, removing duplication, and improving naming. Use when: implementing features or writing code. Keywords: refactor, cleanup, improve code"
 ---
 
 # Code Refactoring

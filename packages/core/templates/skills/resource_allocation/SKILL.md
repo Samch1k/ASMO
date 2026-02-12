@@ -1,6 +1,6 @@
 ---
-"name": "Resource Allocation"
-"description": "Allocate resources (people, time, budget) effectively across projects and tasks. Optimize resource utilization and balance workload. Use when: performing relevant tasks. Keywords: resources, allocation, resource planning"
+name: "Resource Allocation"
+description: "Allocate resources (people, time, budget) effectively across projects and tasks. Optimize resource utilization and balance workload. Use when: performing relevant tasks. Keywords: resources, allocation, resource planning"
 ---
 
 # Resource Allocation

@@ -1,6 +1,6 @@
 ---
-"name": "Query Optimization"
-"description": "Optimize database queries for better performance. Includes index optimization, query rewriting, analyzing query plans, and reducing N+1 queries. Use when: performing relevant tasks. Keywords: optimize queries, database optimization, query performance"
+name: "Query Optimization"
+description: "Optimize database queries for better performance. Includes index optimization, query rewriting, analyzing query plans, and reducing N+1 queries. Use when: performing relevant tasks. Keywords: optimize queries, database optimization, query performance"
 ---
 
 # Query Optimization

@@ -1,6 +1,6 @@
 ---
-"name": "Test Coverage Analysis"
-"description": "Analyze test coverage metrics, identify untested code paths, and improve overall test coverage to ensure code quality and reliability. Use when: verifying functionality or writing tests. Keywords: coverage, test coverage, coverage analysis"
+name: "Test Coverage Analysis"
+description: "Analyze test coverage metrics, identify untested code paths, and improve overall test coverage to ensure code quality and reliability. Use when: verifying functionality or writing tests. Keywords: coverage, test coverage, coverage analysis"
 ---
 
 # Test Coverage Analysis

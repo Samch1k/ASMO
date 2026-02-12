@@ -1,6 +1,6 @@
 ---
-"name": "Caching Strategy"
-"description": "Design and implement caching strategies to improve performance. Includes cache invalidation, cache layers, and choosing appropriate caching mechanisms. Use when: performing relevant tasks. Keywords: caching, cache, cache optimization"
+name: "Caching Strategy"
+description: "Design and implement caching strategies to improve performance. Includes cache invalidation, cache layers, and choosing appropriate caching mechanisms. Use when: performing relevant tasks. Keywords: caching, cache, cache optimization"
 ---
 
 # Caching Strategy

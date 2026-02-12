@@ -1,6 +1,6 @@
 ---
-"name": "Deployment"
-"description": "Deploy applications to production environments (Vercel for frontend, Render for backend). Includes build process, environment configuration, rollback procedures, and deployment verification. Use when: deploying or managing infrastructure. Keywords: deploy, release, production"
+name: "Deployment"
+description: "Deploy applications to production environments (Vercel for frontend, Render for backend). Includes build process, environment configuration, rollback procedures, and deployment verification. Use when: deploying or managing infrastructure. Keywords: deploy, release, production"
 ---
 
 # Deployment

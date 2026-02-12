@@ -1,6 +1,6 @@
 ---
-"name": "Monitoring"
-"description": "Monitor application health, performance metrics, error rates, and service availability. Includes setting up alerts, dashboards, and responding to monitoring signals. Use when: deploying or managing infrastructure. Keywords: monitoring, metrics, observability"
+name: "Monitoring"
+description: "Monitor application health, performance metrics, error rates, and service availability. Includes setting up alerts, dashboards, and responding to monitoring signals. Use when: deploying or managing infrastructure. Keywords: monitoring, metrics, observability"
 ---
 
 # Monitoring

@@ -475,19 +475,12 @@ export class RetrospectiveAgent {
     )
     await fs.writeFile(contextPath, contextMd, 'utf-8')
 
-    // Save latest symlink for easy access
+    // Save latest copy for easy access (copyFile instead of symlink for OneDrive compatibility)
     const latestMetricsPath = path.join(asmoDir, 'metrics-latest.json')
     const latestContextPath = path.join(asmoDir, 'analysis-context-latest.md')
 
-    try {
-      await fs.unlink(latestMetricsPath)
-      await fs.unlink(latestContextPath)
-    } catch {
-      // Symlinks don't exist, ignore
-    }
-
-    await fs.symlink(path.basename(metricsPath), latestMetricsPath)
-    await fs.symlink(path.basename(contextPath), latestContextPath)
+    await fs.copyFile(metricsPath, latestMetricsPath)
+    await fs.copyFile(contextPath, latestContextPath)
 
     console.log(`💾 [BMad] Metrics saved for Claude Code analysis:`)
     console.log(`   ${metricsPath}`)

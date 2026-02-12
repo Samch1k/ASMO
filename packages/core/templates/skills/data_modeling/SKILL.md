@@ -1,6 +1,6 @@
 ---
-"name": "Data Modeling"
-"description": "Design database schemas, entity relationships, and data structures. Includes normalization, indexing strategies, and ensuring data integrity. Use when: designing systems. Keywords: database design, schema, data structure"
+name: "Data Modeling"
+description: "Design database schemas, entity relationships, and data structures. Includes normalization, indexing strategies, and ensuring data integrity. Use when: designing systems. Keywords: database design, schema, data structure"
 ---
 
 # Data Modeling

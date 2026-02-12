@@ -1,6 +1,6 @@
 ---
-"name": "Progress Tracking"
-"description": "Track project progress, monitor milestones, identify delays, and communicate status to stakeholders. Maintain project visibility. Use when: performing relevant tasks. Keywords: track progress, status tracking, project tracking"
+name: "Progress Tracking"
+description: "Track project progress, monitor milestones, identify delays, and communicate status to stakeholders. Maintain project visibility. Use when: performing relevant tasks. Keywords: track progress, status tracking, project tracking"
 ---
 
 # Progress Tracking

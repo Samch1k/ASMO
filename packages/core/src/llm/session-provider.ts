@@ -8,6 +8,9 @@
  */
 
 import { spawn, execSync } from 'child_process'
+import { existsSync } from 'fs'
+import { homedir } from 'os'
+import path from 'path'
 import type {
   ILLMProvider,
   LLMGenerateOptions,
@@ -195,10 +198,29 @@ IMPORTANT: Respond with valid JSON only. No markdown, no code blocks, no explana
     return new Promise((resolve, reject) => {
       const effectiveTimeout = timeout || this.config.timeout
 
+      // On Windows, ensure CLAUDE_CODE_GIT_BASH_PATH is available
+      // (setx sets env for future shells, not the current process)
+      const spawnEnv = { ...process.env }
+      if (process.platform === 'win32' && !spawnEnv.CLAUDE_CODE_GIT_BASH_PATH) {
+        const candidates = [
+          path.join('C:', 'Program Files', 'Git', 'bin', 'bash.exe'),
+          path.join(homedir(), 'AppData', 'Local', 'Programs', 'Git', 'bin', 'bash.exe'),
+          path.join('C:', 'Program Files (x86)', 'Git', 'bin', 'bash.exe'),
+        ]
+        for (const candidate of candidates) {
+          if (existsSync(candidate)) {
+            spawnEnv.CLAUDE_CODE_GIT_BASH_PATH = candidate
+            break
+          }
+        }
+      }
+
       const child = spawn('claude', args, {
         cwd: this.config.workingDirectory,
-        env: { ...process.env },
-        stdio: ['ignore', 'pipe', 'pipe']  // ignore stdin - claude -p doesn't need input
+        // Use resolved spawnEnv so Windows can inject CLAUDE_CODE_GIT_BASH_PATH when available
+        env: spawnEnv,
+        // Ignore stdin – claude -p doesn't need interactive input
+        stdio: ['ignore', 'pipe', 'pipe']
       })
 
       let stdout = ''

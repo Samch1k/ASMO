@@ -1,6 +1,6 @@
 ---
-"name": "Prototyping"
-"description": "Create interactive prototypes to test and validate design concepts before development. Includes clickable prototypes and user flow simulations. Use when: performing relevant tasks. Keywords: prototype, interactive mockup, clickable prototype"
+name: "Prototyping"
+description: "Create interactive prototypes to test and validate design concepts before development. Includes clickable prototypes and user flow simulations. Use when: performing relevant tasks. Keywords: prototype, interactive mockup, clickable prototype"
 ---
 
 # Prototyping

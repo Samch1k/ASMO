@@ -196,6 +196,17 @@ export class WorkflowSelector {
     // Get alternative workflows
     const alternatives = this.findAlternatives(complexity, workflow)
 
+    if (this.verbose) {
+      console.log(`   Selected: ${workflow.id} (confidence: ${(confidence * 100).toFixed(1)}%)`)
+      if (alternatives.length > 0) {
+        console.log(
+          `   Alternatives: ${alternatives
+            .map(a => `${a.workflowId} (${(a.confidence * 100).toFixed(0)}%)`)
+            .join(', ')}`
+        )
+      }
+    }
+
     // Build selection result
     const selection: WorkflowSelection = {
       workflow,
@@ -408,6 +419,8 @@ export class WorkflowSelector {
     adapter: AnalysisResult,
     patterns: string[] | undefined
   ): Workflow {
+    console.log(`   [Merge] Evaluating sources: patterns=${patterns?.length || 0}, adapter=${adapter.suggestedWorkflow || 'none'} (${(adapter.confidence * 100).toFixed(0)}%), BMAD=${complexity.recommendedWorkflow}`)
+
     // Priority 1: SkillMatcher patterns (if detected)
     if (patterns && patterns.length > 0) {
       // Try to find workflow matching the pattern
@@ -416,15 +429,18 @@ export class WorkflowSelector {
         const workflowId = this.mapPatternToWorkflow(pattern)
         const workflow = this.workflows.get(workflowId)
         if (workflow) {
+          console.log(`   [Merge] Winner: patterns → ${workflow.id} (from pattern: ${pattern})`)
           return workflow
         }
       }
+      console.log(`   [Merge] Patterns matched but no workflow found, falling through...`)
     }
 
     // Priority 2: ClaudeCodeAdapter suggested workflow (if confident)
     if (adapter.suggestedWorkflow && adapter.confidence >= 0.7) {
       const workflow = this.workflows.get(adapter.suggestedWorkflow)
       if (workflow) {
+        console.log(`   [Merge] Winner: adapter → ${workflow.id} (confidence: ${(adapter.confidence * 100).toFixed(0)}%)`)
         return workflow
       }
     }
@@ -432,12 +448,14 @@ export class WorkflowSelector {
     // Priority 3: BMAD recommended workflow (fallback)
     const workflow = this.workflows.get(complexity.recommendedWorkflow)
     if (workflow) {
+      console.log(`   [Merge] Winner: BMAD → ${workflow.id} (complexity: ${complexity.level})`)
       return workflow
     }
 
     // Fallback: Return first workflow or throw
     const firstWorkflow = Array.from(this.workflows.values())[0]
     if (firstWorkflow) {
+      console.log(`   [Merge] Fallback: using first registered workflow → ${firstWorkflow.id}`)
       return firstWorkflow
     }
 
@@ -583,6 +601,11 @@ export class WorkflowSelector {
     // Check if user's choice matches complexity
     const isGoodMatch = this.isWorkflowSuitableForComplexity(workflow, complexity)
     const confidence = isGoodMatch ? 0.9 : 0.6
+
+    console.log(`[WorkflowSelector] User preference: ${workflowId} → ${isGoodMatch ? 'good match' : 'MISMATCH'} for ${complexity.level} task (confidence: ${(confidence * 100).toFixed(0)}%)`)
+    if (!isGoodMatch) {
+      console.log(`[WorkflowSelector] ⚠️  Recommended alternative: ${complexity.recommendedWorkflow}`)
+    }
 
     return {
       workflow,

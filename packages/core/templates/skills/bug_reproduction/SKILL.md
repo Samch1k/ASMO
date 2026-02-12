@@ -1,6 +1,6 @@
 ---
-"name": "Bug Reproduction"
-"description": "Reproduce reported bugs to understand the exact conditions that cause failures. Includes creating minimal reproducible examples and documenting steps to reproduce. Use when: verifying functionality or writing tests. Keywords: reproduce bug, replicate, reproduce issue"
+name: "Bug Reproduction"
+description: "Reproduce reported bugs to understand the exact conditions that cause failures. Includes creating minimal reproducible examples and documenting steps to reproduce. Use when: verifying functionality or writing tests. Keywords: reproduce bug, replicate, reproduce issue"
 ---
 
 # Bug Reproduction

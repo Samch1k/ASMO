@@ -137,6 +137,7 @@ export class ComplexityAnalyzer {
     const prompt = this.buildAnalysisPrompt(sanitizedPrompt, context)
 
     // Call LLM for analysis (or use heuristics if LLM not available)
+    console.log(`[ComplexityAnalyzer] Analyzing task: "${sanitizedPrompt.substring(0, 80)}${sanitizedPrompt.length > 80 ? '...' : ''}"`)
     const analysisResult = await this.callLLM(prompt, sanitizedPrompt, effectiveConfig)
 
     // Parse LLM response
@@ -164,6 +165,15 @@ export class ComplexityAnalyzer {
       if (complexity.recommendedWorkflow) {
         console.log(`   Recommended: ${complexity.recommendedWorkflow}`)
       }
+      console.log(
+        `[ComplexityAnalyzer] Result: score=${complexity.score}/100, level=${complexity.level}, ` +
+        `confidence=${(complexity.confidence * 100).toFixed(0)}%, mode=${this.lastAnalysisMode}`
+      )
+      console.log(`[ComplexityAnalyzer] Reasoning: ${complexity.reasoning}`)
+      console.log(
+        `[ComplexityAnalyzer] Recommended workflow: ${complexity.recommendedWorkflow}, ` +
+        `agents: [${complexity.recommendedAgents.join(', ')}]`
+      )
     }
 
     return complexity
@@ -298,6 +308,7 @@ Be objective and realistic in your assessment. Consider both the immediate task 
         // Track which mode we're using
         this.lastAnalysisMode = provider.id === 'session' ? 'session' : 'api'
         this.lastProvider = provider.name
+        console.log(`[ComplexityAnalyzer] LLM provider: ${this.lastProvider} (mode: ${this.lastAnalysisMode})`)
 
         const response = await provider.generate(prompt, {
           maxTokens: config.maxTokens,
@@ -337,6 +348,7 @@ Be objective and realistic in your assessment. Consider both the immediate task 
    * Analyzes keywords in task description to estimate complexity.
    */
   private analyzeWithHeuristics(taskDescription: string): string {
+    console.log(`[ComplexityAnalyzer] Running heuristic analysis...`)
     const taskLower = taskDescription.toLowerCase()
 
     let score = 30 // Default: simple task
@@ -459,13 +471,18 @@ Be objective and realistic in your assessment. Consider both the immediate task 
     }
 
     const reasoning = this.generateReasoning(score, factors)
+    const dedupedAgents = Array.from(new Set(recommendedAgents))
+
+    console.log(`[ComplexityAnalyzer] Heuristic score: ${score}/100 | risk: ${factors.riskLevel} | files: ${factors.filesAffected} | LOC: ${factors.estimatedLOC}`)
+    console.log(`[ComplexityAnalyzer] Heuristic flags: data=${factors.dataChanges}, security=${factors.securityImpact}, perf=${factors.performanceImpact}, expertise=${factors.domainExpertiseRequired}`)
+    console.log(`[ComplexityAnalyzer] Heuristic agents: [${dedupedAgents.join(', ')}]`)
 
     return JSON.stringify({
       score,
       confidence: 0.75, // Heuristic confidence
       reasoning,
       factors,
-      recommendedAgents: Array.from(new Set(recommendedAgents)) // Remove duplicates
+      recommendedAgents: dedupedAgents
     })
   }
 
@@ -572,10 +589,12 @@ Be objective and realistic in your assessment. Consider both the immediate task 
   private recommendWorkflow(complexity: ComplexityScore): string {
     // If no workflows registered, return default
     if (this.workflows.size === 0) {
+      const defaultId = this.getDefaultWorkflowForLevel(complexity.level)
       if (this.verbose) {
         console.log('   [recommendWorkflow] No workflows registered, using default')
+        console.log(`      → Default workflow: ${defaultId}`)
       }
-      return this.getDefaultWorkflowForLevel(complexity.level)
+      return defaultId
     }
 
     // Try to match based on complexity level and task type
@@ -602,9 +621,13 @@ Be objective and realistic in your assessment. Consider both the immediate task 
     // Bug fix workflow (high priority for fix tasks)
     if (isFix && (level === 'trivial' || level === 'simple')) {
       const bugFixWorkflow = this.findWorkflowByKeyword('bug')
-      if (bugFixWorkflow) return bugFixWorkflow.id
+      if (bugFixWorkflow) {
+        console.log(`[ComplexityAnalyzer] Workflow match: "${bugFixWorkflow.id}" (rule: ${level} → bug_fix)`)
+        return bugFixWorkflow.id
+      }
     }
 
+<<<<<<< Updated upstream
     // Feature creation/development workflow
     if (isCreation) {
       if (this.verbose) {
@@ -617,6 +640,26 @@ Be objective and realistic in your assessment. Consider both the immediate task 
           console.log(`      → Searching for architecture workflow: ${archWorkflow ? 'FOUND (' + archWorkflow.id + ')' : 'NOT FOUND'}`)
         }
         if (archWorkflow) return archWorkflow.id
+=======
+    // Feature development workflow
+    if (level === 'simple' || level === 'medium') {
+      const featureWorkflow = this.findWorkflowByKeyword('feature')
+      if (featureWorkflow) {
+        console.log(`[ComplexityAnalyzer] Workflow match: "${featureWorkflow.id}" (rule: ${level} → feature)`)
+        return featureWorkflow.id
+      }
+    }
+
+    // Complex workflows
+    if (level === 'complex' || level === 'enterprise') {
+      // Architecture design for high complexity
+      if (factors.filesAffected > 10) {
+        const archWorkflow = this.findWorkflowByKeyword('architecture')
+        if (archWorkflow) {
+          console.log(`[ComplexityAnalyzer] Workflow match: "${archWorkflow.id}" (rule: ${level} + files>${factors.filesAffected} → architecture)`)
+          return archWorkflow.id
+        }
+>>>>>>> Stashed changes
       }
 
       // Otherwise use feature implementation
@@ -644,19 +687,28 @@ Be objective and realistic in your assessment. Consider both the immediate task 
       // Security audit
       if (factors.securityImpact) {
         const securityWorkflow = this.findWorkflowByKeyword('security')
-        if (securityWorkflow) return securityWorkflow.id
+        if (securityWorkflow) {
+          console.log(`[ComplexityAnalyzer] Workflow match: "${securityWorkflow.id}" (rule: ${level} + securityImpact → security)`)
+          return securityWorkflow.id
+        }
       }
 
       // Performance optimization
       if (factors.performanceImpact) {
         const perfWorkflow = this.findWorkflowByKeyword('performance')
-        if (perfWorkflow) return perfWorkflow.id
+        if (perfWorkflow) {
+          console.log(`[ComplexityAnalyzer] Workflow match: "${perfWorkflow.id}" (rule: ${level} + performanceImpact → performance)`)
+          return perfWorkflow.id
+        }
       }
 
       // Database migration
       if (factors.dataChanges) {
         const dbWorkflow = this.findWorkflowByKeyword('database')
-        if (dbWorkflow) return dbWorkflow.id
+        if (dbWorkflow) {
+          console.log(`[ComplexityAnalyzer] Workflow match: "${dbWorkflow.id}" (rule: ${level} + dataChanges → database)`)
+          return dbWorkflow.id
+        }
       }
 
       // High file count -> architecture design
@@ -667,6 +719,7 @@ Be objective and realistic in your assessment. Consider both the immediate task 
     }
 
     // Fallback to default
+<<<<<<< Updated upstream
     if (this.verbose) {
       console.log('      → No specific workflow matched, using default for level')
     }
@@ -675,6 +728,11 @@ Be objective and realistic in your assessment. Consider both the immediate task 
       console.log(`      → Default workflow: ${defaultWorkflow}`)
     }
     return defaultWorkflow
+=======
+    const defaultId = this.getDefaultWorkflowForLevel(level)
+    console.log(`[ComplexityAnalyzer] No specific match, fallback to default: ${defaultId} (level: ${level})`)
+    return defaultId
+>>>>>>> Stashed changes
   }
 
   /**

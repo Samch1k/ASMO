@@ -1,6 +1,6 @@
 ---
-"name": "Hotfix Generation"
-"description": "Quickly create and deploy critical fixes for production issues. Includes minimal code changes, expedited testing, and emergency deployment procedures. Use when: investigating bugs. Keywords: hotfix, emergency fix, critical fix"
+name: "Hotfix Generation"
+description: "Quickly create and deploy critical fixes for production issues. Includes minimal code changes, expedited testing, and emergency deployment procedures. Use when: investigating bugs. Keywords: hotfix, emergency fix, critical fix"
 ---
 
 # Hotfix Generation

@@ -1,6 +1,6 @@
 ---
-"name": "Feature Implementation"
-"description": "End-to-end implementation of new features from requirements to deployment. Includes understanding business requirements, implementing frontend and backend components, writing tests, and integrating into existing codebase. Use when: implementing features or writing code. Keywords: feature, implementation, new feature"
+name: "Feature Implementation"
+description: "End-to-end implementation of new features from requirements to deployment. Includes understanding business requirements, implementing frontend and backend components, writing tests, and integrating into existing codebase. Use when: implementing features or writing code. Keywords: feature, implementation, new feature"
 ---
 
 # Feature Implementation

@@ -1,6 +1,6 @@
 ---
-"name": "Feature Prioritization"
-"description": "Prioritize features and backlog items using frameworks like RICE, MoSCoW, or value vs effort. Make data-driven prioritization decisions. Use when: performing relevant tasks. Keywords: prioritize, backlog prioritization, feature ranking"
+name: "Feature Prioritization"
+description: "Prioritize features and backlog items using frameworks like RICE, MoSCoW, or value vs effort. Make data-driven prioritization decisions. Use when: performing relevant tasks. Keywords: prioritize, backlog prioritization, feature ranking"
 ---
 
 # Feature Prioritization

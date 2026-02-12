@@ -1,6 +1,6 @@
 ---
-"name": "Product Strategy"
-"description": "Define product strategy, vision, and long-term direction. Includes market analysis, competitive positioning, and strategic planning. Use when: performing relevant tasks. Keywords: product strategy, strategic planning, vision"
+name: "Product Strategy"
+description: "Define product strategy, vision, and long-term direction. Includes market analysis, competitive positioning, and strategic planning. Use when: performing relevant tasks. Keywords: product strategy, strategic planning, vision"
 ---
 
 # Product Strategy

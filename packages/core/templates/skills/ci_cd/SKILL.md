@@ -1,6 +1,6 @@
 ---
-"name": "CI/CD Pipeline Management"
-"description": "Manage continuous integration and deployment pipelines using GitHub Actions. Includes pipeline configuration, automated testing, build optimization, and deployment automation. Use when: deploying or managing infrastructure. Keywords: ci/cd, pipeline, automation"
+name: "CI/CD Pipeline Management"
+description: "Manage continuous integration and deployment pipelines using GitHub Actions. Includes pipeline configuration, automated testing, build optimization, and deployment automation. Use when: deploying or managing infrastructure. Keywords: ci/cd, pipeline, automation"
 ---
 
 # CI/CD Pipeline Management

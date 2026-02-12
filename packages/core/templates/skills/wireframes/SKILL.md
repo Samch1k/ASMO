@@ -1,6 +1,6 @@
 ---
-"name": "Wireframes"
-"description": "Create low-fidelity wireframes to visualize layout and structure before implementation. Quick iteration on design ideas and information architecture. Use when: performing relevant tasks. Keywords: wireframe, mockup, sketch"
+name: "Wireframes"
+description: "Create low-fidelity wireframes to visualize layout and structure before implementation. Quick iteration on design ideas and information architecture. Use when: performing relevant tasks. Keywords: wireframe, mockup, sketch"
 ---
 
 # Wireframes

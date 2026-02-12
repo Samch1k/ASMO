@@ -1,6 +1,6 @@
 ---
-"name": "User Testing"
-"description": "Conduct user testing sessions to gather feedback on designs and functionality. Observe users interacting with the product and identify usability issues. Use when: performing relevant tasks. Keywords: testing with users, usability testing, user validation"
+name: "User Testing"
+description: "Conduct user testing sessions to gather feedback on designs and functionality. Observe users interacting with the product and identify usability issues. Use when: performing relevant tasks. Keywords: testing with users, usability testing, user validation"
 ---
 
 # User Testing

@@ -1,6 +1,6 @@
 ---
-"name": "System Design"
-"description": "Design system architecture, define component boundaries, establish data flows, and plan scalability. Includes creating high-level architecture diagrams and technical specifications. Use when: designing systems. Keywords: design, architecture, system architecture"
+name: "System Design"
+description: "Design system architecture, define component boundaries, establish data flows, and plan scalability. Includes creating high-level architecture diagrams and technical specifications. Use when: designing systems. Keywords: design, architecture, system architecture"
 ---
 
 # System Design

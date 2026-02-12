@@ -1,6 +1,6 @@
 ---
-"name": "Usability"
-"description": "Evaluate and improve usability of interfaces through heuristic evaluation, usability testing, and applying UX best practices. Ensure interfaces are intuitive and easy to use. Use when: performing relevant tasks. Keywords: usability testing, ux evaluation, ease of use"
+name: "Usability"
+description: "Evaluate and improve usability of interfaces through heuristic evaluation, usability testing, and applying UX best practices. Ensure interfaces are intuitive and easy to use. Use when: performing relevant tasks. Keywords: usability testing, ux evaluation, ease of use"
 ---
 
 # Usability

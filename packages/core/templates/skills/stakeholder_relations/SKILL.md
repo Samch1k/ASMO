@@ -1,6 +1,6 @@
 ---
-"name": "Stakeholder Relations"
-"description": "Stakeholder management and communication. Manage relationships, communicate effectively, handle expectations. Use when: stakeholder management, communication. Keywords: stakeholder, communication, management"
+name: "Stakeholder Relations"
+description: "Stakeholder management and communication. Manage relationships, communicate effectively, handle expectations. Use when: stakeholder management, communication. Keywords: stakeholder, communication, management"
 ---
 
 # Stakeholder Relations

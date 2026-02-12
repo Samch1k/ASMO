@@ -1,6 +1,6 @@
 ---
-"name": "Code Optimization"
-"description": "Optimize code for better performance, including algorithm improvements, reducing complexity, optimizing loops, and improving memory usage. Use when: performing relevant tasks. Keywords: optimize code, code performance, optimization"
+name: "Code Optimization"
+description: "Optimize code for better performance, including algorithm improvements, reducing complexity, optimizing loops, and improving memory usage. Use when: performing relevant tasks. Keywords: optimize code, code performance, optimization"
 ---
 
 # Code Optimization

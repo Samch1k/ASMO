@@ -165,6 +165,7 @@ export class ConfigLoader {
    * - core-roles.json
    * - specialized-roles.json
    * - project-roles.json
+   * - validation-roles.json
    */
   async loadRoles(): Promise<Role[]> {
     if (!this.roleValidator) {

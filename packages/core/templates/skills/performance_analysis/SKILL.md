@@ -1,6 +1,6 @@
 ---
-"name": "Performance Analysis"
-"description": "Analyze application performance metrics, identify bottlenecks, and recommend optimizations. Includes profiling, benchmarking, and performance testing. Use when: performing relevant tasks. Keywords: performance, analyze performance, perf analysis"
+name: "Performance Analysis"
+description: "Analyze application performance metrics, identify bottlenecks, and recommend optimizations. Includes profiling, benchmarking, and performance testing. Use when: performing relevant tasks. Keywords: performance, analyze performance, perf analysis"
 ---
 
 # Performance Analysis
