@@ -9,7 +9,7 @@
 
 ASMO is an autonomous AI development orchestration system that coordinates multiple AI agents to work together as a cohesive team, handling complex software development tasks from design to deployment.
 
-**Origin**: Based on BMAD (Breakthrough Method of Agile AI Driven Development) principles, refactored as a standalone, generalizable library for any project.
+**Origin**: Based on BMAD  principles, refactored as a standalone, generalizable library for any project.
 
 ## Key Features
 
